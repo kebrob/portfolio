@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  body {
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+    cursor: none;
+    background-color: hsl(45 30% 96%);
+    color: hsl(0 0% 8%);
+    background-image: radial-gradient(circle, hsl(0 0% 8% / 0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-attachment: fixed;
+  }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.dark-section {
+  background-color: hsl(0 0% 6%);
+  color: hsl(45 30% 96%);
+  background-image: radial-gradient(circle, hsl(45 30% 96% / 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+  position: relative;
 }
+
+.dark-section::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to bottom, transparent, hsl(0 0% 6%));
+  pointer-events: none;
+}
+
+.custom-cursor {
+  width: 12px;
+  height: 12px;
+  background-color: hsl(0 0% 8%);
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, background-color 0.3s ease;
+}
+
+.custom-cursor.hovering {
+  transform: scale(1.5);
+}
+
+.custom-cursor.dark-area {
+  background-color: hsl(45 30% 96%);
+}
+
+.section-transition {
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+
