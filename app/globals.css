@@ -21,7 +21,8 @@
   background-image: 
     radial-gradient(circle, hsl(0 0% 100% / 0.04) 1.5px, transparent 1.5px);
   background-size: 20px 20px;
-  background-position: 10px 10px;
+  background-position: 0 0;
+  background-attachment: fixed;
 }
 
 .dark-section::before {
@@ -80,8 +81,8 @@
     background-position:
       10px 10px,
       10px 10px,
-      -40px -40px,
-      -40px -40px !important;
+      10px 10px,
+      10px 10px !important;
   }
 }
 
