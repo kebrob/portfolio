@@ -10,7 +10,7 @@ export default function Home() {
     <div className="bg-background text-foreground">
       <CustomCursor />
       
-      <div className="dot-pattern">
+      <div>
         <Hero />
         <About />
         <Experience />
