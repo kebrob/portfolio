@@ -36,6 +36,45 @@
   pointer-events: none;
 }
 
+.nav-blur {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 80px;
+  pointer-events: none;
+}
+
+.nav-blur > div {
+  position: absolute;
+  inset: 0;
+}
+
+.nav-blur > div:nth-of-type(1) {
+  z-index: 2;
+  backdrop-filter: blur(1px);
+  mask: linear-gradient(to bottom, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 25%, rgba(255, 255, 255, 0) 100%);
+}
+
+.nav-blur > div:nth-of-type(2) {
+  z-index: 3;
+  backdrop-filter: blur(2px);
+  mask: linear-gradient(to bottom, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 35%, rgba(255, 255, 255, 0) 100%);
+}
+
+.nav-blur > div:nth-of-type(3) {
+  z-index: 4;
+  backdrop-filter: blur(3px);
+  mask: linear-gradient(to bottom, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 45%, rgba(255, 255, 255, 0) 100%);
+}
+
+.nav-blur > div:nth-of-type(4) {
+  z-index: 5;
+  backdrop-filter: blur(6px);
+  mask: linear-gradient(to bottom, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 55%, rgba(255, 255, 255, 0) 100%);
+}
+
 .custom-cursor {
   width: 12px;
   height: 12px;
@@ -52,6 +91,10 @@
 
 .custom-cursor.dark-area {
   background-color: hsl(45 30% 96%);
+}
+
+.cursor-pointer {
+  cursor: none !important;
 }
 
 .section-transition {
