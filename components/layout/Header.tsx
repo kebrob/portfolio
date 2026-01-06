@@ -90,7 +90,7 @@ export default function Header() {
               <li key={item}>
                 <button
                   onClick={() => scrollToSection(item)}
-                  className="font-mono text-[11px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity duration-300 hoverable"
+                  className="font-mono text-[11px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity duration-300 hoverable cursor-pointer"
                 >
                   {item}
                 </button>

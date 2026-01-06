@@ -6,16 +6,11 @@ export default function CustomCursor() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isInDarkArea, setIsInDarkArea] = useState(false);
 
   useEffect(() => {
     const updatePosition = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
       setIsVisible(true);
-      
-      const element = document.elementFromPoint(e.clientX, e.clientY);
-      const inDark = Boolean(element?.closest('.dark-section'));
-      setIsInDarkArea(inDark);
     };
 
     const handleMouseEnter = () => setIsVisible(true);
@@ -50,7 +45,7 @@ export default function CustomCursor() {
 
   return (
     <div
-      className={`custom-cursor ${isHovering ? 'hovering' : ''} ${isInDarkArea ? 'dark-area' : ''}`}
+      className={`custom-cursor ${isHovering ? 'hovering' : ''}`}
       style={{
         left: position.x - 6,
         top: position.y - 6,

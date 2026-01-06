@@ -26,7 +26,7 @@ export default function Hero() {
 
       <button
         onClick={scrollToAbout}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_40%)] opacity-70 hover:opacity-100 transition-colors hoverable"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_40%)] opacity-70 hover:opacity-100 transition-colors hoverable cursor-pointer"
       >
         scroll to explore
       </button>
