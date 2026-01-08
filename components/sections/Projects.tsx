@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowUpRight } from 'lucide-react';
 
 const projects = [
@@ -25,7 +27,7 @@ const projects = [
 
 export default function Projects() {
   return (
-    <section id="projects" className="dark-section section-transition px-5 md:px-10 lg:px-20 py-32 bg-[hsl(0_0%_6%)] text-[hsl(45_30%_96%)]">
+    <section id="projects" className="dark-section section-gradient px-5 md:px-10 lg:px-20 py-32 min-h-screen">
       <div className="max-w-4xl">
         <span className="font-mono text-xs uppercase tracking-[0.3em] mb-12 block text-[hsl(0_0%_65%)]">
           Selected Work
@@ -40,7 +42,7 @@ export default function Projects() {
             >
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
-                  <h3 className="text-2xl md:text-3xl font-bold mb-3 group-hover:translate-x-2 transition-transform">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-3 group-hover:translate-x-2 transition-transform text-[hsl(45_30%_96%)]">
                     {project.title}
                   </h3>
                   <p className="mb-4 text-[hsl(0_0%_65%)]">
@@ -57,7 +59,7 @@ export default function Projects() {
                     ))}
                   </div>
                 </div>
-                <ArrowUpRight className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-2" />
+                <ArrowUpRight className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-2 text-[hsl(45_30%_96%)]" />
               </div>
             </a>
           ))}

@@ -6,7 +6,7 @@ export default function Contact() {
   return (
     <footer
       id="contact"
-      className="dark-section section-transition px-5 md:px-10 lg:px-20 py-32 bg-[hsl(0_0%_6%)] text-[hsl(45_30%_96%)] min-h-screen flex flex-col justify-center"
+      className="dark-section px-5 md:px-10 lg:px-20 py-32 bg-[hsl(0_0%_6%)] text-[hsl(45_30%_96%)] min-h-screen flex flex-col justify-center"
     >
       <div className="max-w-4xl w-full">
         <div className="mb-20">

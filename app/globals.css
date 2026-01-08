@@ -21,7 +21,7 @@
   background-attachment: fixed;
 }
 
-.dark-section::before {
+.section-gradient::before {
   content: '';
   position: absolute;
   top: -200px;
@@ -84,10 +84,6 @@
 
 .custom-cursor.hovering {
   transform: scale(1.5);
-}
-
-.section-transition {
-  transition: background-color 0.8s ease, color 0.8s ease;
 }
 
 @layer components {
