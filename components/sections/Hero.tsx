@@ -1,5 +1,7 @@
 'use client';
 
+import TextWave from '@/components/ui/TextWave';
+
 export default function Hero() {
   const scrollToAbout = () => {
     const element = document.getElementById('about');
@@ -26,9 +28,18 @@ export default function Hero() {
 
       <button
         onClick={scrollToAbout}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_40%)] opacity-70 hover:opacity-100 transition-colors hoverable cursor-pointer"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] opacity-70 hover:opacity-100 transition-colors hoverable cursor-pointer"
       >
-        scroll to explore
+          [&nbsp;
+        <TextWave 
+          text="scroll to explore"
+          invertBox={{
+            backgroundColor: '#000',
+            textColor: '#fff'
+          }}
+          speed={40}
+        />
+          &nbsp;]
       </button>
     </section>
   );
