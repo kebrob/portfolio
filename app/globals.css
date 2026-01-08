@@ -7,10 +7,6 @@
     background-color: hsl(45 30% 96%);
     color: hsl(0 0% 8%);
   }
-
-  html {
-    scroll-behavior: smooth;
-  }
 }
 
 .dark-section {

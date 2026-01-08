@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 export default function Header() {
   const [isDark, setIsDark] = useState(false);
-  const [time, setTime] = useState('');
+  const [time, setTime] = useState('00:00_AM');
 
   useEffect(() => {
     const updateTime = () => {
@@ -13,7 +13,7 @@ export default function Header() {
       const minutes = now.getMinutes().toString().padStart(2, '0');
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
-      hours = hours ? hours : 12; // 0 should be 12
+      hours = hours || 12; // 0 should be 12
       const hoursStr = hours.toString().padStart(2, '0');
       setTime(`${hoursStr}:${minutes}_${ampm}`);
     };
@@ -69,36 +69,34 @@ export default function Header() {
   };
 
   return (
-    <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${isDark ? 'text-[hsl(45_30%_96%)]' : 'text-[hsl(0_0%_8%)]'}`}
+          className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${isDark ? 'text-[hsl(45_30%_96%)]' : 'text-[hsl(0_0%_8%)]'}`}
       >
-        <div className="nav-blur">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-
-        <div className="flex justify-between items-center px-3 py-3 relative z-10">
-          <div className="font-mono text-[11px] uppercase tracking-widest opacity-50">
-            ROBERTKEBINGER_{time}_ROSENHEIM
+          <div className="nav-blur">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
           </div>
 
-          <ul className="flex gap-4">
-            {['about', 'projects', 'contact'].map((item) => (
-              <li key={item}>
-                <button
-                  onClick={() => scrollToSection(item)}
-                  className="font-mono text-[11px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity duration-300 hoverable cursor-pointer"
-                >
-                  {item}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div className="flex justify-between items-center px-3 py-3 relative z-10">
+              <div className="font-mono text-[11px] uppercase tracking-widest opacity-50">
+                  ROBERTKEBINGER_{time}_ROSENHEIM
+              </div>
+
+              <ul className="flex gap-4">
+                  {['about', 'projects', 'contact'].map((item) => (
+                      <li key={item}>
+                          <button
+                              onClick={() => scrollToSection(item)}
+                              className="font-mono text-[11px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity duration-300 hoverable cursor-pointer"
+                          >
+                              {item}
+                          </button>
+                      </li>
+                  ))}
+              </ul>
+          </div>
       </nav>
-    </>
   );
 }
