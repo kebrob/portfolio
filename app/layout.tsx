@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GridBackground from "@/components/GridBackground";
 import SmoothScroll from "@/components/SmoothScroll";
+import ClientProviders from "@/components/ClientProviders";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,11 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${ibmPlexMono.variable} font-sans`}>
-        <SmoothScroll />
-        <GridBackground />
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <ClientProviders>
+          <SmoothScroll />
+          <GridBackground />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </ClientProviders>
       </body>
     </html>
   );

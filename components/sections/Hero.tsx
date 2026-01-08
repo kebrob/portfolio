@@ -1,21 +1,75 @@
 'use client';
 
+import {useEffect, useRef, useState} from 'react';
+import TypingAnimation from '@/components/ui/TypingAnimation';
 import TextWave from '@/components/ui/TextWave';
 
 export default function Hero() {
+  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [fontSize, setFontSize] = useState('10px');
+
+  useEffect(() => {
+    const resizeText = () => {
+      const element = h1Ref.current;
+      if (!element) return;
+
+      // Temporarily set full text to measure
+      element.textContent = 'Robert Kebinger';
+
+      // Create temporary span for cube to measure total width
+      const tempSpan = document.createElement('span');
+      tempSpan.className = 'inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]';
+      element.appendChild(tempSpan);
+
+      // Binary search to find the largest font size that fits
+      let minSize = 10;
+      let maxSize = 2000;
+      let bestSize = minSize;
+
+      while (maxSize - minSize > 0.5) {
+        const midSize = (minSize + maxSize) / 2;
+        element.style.fontSize = `${midSize}px`;
+        
+        // Check if text fits within viewport
+        if (element.scrollWidth < window.innerWidth) {
+          bestSize = midSize;
+          minSize = midSize;
+        } else {
+          maxSize = midSize;
+        }
+      }
+
+      // Apply the best size that fits
+      const finalSize = `${bestSize}px`;
+      element.style.fontSize = finalSize;
+      setFontSize(finalSize);
+      
+      // Clear text before showing typing animation (only if not animated yet)
+      if (!hasAnimated) {
+        element.textContent = '';
+        setIsReady(true);
+      }
+    };
+
+    setTimeout(resizeText, 100);
+    window.addEventListener('resize', resizeText);
+    return () => window.removeEventListener('resize', resizeText);
+  }, [hasAnimated]);
+
+  const handleTypingComplete = () => {
+    setHasAnimated(true);
+  };
+
   const scrollToAbout = () => {
     const element = document.getElementById('about');
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section className="min-h-screen flex flex-col justify-center px-5 md:px-10 lg:px-20 relative">
-      <div className="max-w-4xl">
-        <h1 className="text-[clamp(3rem,10vw,9rem)] font-bold leading-[0.9] tracking-tight mb-8 flex flex-col items-start">
-          <span>Robert</span>
-          <span className="whitespace-nowrap">Kebinger<span className="inline-block w-[0.15em] h-[0.15em] ml-2 align-middle bg-[hsl(0_0%_8%)]" /></span>
-        </h1>
-
+    <section className="min-h-screen flex flex-col relative">
+      <div className="flex-1 flex flex-col justify-center max-w-4xl px-5 md:px-10 lg:px-20">
         <div className="max-w-xl">
           <p className="font-sans text-sm md:text-base tracking-wide text-[hsl(0_0%_8%)]">
             Frontend Developer crafting clean, purposeful digital experiences
@@ -26,9 +80,29 @@ export default function Hero() {
         </div>
       </div>
 
+      <div className="absolute bottom-16 left-0 right-0">
+        <h1 
+          ref={h1Ref} 
+          className="font-bold leading-[0.9] tracking-tight whitespace-nowrap inline-block"
+          style={{ opacity: isReady || hasAnimated ? 1 : 0, fontSize }}
+        >
+          {hasAnimated ? (
+            <>
+              Robert Kebinger<span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]" />
+            </>
+          ) : isReady ? (
+            <TypingAnimation 
+              text="Robert Kebinger" 
+              speed={80}
+              onComplete={handleTypingComplete}
+            />
+          ) : null}
+        </h1>
+      </div>
+
       <button
         onClick={scrollToAbout}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] opacity-70 hover:opacity-100 transition-colors hoverable cursor-pointer"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] opacity-70 hover:opacity-100 transition-colors hoverable cursor-pointer"
       >
           [&nbsp;
         <TextWave 
