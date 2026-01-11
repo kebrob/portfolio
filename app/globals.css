@@ -2,11 +2,15 @@
 
 @layer base {
     body {
+        --font-sans: var(--font-inter);
+        --font-mono: var(--font-ibm-plex-mono);
+
         font-family:
             var(--font-inter),
             -apple-system,
             BlinkMacSystemFont,
             sans-serif;
+
         cursor: none;
         background-color: hsl(45 30% 96%);
         color: hsl(0 0% 8%);

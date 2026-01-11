@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function About() {
     return (
         <section id="about" className="px-5 md:px-10 lg:px-20 py-32">
@@ -29,6 +31,17 @@ export default function About() {
                                 Vienna, Austria
                             </span>
                         </div>
+                    </div>
+
+                    {/* Photo */}
+                    <div className="relative w-[100px] h-[120px] md:w-[120px] md:h-[150px] bg-muted overflow-hidden">
+                        <Image
+                            src="/images/rk_43.jpg"
+                            alt="Robert Kebinger"
+                            fill
+                            className="object-cover grayscale"
+                            priority
+                        />
                     </div>
                 </div>
             </div>

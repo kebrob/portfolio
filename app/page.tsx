@@ -18,12 +18,10 @@ export default function Home() {
     const darkProgress = useTransform(scrollYProgress, [0, 0.7], [0, 1]);
 
     return (
-        <div className="bg-background text-foreground">
-            <div>
-                <Hero />
-                <About />
-                <Experience />
-            </div>
+        <>
+            <Hero />
+            <About />
+            <Experience />
 
             <div ref={containerRef} className="relative">
                 {/* Dark veil with dot pattern that fades in */}
@@ -44,6 +42,6 @@ export default function Home() {
                     <Contact />
                 </div>
             </div>
-        </div>
+        </>
     );
 }

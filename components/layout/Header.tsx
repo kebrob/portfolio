@@ -80,7 +80,7 @@ export default function Header() {
             </div>
 
             <div className="flex justify-between items-baseline px-3 py-3 relative z-10">
-                <div className="font-mono text-[11px] uppercase tracking-widest opacity-50 leading-[1] hidden md:block">
+                <div className="font-mono text-[13px] uppercase tracking-widest opacity-50 leading-[1] hidden md:block">
                     ROBERTKEBINGER_{time}_ROSENHEIM
                 </div>
 
@@ -89,7 +89,7 @@ export default function Header() {
                         <li key={item} className="leading-[1]">
                             <button
                                 onClick={() => scrollToSection(item)}
-                                className="font-mono text-[11px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity duration-300 hoverable cursor-pointer leading-[1] block"
+                                className="font-mono text-[13px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity duration-300 hoverable cursor-pointer leading-[1] block"
                             >
                                 {item}
                             </button>
