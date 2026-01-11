@@ -31,6 +31,9 @@ export default function TextWave({
     const [isReady, setIsReady] = useState(false);
 
     const chars = text.split("");
+    const randomChars = ["$", "+", "#", "*", "/", "\\", "&", "%", "?", ";"];
+
+    const getRandomChar = () => randomChars[Math.floor(Math.random() * randomChars.length)];
 
     useEffect(() => {
         setIsReady(true);
@@ -68,29 +71,34 @@ export default function TextWave({
                 onUpdate: (value) => {
                     const newIndex = Math.round(value);
                     if (newIndex !== currentIndexRef.current) {
-                        // Remove highlight from previous character
+                        // Remove highlight from previous character and restore original
                         const prevChar = charsRef.current[currentIndexRef.current];
                         if (prevChar && invertBox) {
                             prevChar.style.backgroundColor = "";
                             prevChar.style.color = "";
+                            const originalChar = chars[currentIndexRef.current];
+                            prevChar.textContent = originalChar === " " ? "\u00A0" : originalChar;
                         }
 
-                        // Add highlight to current character
+                        // Add highlight to current character and change to random symbol
                         const currentChar = charsRef.current[newIndex];
                         if (currentChar && invertBox) {
                             currentChar.style.backgroundColor = invertBox.backgroundColor || "#000";
                             currentChar.style.color = invertBox.textColor || "#fff";
+                            currentChar.textContent = getRandomChar();
                         }
 
                         currentIndexRef.current = newIndex;
                     }
                 },
                 onComplete: () => {
-                    // Clear the last character
+                    // Clear the last character and restore original
                     const lastChar = charsRef.current[currentIndexRef.current];
                     if (lastChar && invertBox) {
                         lastChar.style.backgroundColor = "";
                         lastChar.style.color = "";
+                        const originalChar = chars[currentIndexRef.current];
+                        lastChar.textContent = originalChar === " " ? "\u00A0" : originalChar;
                     }
 
                     if (loop) {

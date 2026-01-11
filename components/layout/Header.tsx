@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import TextWave from "@/components/ui/TextWave";
 
 export default function Header() {
     const [isDark, setIsDark] = useState(false);
     const [time, setTime] = useState("00:00_AM");
+    const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
     useEffect(() => {
         const updateTime = () => {
@@ -81,26 +83,60 @@ export default function Header() {
 
             <div className="flex justify-between items-baseline px-3 py-3 relative z-10">
                 <div className="font-mono text-[13px] uppercase tracking-widest opacity-50 leading-[1] hidden md:block">
-                    ROBERTKEBINGER_{time}_ROSENHEIM
+                    ROBERTKEBINGER_{time}_ROSENHEIM_DE
                 </div>
 
                 <ul className="flex gap-4 list-none md:ml-0 ml-auto">
-                    {["about", "projects", "contact"].map((item) => (
-                        <li key={item} className="leading-[1]">
-                            <button
-                                onClick={() => scrollToSection(item)}
-                                className="font-mono text-[13px] uppercase tracking-widest text-[hsl(0_0%_40%)] hover:text-[hsl(0_0%_0%)] transition-opacity duration-300 hoverable cursor-pointer leading-[1] block"
-                            >
-                                {item === "contact" ? (
-                                    <span className="px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
-                                        {item}
+                    {["about", "projects", "contact"].map((item) => {
+                        const isHovered = hoveredItem === item;
+                        const isContact = item === "contact";
+
+                        return (
+                            <li key={item} className="leading-[1]">
+                                <button
+                                    onClick={() => scrollToSection(item)}
+                                    onMouseEnter={() => setHoveredItem(item)}
+                                    onMouseLeave={() => setHoveredItem(null)}
+                                    className={`font-mono text-[13px] uppercase tracking-widest transition-opacity duration-300 hoverable cursor-pointer leading-[1] block`}
+                                >
+                                    <span
+                                        className={
+                                            isContact
+                                                ? `px-1 py-0.5 ${isDark ? "bg-[hsl(45_30%_96%)] text-[hsl(0_0%_8%)]" : "text-[hsl(45_30%_96%)] bg-[hsl(0_0%_8%)]"}`
+                                                : ""
+                                        }
+                                    >
+                                        {isHovered ? (
+                                            <TextWave
+                                                key={`${item}-${hoveredItem}`}
+                                                text={item}
+                                                loop={false}
+                                                speed={30}
+                                                invertBox={{
+                                                    backgroundColor: isContact
+                                                        ? isDark
+                                                            ? "#141414"
+                                                            : "#f8f6f2"
+                                                        : isDark
+                                                          ? "#f8f6f2"
+                                                          : "#141414",
+                                                    textColor: isContact
+                                                        ? isDark
+                                                            ? "#f8f6f2"
+                                                            : "#141414"
+                                                        : isDark
+                                                          ? "#141414"
+                                                          : "#f8f6f2",
+                                                }}
+                                            />
+                                        ) : (
+                                            item
+                                        )}
                                     </span>
-                                ) : (
-                                    item
-                                )}
-                            </button>
-                        </li>
-                    ))}
+                                </button>
+                            </li>
+                        );
+                    })}
                 </ul>
             </div>
         </nav>

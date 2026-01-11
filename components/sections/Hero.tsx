@@ -84,31 +84,27 @@ export default function Hero() {
             <div className="flex-1 flex items-center pb-32 md:pb-40 lg:pb-48">
                 <div className="w-full flex items-center justify-between px-[20px] md:px-[40px] lg:px-[80px]">
                     {/* Statement block */}
-                    <div className="max-w-[520px] space-y-6">
-                        <p className="text-xl font-semibold mb-1">
-                            Frontend-focused Full-Stack Developer
-                        </p>
-                        <p className="text-lg leading-relaxed mb-2">
-                            Designing and building{" "}
-                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
-                                scalable
+                    <div className="max-w-[520px] space-y-4">
+                        <p className="text-xl font-semibold">
+                            <span className="inline-block bg-[hsl(0_0%_10%)] text-white font-mono px-1 py-0.5">
+                                Frontend-focused
                             </span>{" "}
-                            web applications with a strong focus on{" "}
-                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
-                                frontend architecture
+                            Full-Stack Developer
+                        </p>
+
+                        <p className="text-lg leading-relaxed text-neutral-900">
+                            Designing and building scalable web applications with a strong focus on{" "}
+                            <span className="font-mono tracking-wide px-1 py-0.5 bg-black/5 text-neutral-700">
+                                architecture
                             </span>
                             ,{" "}
-                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
+                            <span className="font-mono tracking-wide px-1 py-0.5 bg-black/5 text-neutral-700">
                                 performance
                             </span>
                             , and{" "}
-                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
+                            <span className="font-mono tracking-wide px-1 py-0.5 bg-black/5 text-neutral-700">
                                 detail
                             </span>
-                            .
-                        </p>
-                        <p className="font-mono text-sm uppercase tracking-widest text-[hsl(0_0%_40%)] mb-0">
-                            Based in Rosenheim, Germany
                         </p>
                     </div>
                 </div>
