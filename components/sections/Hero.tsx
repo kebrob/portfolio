@@ -105,18 +105,19 @@ export default function Hero() {
                     className="font-bold leading-[0.9] tracking-tight whitespace-nowrap inline-block"
                     style={{ opacity: isReady || hasAnimated ? 1 : 0, fontSize }}
                 >
-                    {hasAnimated ? (
+                    {hasAnimated && (
                         <>
-                            Robert Kebinger
+                            <span>Robert Kebinger</span>
                             <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]" />
                         </>
-                    ) : isReady ? (
+                    )}
+                    {!hasAnimated && isReady && (
                         <TypingAnimation
                             text="Robert Kebinger"
                             speed={80}
                             onComplete={handleTypingComplete}
                         />
-                    ) : null}
+                    )}
                 </h1>
             </div>
 

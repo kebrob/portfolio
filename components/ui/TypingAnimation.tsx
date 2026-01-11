@@ -8,7 +8,11 @@ interface TypingAnimationProps {
     onComplete?: () => void;
 }
 
-export default function TypingAnimation({ text, speed = 80, onComplete }: TypingAnimationProps) {
+export default function TypingAnimation({
+    text,
+    speed = 80,
+    onComplete,
+}: Readonly<TypingAnimationProps>) {
     const [displayedText, setDisplayedText] = useState("");
     const [isComplete, setIsComplete] = useState(false);
 
@@ -36,7 +40,7 @@ export default function TypingAnimation({ text, speed = 80, onComplete }: Typing
             {displayedText}
             {!isComplete && (
                 <span
-                    className="inline-block w-[0.05em] h-[0.9em] ml-1 bg-[hsl(0_0%_8%)] animate-pulse"
+                    className="inline-block w-[0.05em] h-[0.8em] ml-1 bg-[hsl(0_0%_8%)] animate-pulse"
                     style={{ verticalAlign: "baseline" }}
                 />
             )}
