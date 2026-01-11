@@ -15,6 +15,14 @@ export default function Hero() {
       const element = h1Ref.current;
       if (!element) return;
 
+      // Don't modify DOM if typing animation is in progress
+      if (isReady && !hasAnimated) {
+        return;
+      }
+
+      // Store current content
+      const currentContent = element.innerHTML;
+      
       // Temporarily set full text to measure
       element.textContent = 'Robert Kebinger';
 
@@ -50,13 +58,16 @@ export default function Hero() {
       if (!hasAnimated) {
         element.textContent = '';
         setIsReady(true);
+      } else {
+        // Restore content if animation already completed
+        element.innerHTML = currentContent;
       }
     };
 
     setTimeout(resizeText, 100);
     window.addEventListener('resize', resizeText);
     return () => window.removeEventListener('resize', resizeText);
-  }, [hasAnimated]);
+  }, [hasAnimated, isReady]);
 
   const handleTypingComplete = () => {
     setHasAnimated(true);
@@ -72,7 +83,7 @@ export default function Hero() {
       <div className="flex-1 flex flex-col justify-center max-w-4xl px-5 md:px-10 lg:px-20">
         <div className="max-w-xl">
           <p className="font-sans text-sm md:text-base tracking-wide text-[hsl(0_0%_8%)]">
-            Frontend Developer crafting clean, purposeful digital experiences
+            Frontend Developer Building scalable, performant web applications with modern frameworks and pixel-perfect design implementation
           </p>
           <p className="font-sans text-sm md:text-base tracking-wide text-[hsl(0_0%_8%)] mt-0.5">
             Based in Rosenheim
