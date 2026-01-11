@@ -3,6 +3,23 @@
 import { useEffect, useState, useCallback } from "react";
 import TextWave from "@/components/ui/TextWave";
 
+const COLORS = {
+    light: {
+        textInverted: "text-[hsl(45_30%_96%)]",
+        text: "text-[hsl(0_0%_8%)]",
+        background: "#f8f6f2",
+        textHex: "#141414",
+        backgroundInverted: "bg-[hsl(0_0%_8%)]",
+    },
+    dark: {
+        textInverted: "text-[hsl(0_0%_8%)]",
+        text: "text-[hsl(45_30%_96%)]",
+        background: "#141414",
+        textHex: "#f8f6f2",
+        backgroundInverted: "bg-[hsl(45_30%_96%)]",
+    },
+};
+
 export default function Header() {
     const [isDark, setIsDark] = useState(false);
     const [time, setTime] = useState("00:00_AM");
@@ -70,9 +87,32 @@ export default function Header() {
         element?.scrollIntoView({ behavior: "smooth" });
     };
 
+    const getContactButtonClasses = (isContact: boolean) => {
+        if (!isContact) return "";
+
+        const theme = isDark ? COLORS.dark : COLORS.light;
+        return `px-1 py-0.5 ${theme.backgroundInverted} ${theme.textInverted}`;
+    };
+
+    const getInvertBoxColors = (isContact: boolean) => {
+        if (isContact) {
+            return {
+                backgroundColor: isDark ? COLORS.dark.background : COLORS.light.background,
+                textColor: isDark ? COLORS.dark.textHex : COLORS.light.textHex,
+            };
+        }
+
+        return {
+            backgroundColor: isDark ? COLORS.light.background : COLORS.dark.background,
+            textColor: isDark ? COLORS.light.textHex : COLORS.dark.textHex,
+        };
+    };
+
+    const currentTheme = isDark ? COLORS.dark : COLORS.light;
+
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${isDark ? "text-[hsl(45_30%_96%)]" : "text-[hsl(0_0%_8%)]"}`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${currentTheme.text}`}
         >
             <div className="nav-blur">
                 <div></div>
@@ -99,35 +139,14 @@ export default function Header() {
                                     onMouseLeave={() => setHoveredItem(null)}
                                     className={`font-mono text-[13px] uppercase tracking-widest transition-opacity duration-300 hoverable cursor-pointer leading-[1] block`}
                                 >
-                                    <span
-                                        className={
-                                            isContact
-                                                ? `px-1 py-0.5 ${isDark ? "bg-[hsl(45_30%_96%)] text-[hsl(0_0%_8%)]" : "text-[hsl(45_30%_96%)] bg-[hsl(0_0%_8%)]"}`
-                                                : ""
-                                        }
-                                    >
+                                    <span className={getContactButtonClasses(isContact)}>
                                         {isHovered ? (
                                             <TextWave
                                                 key={`${item}-${hoveredItem}`}
                                                 text={item}
                                                 loop={false}
-                                                speed={30}
-                                                invertBox={{
-                                                    backgroundColor: isContact
-                                                        ? isDark
-                                                            ? "#141414"
-                                                            : "#f8f6f2"
-                                                        : isDark
-                                                          ? "#f8f6f2"
-                                                          : "#141414",
-                                                    textColor: isContact
-                                                        ? isDark
-                                                            ? "#f8f6f2"
-                                                            : "#141414"
-                                                        : isDark
-                                                          ? "#141414"
-                                                          : "#f8f6f2",
-                                                }}
+                                                speed={50}
+                                                invertBox={getInvertBoxColors(isContact)}
                                             />
                                         ) : (
                                             item
