@@ -89,8 +89,23 @@ export default function Hero() {
                             Frontend-focused Full-Stack Developer
                         </p>
                         <p className="text-lg leading-relaxed mb-2">
-                            Designing and building scalable web applications with a strong focus on
-                            frontend architecture, performance, and detail.
+                            Designing and building{" "}
+                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
+                                scalable
+                            </span>{" "}
+                            web applications with a strong focus on{" "}
+                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
+                                frontend architecture
+                            </span>
+                            ,{" "}
+                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
+                                performance
+                            </span>
+                            , and{" "}
+                            <span className="font-mono px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
+                                detail
+                            </span>
+                            .
                         </p>
                         <p className="font-mono text-sm uppercase tracking-widest text-[hsl(0_0%_40%)] mb-0">
                             Based in Rosenheim, Germany
@@ -123,18 +138,17 @@ export default function Hero() {
 
             <button
                 onClick={scrollToAbout}
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] opacity-70 hover:opacity-100 transition-colors hoverable cursor-pointer"
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] hover:text-[hsl(0_0%_00%)] transition-colors hoverable cursor-pointer"
             >
-                [&nbsp;
                 <TextWave
-                    text="scroll to explore"
+                    text="[scroll to explore]"
                     invertBox={{
                         backgroundColor: "#000",
                         textColor: "#fff",
                     }}
-                    speed={40}
+                    speed={50}
+                    delay={2}
                 />
-                &nbsp;]
             </button>
         </section>
     );

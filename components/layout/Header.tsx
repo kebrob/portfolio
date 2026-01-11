@@ -89,9 +89,15 @@ export default function Header() {
                         <li key={item} className="leading-[1]">
                             <button
                                 onClick={() => scrollToSection(item)}
-                                className="font-mono text-[13px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity duration-300 hoverable cursor-pointer leading-[1] block"
+                                className="font-mono text-[13px] uppercase tracking-widest text-[hsl(0_0%_40%)] hover:text-[hsl(0_0%_0%)] transition-opacity duration-300 hoverable cursor-pointer leading-[1] block"
                             >
-                                {item}
+                                {item === "contact" ? (
+                                    <span className="px-1 py-0.5 bg-[hsl(0_0%_10%)] text-white">
+                                        {item}
+                                    </span>
+                                ) : (
+                                    item
+                                )}
                             </button>
                         </li>
                     ))}
