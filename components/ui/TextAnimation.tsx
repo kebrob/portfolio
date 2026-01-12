@@ -42,7 +42,7 @@ export default function TextAnimation({
     const shouldAnimate = startOnView ? isInView : true;
 
     const chars = text.split("");
-    const randomChars = ["$", "+", "#", "*", "/", "\\", "&", "%", "?", ";"];
+    const randomChars = ["!", '"', "*", "/", "\\", ":", "(", ")", "?", ";", "-"];
 
     const getRandomChar = () => randomChars[Math.floor(Math.random() * randomChars.length)];
 

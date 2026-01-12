@@ -10,6 +10,7 @@ export default function Hero() {
     const [isReady, setIsReady] = useState(false);
     const [hasAnimated, setHasAnimated] = useState(false);
     const [fontSize, setFontSize] = useState("10px");
+    const [textWidth, setTextWidth] = useState(0);
 
     useEffect(() => {
         const resizeText = () => {
@@ -51,10 +52,13 @@ export default function Hero() {
                 }
             }
 
-            // Apply the best size that fits
-            const finalSize = `${bestSize}px`;
+            // Apply the best size that fits with a small buffer for character width variance
+            const finalSize = `${bestSize * 0.96}px`;
             element.style.fontSize = finalSize;
             setFontSize(finalSize);
+
+            // Capture the full text width for centering
+            setTextWidth(element.scrollWidth);
 
             // Clear text before showing typing animation (only if not animated yet)
             if (!hasAnimated) {
@@ -114,11 +118,15 @@ export default function Hero() {
                 </div>
             </div>
 
-            <div className="absolute bottom-16 left-0 right-0">
+            <div className="absolute bottom-10 left-0 right-0 flex justify-center">
                 <h1
                     ref={h1Ref}
-                    className="font-bold leading-[0.9] tracking-tight whitespace-nowrap inline-block"
-                    style={{ opacity: isReady || hasAnimated ? 1 : 0, fontSize }}
+                    className="font-bold leading-[1.2] tracking-tight whitespace-nowrap"
+                    style={{
+                        opacity: isReady || hasAnimated ? 1 : 0,
+                        fontSize,
+                        width: textWidth > 0 ? `${textWidth}px` : "auto",
+                    }}
                 >
                     {hasAnimated && (
                         <>
