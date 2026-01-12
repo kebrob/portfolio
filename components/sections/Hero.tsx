@@ -25,6 +25,9 @@ export default function Hero() {
             // Store current content
             const currentContent = element.innerHTML;
 
+            // Reset width to auto for accurate measurement
+            element.style.width = "auto";
+
             // Temporarily set full text to measure
             element.textContent = "Robert Kebinger";
 
@@ -121,7 +124,7 @@ export default function Hero() {
             <div className="absolute bottom-10 left-0 right-0 flex justify-center">
                 <h1
                     ref={h1Ref}
-                    className="font-bold leading-[1.2] tracking-tight whitespace-nowrap"
+                    className="font-bold leading-[1.2] tracking-tighter whitespace-nowrap"
                     style={{
                         opacity: isReady || hasAnimated ? 1 : 0,
                         fontSize,

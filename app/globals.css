@@ -18,6 +18,11 @@
     }
 }
 
+h1 {
+    font-kerning: none;
+    font-feature-settings: "kern" 0;
+}
+
 .dark-section {
     background-color: hsl(0 0% 6%);
     color: hsl(45 30% 96%);

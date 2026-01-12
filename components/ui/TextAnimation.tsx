@@ -241,7 +241,6 @@ export default function TextAnimation({
                         charsRef.current[i] = el;
                     }}
                     style={{
-                        willChange: "background-color, color",
                         opacity: mode === "typing" ? 0 : 1,
                     }}
                 >
