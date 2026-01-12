@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import TextWave from "@/components/ui/TextWave";
+import TextAnimation from "@/components/ui/TextAnimation";
 
 const COLORS = {
     light: {
@@ -141,7 +141,7 @@ export default function Header() {
                                 >
                                     <span className={getContactButtonClasses(isContact)}>
                                         {isHovered ? (
-                                            <TextWave
+                                            <TextAnimation
                                                 key={`${item}-${hoveredItem}`}
                                                 text={item}
                                                 loop={false}

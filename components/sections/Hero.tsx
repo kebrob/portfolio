@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import TypingAnimation from "@/components/ui/TypingAnimation";
-import TextWave from "@/components/ui/TextWave";
+import TextAnimation from "@/components/ui/TextAnimation";
 
 export default function Hero() {
     const h1Ref = useRef<HTMLHeadingElement>(null);
@@ -123,9 +123,13 @@ export default function Hero() {
                         </>
                     )}
                     {!hasAnimated && isReady && (
-                        <TypingAnimation
+                        <TextAnimation
                             text="Robert Kebinger"
-                            speed={80}
+                            mode="typing"
+                            speed={50}
+                            invertBox={{ backgroundColor: "#141414", textColor: "#f8f6f2" }}
+                            loop={false}
+                            startOnView={true}
                             onComplete={handleTypingComplete}
                         />
                     )}
@@ -136,7 +140,7 @@ export default function Hero() {
                 onClick={scrollToAbout}
                 className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] hover:text-[hsl(0_0%_00%)] transition-colors hoverable cursor-pointer"
             >
-                <TextWave
+                <TextAnimation
                     text="[scroll to explore]"
                     invertBox={{
                         backgroundColor: "#000",
