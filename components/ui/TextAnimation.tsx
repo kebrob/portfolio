@@ -56,6 +56,7 @@ export default function TextAnimation({
 
         let animation: any;
         let timeoutId: NodeJS.Timeout;
+        let isAnimating = false;
 
         const charCount = chars.length;
 
@@ -75,6 +76,8 @@ export default function TextAnimation({
             let currentIdx = 0;
 
             const typeNextChar = () => {
+                if (!isAnimating) return;
+
                 if (currentIdx >= charCount) {
                     // Animation complete
                     const lastChar = charsRef.current[currentIdx - 1];
@@ -87,7 +90,7 @@ export default function TextAnimation({
 
                     onComplete?.();
 
-                    if (loop) {
+                    if (loop && isAnimating) {
                         // Reset all characters to hidden
                         charsRef.current.forEach((charEl, idx) => {
                             if (charEl) {
@@ -95,7 +98,7 @@ export default function TextAnimation({
                             }
                         });
                         timeoutId = setTimeout(() => {
-                            runTypingAnimation();
+                            if (isAnimating) runTypingAnimation();
                         }, delay * 1000);
                     }
                     return;
@@ -148,6 +151,8 @@ export default function TextAnimation({
                 ease: "linear",
                 duration,
                 onUpdate: (value) => {
+                    if (!isAnimating) return;
+
                     const newIndex = Math.round(value);
                     if (newIndex !== currentIndexRef.current) {
                         // Remove highlight from previous character and restore original
@@ -171,6 +176,8 @@ export default function TextAnimation({
                     }
                 },
                 onComplete: () => {
+                    if (!isAnimating) return;
+
                     // Clear the last character and restore original
                     const lastChar = charsRef.current[currentIndexRef.current];
                     if (lastChar && invertBox) {
@@ -182,8 +189,10 @@ export default function TextAnimation({
 
                     onComplete?.();
 
-                    if (loop) {
-                        timeoutId = setTimeout(runAnimation, delay * 1000);
+                    if (loop && isAnimating) {
+                        timeoutId = setTimeout(() => {
+                            if (isAnimating) runAnimation();
+                        }, delay * 1000);
                     }
                 },
             });
@@ -197,35 +206,31 @@ export default function TextAnimation({
                 }
             });
 
+            isAnimating = true;
             if (delay > 0) {
-                timeoutId = setTimeout(runTypingAnimation, delay * 1000);
+                timeoutId = setTimeout(() => {
+                    if (isAnimating) runTypingAnimation();
+                }, delay * 1000);
             } else {
                 runTypingAnimation();
             }
         } else {
+            isAnimating = true;
             if (delay > 0) {
-                timeoutId = setTimeout(runAnimation, delay * 1000);
+                timeoutId = setTimeout(() => {
+                    if (isAnimating) runAnimation();
+                }, delay * 1000);
             } else {
                 runAnimation();
             }
         }
 
         return () => {
+            isAnimating = false;
             animation?.stop();
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [
-        isReady,
-        chars.length,
-        loop,
-        speed,
-        direction,
-        delay,
-        invertBox,
-        mode,
-        onComplete,
-        shouldAnimate,
-    ]);
+    }, [isReady, shouldAnimate]);
 
     return (
         <span ref={containerRef} className={className}>
