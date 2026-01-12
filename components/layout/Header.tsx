@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useLenis } from "lenis/react";
 import TextAnimation from "@/components/ui/TextAnimation";
 
 const COLORS = {
@@ -21,6 +22,7 @@ const COLORS = {
 };
 
 export default function Header() {
+    const lenis = useLenis();
     const [isDark, setIsDark] = useState(false);
     const [time, setTime] = useState("00:00_AM");
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -83,8 +85,11 @@ export default function Header() {
     }, [checkIntersection]);
 
     const scrollToSection = (id: string) => {
-        const element = document.getElementById(id);
-        element?.scrollIntoView({ behavior: "smooth" });
+        lenis?.scrollTo(`#${id}`, {
+            duration: 1.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            lerp: 0.1,
+        });
     };
 
     const getContactButtonClasses = (isContact: boolean) => {

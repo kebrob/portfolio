@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import TypingAnimation from "@/components/ui/TypingAnimation";
+import { useLenis } from "lenis/react";
 import TextAnimation from "@/components/ui/TextAnimation";
 
 export default function Hero() {
+    const lenis = useLenis();
     const h1Ref = useRef<HTMLHeadingElement>(null);
     const [isReady, setIsReady] = useState(false);
     const [hasAnimated, setHasAnimated] = useState(false);
@@ -75,8 +76,11 @@ export default function Hero() {
     };
 
     const scrollToAbout = () => {
-        const element = document.getElementById("about");
-        element?.scrollIntoView({ behavior: "smooth" });
+        lenis?.scrollTo("#about", {
+            duration: 1.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            lerp: 0.1,
+        });
     };
 
     return (
