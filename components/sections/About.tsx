@@ -1,8 +1,15 @@
 import Image from "next/image";
+import { ArrowUpRight, Infinity } from "lucide-react";
 
 export default function About() {
+    const startDate = new Date("2019-08-05");
+    const now = new Date();
+    const yearsOfExperience = Math.floor(
+        (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25)
+    );
+
     return (
-        <section id="about" className="px-[20px] md:px-[40px] lg:px-[80px] py-32">
+        <section id="about" className="px-5 md:px-10 lg:px-20 py-32">
             <div className="max-w-6xl mx-auto">
                 <span className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground mb-16 block">
                     About
@@ -51,19 +58,19 @@ export default function About() {
                         {/* Stats or highlights */}
                         <div className="grid grid-cols-3 gap-8 pt-8 border-t border-border">
                             <div>
-                                <span className="text-3xl font-bold">5+</span>
+                                <span className="text-3xl font-bold">{yearsOfExperience}+</span>
                                 <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1">
                                     Years Experience
                                 </p>
                             </div>
                             <div>
-                                <span className="text-3xl font-bold">50+</span>
+                                <ArrowUpRight size={36} strokeWidth={2.5} />
                                 <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1">
-                                    Projects
+                                    Deliverables
                                 </p>
                             </div>
                             <div>
-                                <span className="text-3xl font-bold">∞</span>
+                                <Infinity size={36} strokeWidth={2.5} />
                                 <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1">
                                     Water Refills
                                 </p>
