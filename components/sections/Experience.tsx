@@ -61,10 +61,19 @@ export default function Experience() {
     const containerRef = useRef<HTMLDivElement>(null);
     const prefersReducedMotion = useReducedMotion();
 
-    // Framer Motion scroll tracking - replaces manual scroll listener
-    const {scrollYProgress} = useScroll({
-        target: containerRef,
-        offset: ["start start", "end end"],
+    const {scrollY} = useScroll();
+
+    // Manually compute 0→1 progress scoped to this section.
+    // useScroll({ target, offset: ["start start", "end end"] }) triggers FM's
+    // WAAPI/ScrollTimeline HW-acceleration path (added in 12.37.0) which maps
+    // keyframe offsets against the full-document scroll range instead of the
+    // section range, breaking the animation. Manual calculation bypasses that.
+    const scrollYProgress = useTransform(scrollY, (y) => {
+        if (!containerRef.current) return 0;
+        const top = containerRef.current.offsetTop;
+        const height = containerRef.current.offsetHeight;
+        const viewH = window.innerHeight;
+        return Math.max(0, Math.min(1, (y - top) / (height - viewH)));
     });
 
     // Calculate phase boundaries

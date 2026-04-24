@@ -1,4 +1,5 @@
-import { Mail, Github, Linkedin, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import { Mail, ArrowUpRight } from "lucide-react";
 
 export default function Contact() {
     const currentYear = new Date().getFullYear();
@@ -42,7 +43,7 @@ export default function Contact() {
                         rel="noopener noreferrer"
                         className="group flex items-center gap-2 font-mono text-sm uppercase tracking-widest text-[hsl(0_0%_65%)] opacity-70 hover:opacity-100 transition-opacity hoverable"
                     >
-                        <Github className="w-4 h-4" />
+                        <Image src="/github.svg" alt="GitHub" width={16} height={16} />
                         <span>GitHub</span>
                     </a>
                     <a
@@ -51,7 +52,7 @@ export default function Contact() {
                         rel="noopener noreferrer"
                         className="group flex items-center gap-2 font-mono text-sm uppercase tracking-widest text-[hsl(0_0%_65%)] opacity-70 hover:opacity-100 transition-opacity hoverable"
                     >
-                        <Linkedin className="w-4 h-4" />
+                        <Image src="/linkedin.png" alt="LinkedIn" width={16} height={16} />
                         <span>LinkedIn</span>
                     </a>
                     <a

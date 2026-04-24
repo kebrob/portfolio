@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowUpRight, Infinity } from "lucide-react";
+import { GlassWater } from "lucide-react";
 
 export default function About() {
     const startDate = new Date("2019-08-05");
@@ -64,15 +64,15 @@ export default function About() {
                                 </p>
                             </div>
                             <div>
-                                <ArrowUpRight size={36} strokeWidth={2.5} />
+                                <span className="text-3xl font-bold">25+</span>
                                 <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1">
-                                    Deliverables
+                                    Technologies & Tools
                                 </p>
                             </div>
                             <div>
-                                <Infinity size={36} strokeWidth={2.5} />
-                                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1">
-                                    Water Refills
+                                <GlassWater size={30} strokeWidth={2.5} />
+                                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-2.5">
+                                    Running on water
                                 </p>
                             </div>
                         </div>
