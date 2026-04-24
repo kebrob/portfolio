@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useLenis } from "lenis/react";
 import TextAnimation from "@/components/ui/TextAnimation";
+import { useHeaderTheme } from "@/lib/header-theme";
 
 const COLORS = {
     light: {
@@ -23,7 +24,9 @@ const COLORS = {
 
 export default function Header() {
     const lenis = useLenis();
-    const [isDark, setIsDark] = useState(false);
+    const { forceDark } = useHeaderTheme();
+    const [intersectionDark, setIntersectionDark] = useState(false);
+    const isDark = forceDark || intersectionDark;
     const [time, setTime] = useState("00:00_AM");
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
@@ -55,7 +58,7 @@ export default function Header() {
                 shouldBeDark = true;
             }
         });
-        setIsDark(shouldBeDark);
+        setIntersectionDark(shouldBeDark);
     }, []);
 
     useEffect(() => {
