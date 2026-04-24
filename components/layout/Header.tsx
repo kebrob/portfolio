@@ -43,9 +43,20 @@ export default function Header() {
         };
 
         updateTime();
-        const interval = setInterval(updateTime, 60000);
 
-        return () => clearInterval(interval);
+        const now = new Date();
+        const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+        let interval: ReturnType<typeof setInterval>;
+
+        const timeout = setTimeout(() => {
+            updateTime();
+            interval = setInterval(updateTime, 60000);
+        }, msUntilNextMinute);
+
+        return () => {
+            clearTimeout(timeout);
+            clearInterval(interval);
+        };
     }, []);
 
     const checkIntersection = useCallback(() => {
