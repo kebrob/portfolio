@@ -2,6 +2,10 @@
 @import "lenis/dist/lenis.css";
 
 @layer base {
+    html {
+        position: relative;
+    }
+
     body {
         --font-sans: var(--font-inter);
         --font-mono: var(--font-ibm-plex-mono);
@@ -13,6 +17,7 @@
             sans-serif;
 
         cursor: none;
+        position: relative;
         background-color: hsl(45 30% 96%);
         color: hsl(0 0% 8%);
     }

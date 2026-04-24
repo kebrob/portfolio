@@ -52,7 +52,7 @@ export default function Contact() {
                         rel="noopener noreferrer"
                         className="group flex items-center gap-2 font-mono text-sm uppercase tracking-widest text-[hsl(0_0%_65%)] opacity-70 hover:opacity-100 transition-opacity hoverable"
                     >
-                        <Image src="/linkedin.png" alt="LinkedIn" width={16} height={16} />
+                        <Image src="/linkedin.png" alt="LinkedIn" width={16} height={16} style={{ width: '16px', height: '16px' }} />
                         <span>LinkedIn</span>
                     </a>
                     <a
