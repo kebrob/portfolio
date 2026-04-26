@@ -72,6 +72,12 @@ export default function ProjectsTransition() {
         [0, 1, 1, 0],
     );
 
+    const hintScale = useTransform(
+        scrollYProgress,
+        [DARK_OVERLAY_END + 0.05, 0.99],
+        [1.8, 1],
+    );
+
     return (
         // CONTAINER_VH gives enough scroll distance for all phases without feeling sluggish
         <div ref={containerRef} className="relative" style={{height: `${CONTAINER_VH}vh`}}>
@@ -125,7 +131,9 @@ export default function ProjectsTransition() {
                     className="absolute bottom-6 left-0 right-0 flex justify-center pointer-events-none z-30"
                     style={prefersReducedMotion ? {opacity: 1} : {opacity: hintOpacity}}
                 >
-                    <ChevronDown className="w-7 h-7 text-[hsl(0_0%_40%)] animate-bounce"/>
+                    <motion.div style={prefersReducedMotion ? {} : {scale: hintScale}}>
+                        <ChevronDown className="w-7 h-7 text-[hsl(0_0%_40%)] animate-bounce"/>
+                    </motion.div>
                 </motion.div>
             </div>
 
