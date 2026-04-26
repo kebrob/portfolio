@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useLenis } from "lenis/react";
+import {useEffect, useRef, useState} from "react";
+import {motion} from "framer-motion";
+import {useLenis} from "lenis/react";
 import TextAnimation from "@/components/ui/TextAnimation";
 
 export default function Hero() {
@@ -78,8 +79,26 @@ export default function Hero() {
         return () => window.removeEventListener("resize", resizeText);
     }, [hasAnimated, isReady]);
 
+    // Keyword highlight sequence — fires after typing animation completes
+    const [highlightIdx, setHighlightIdx] = useState<number | null>(null);
+    const highlightTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+    const startKeywordHighlight = () => {
+        highlightTimers.current = [
+            setTimeout(() => setHighlightIdx(0), 500),
+            setTimeout(() => setHighlightIdx(1), 1000),
+            setTimeout(() => setHighlightIdx(2), 1500),
+            setTimeout(() => setHighlightIdx(null), 2000),
+        ];
+    };
+
+    useEffect(() => {
+        return () => highlightTimers.current.forEach(clearTimeout);
+    }, []);
+
     const handleTypingComplete = () => {
         setHasAnimated(true);
+        startKeywordHighlight();
     };
 
     const scrollToAbout = () => {
@@ -95,29 +114,58 @@ export default function Hero() {
             <div className="flex-1 flex items-center pb-32 md:pb-40 lg:pb-48">
                 <div className="w-full flex items-center justify-between px-[20px] md:px-[40px] lg:px-[80px]">
                     {/* Statement block */}
-                    <div className="max-w-[520px] space-y-4">
-                        <p className="text-xl font-semibold">
+                    <motion.div
+                        className="max-w-[520px] space-y-4"
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            hidden: {},
+                            visible: {transition: {staggerChildren: 0.22, delayChildren: 0.3}},
+                        }}
+                    >
+                        <motion.p
+                            className="text-xl font-semibold"
+                            variants={{
+                                hidden: {opacity: 0, y: 14},
+                                visible: {opacity: 1, y: 0, transition: {duration: 0.55, ease: "easeOut"}}
+                            }}
+                        >
                             <span className="inline-block bg-[hsl(0_0%_10%)] text-white font-mono px-1 py-0.5">
                                 Frontend-focused
                             </span>{" "}
                             Full-Stack Developer
-                        </p>
+                        </motion.p>
 
-                        <p className="text-lg leading-relaxed text-neutral-900">
+                        <motion.p
+                            className="text-lg leading-relaxed text-neutral-900"
+                            variants={{
+                                hidden: {opacity: 0, y: 14},
+                                visible: {opacity: 1, y: 0, transition: {duration: 0.55, ease: "easeOut"}}
+                            }}
+                        >
                             Designing and building scalable web applications with a strong focus on{" "}
-                            <span className="font-mono tracking-wide px-1 py-0.5 bg-black/5 text-neutral-700">
-                                architecture
-                            </span>
-                            ,{" "}
-                            <span className="font-mono tracking-wide px-1 py-0.5 bg-black/5 text-neutral-700">
-                                performance
-                            </span>
-                            , and{" "}
-                            <span className="font-mono tracking-wide px-1 py-0.5 bg-black/5 text-neutral-700">
-                                detail
-                            </span>
-                        </p>
-                    </div>
+                            {(["architecture", "performance", "detail"] as const).map((kw, i) => (
+                                <span key={kw}>
+                                    <motion.span
+                                        className="font-mono tracking-wide px-1 py-0.5"
+                                        animate={
+                                            highlightIdx === i
+                                                ? {backgroundColor: "rgba(0,0,0,0.88)", color: "#f8f6f2"}
+                                                : {backgroundColor: "rgba(0,0,0,0.05)", color: "#525252"}
+                                        }
+                                        transition={
+                                            highlightIdx === i
+                                                ? {duration: 0.12}
+                                                : {duration: 0.55, ease: "easeOut"}
+                                        }
+                                    >
+                                        {kw}
+                                    </motion.span>
+                                    {i === 0 ? ", " : i === 1 ? ", and " : ""}
+                                </span>
+                            ))}
+                        </motion.p>
+                    </motion.div>
                 </div>
             </div>
 
@@ -134,7 +182,7 @@ export default function Hero() {
                     {hasAnimated && (
                         <>
                             <span>Robert Kebinger</span>
-                            <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]" />
+                            <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]"/>
                         </>
                     )}
                     {!hasAnimated && isReady && (
@@ -142,7 +190,7 @@ export default function Hero() {
                             text="Robert Kebinger"
                             mode="typing"
                             speed={50}
-                            invertBox={{ backgroundColor: "#141414", textColor: "#f8f6f2" }}
+                            invertBox={{backgroundColor: "#141414", textColor: "#f8f6f2"}}
                             loop={false}
                             startOnView={true}
                             onComplete={handleTypingComplete}
