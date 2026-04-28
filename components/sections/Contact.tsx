@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useAnimate } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import {useEffect, useRef, useState} from "react";
+import {motion, useInView, useAnimate} from "framer-motion";
+import {ArrowUpRight} from "lucide-react";
 import TextAnimation from "@/components/ui/TextAnimation";
 
 /* Glitch square — starts 5s after in-view, then randomly single or double glitches every 3–10s */
 function GlitchSquare() {
     const [scope, animate] = useAnimate();
-    const inView = useInView(scope, { once: true });
+    const inView = useInView(scope, {once: true});
 
     useEffect(() => {
         if (!inView) return;
@@ -19,11 +19,11 @@ function GlitchSquare() {
             if (cancelled) return;
             const isDouble = Math.random() > 0.5;
 
-            await animate(scope.current, { opacity: [1, 0, 1] }, { duration: 0.1, ease: "linear" });
+            await animate(scope.current, {opacity: [1, 0, 1]}, {duration: 0.1, ease: "linear"});
 
             if (isDouble && !cancelled) {
                 await new Promise<void>((r) => setTimeout(r, 55));
-                await animate(scope.current, { opacity: [1, 0, 1] }, { duration: 0.08, ease: "linear" });
+                await animate(scope.current, {opacity: [1, 0, 1]}, {duration: 0.08, ease: "linear"});
             }
 
             if (!cancelled) {
@@ -50,13 +50,13 @@ function GlitchSquare() {
 const email = "hello@robertkebinger.com";
 
 const socials = [
-    { label: "GitHub", href: "https://github.com/kebrob" },
-    { label: "LinkedIn", href: "https://linkedin.com/in/robertkebinger" },
-    { label: "Instagram", href: "https://instagram.com/robi.keb" },
+    {label: "GitHub", href: "https://github.com/kebrob"},
+    {label: "LinkedIn", href: "https://linkedin.com/in/robert-kebinger-481166204"},
+    {label: "Instagram", href: "https://instagram.com/robertkebinger"},
 ];
 
-const socialInvertBox = { backgroundColor: "#f8f6f2", textColor: "#141414" };
-const emailInvertBox = { backgroundColor: "#141414", textColor: "#f8f6f2" };
+const socialInvertBox = {backgroundColor: "#f8f6f2", textColor: "#141414"};
+const emailInvertBox = {backgroundColor: "#141414", textColor: "#f8f6f2"};
 
 const STAGGER_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -65,15 +65,15 @@ export default function Contact() {
     const [emailHovered, setEmailHovered] = useState(false);
 
     const headlineRef = useRef(null);
-    const headlineInView = useInView(headlineRef, { once: true, amount: 0.3 });
+    const headlineInView = useInView(headlineRef, {once: true, amount: 0.3});
 
     const emailRowRef = useRef(null);
-    const emailRowInView = useInView(emailRowRef, { once: true, amount: 0.5 });
+    const emailRowInView = useInView(emailRowRef, {once: true, amount: 0.5});
 
     const lines = [
-        { text: "Let\u2019s talk", offset: false, isLast: false },
-        { text: "About", offset: true, isLast: false },
-        { text: "IT", offset: true, isLast: true },
+        {text: "Let\u2019s talk", offset: false, isLast: false},
+        {text: "About", offset: true, isLast: false},
+        {text: "IT", offset: true, isLast: true},
     ];
 
     return (
@@ -88,12 +88,12 @@ export default function Contact() {
                         <motion.span
                             key={line.text}
                             className={`block${line.text === "Let\u2019s talk" ? " whitespace-nowrap" : ""}${line.offset ? " pl-[12vw] md:pl-[18vw]" : ""}`}
-                            initial={{ opacity: 0, y: 60 }}
-                            animate={headlineInView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 0.7, delay: i * 0.1, ease: STAGGER_EASE }}
+                            initial={{opacity: 0, y: 60}}
+                            animate={headlineInView ? {opacity: 1, y: 0} : {}}
+                            transition={{duration: 0.7, delay: i * 0.1, ease: STAGGER_EASE}}
                         >
                             {line.text}
-                            {line.isLast && <GlitchSquare />}
+                            {line.isLast && <GlitchSquare/>}
                         </motion.span>
                     ))}
                 </h2>
@@ -108,9 +108,9 @@ export default function Contact() {
                     </span>
                     <motion.span
                         className="hidden sm:block h-px bg-[hsl(45_30%_96%)]"
-                        initial={{ width: 0 }}
-                        animate={emailRowInView ? { width: 80 } : {}}
-                        transition={{ duration: 0.6, delay: 0.2, ease: STAGGER_EASE }}
+                        initial={{width: 0}}
+                        animate={emailRowInView ? {width: 80} : {}}
+                        transition={{duration: 0.6, delay: 0.2, ease: STAGGER_EASE}}
                     />
                     <a
                         href={`mailto:${email}`}
@@ -129,7 +129,8 @@ export default function Contact() {
                         ) : (
                             email
                         )}
-                        <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        <ArrowUpRight
+                            className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"/>
                     </a>
                 </div>
 
@@ -156,7 +157,8 @@ export default function Contact() {
                                 ) : (
                                     s.label
                                 )}
-                                <ArrowUpRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                <ArrowUpRight
+                                    className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"/>
                             </a>
                         </li>
                     ))}
@@ -166,7 +168,7 @@ export default function Contact() {
             {/* Footer */}
             <div className="mt-12">
                 <span className="font-mono text-xs text-[hsl(0_0%_65%)]">
-                    © {new Date().getFullYear()} Robert Kebinger
+                    © {new Date().getFullYear()} Robert Kebinger — All rights reserved
                 </span>
             </div>
         </footer>

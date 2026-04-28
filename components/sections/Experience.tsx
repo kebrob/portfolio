@@ -14,46 +14,43 @@ interface Experience {
     period: string;
     role: string;
     company: string;
-    description: string;
+    description: string[];
     technologies: string[];
 }
 
 const experiences: Experience[] = [
     {
-        year: "2022",
-        period: "2022 — Present",
-        role: "Senior Frontend Developer",
-        company: "Tech Company",
-        description:
-            "Leading frontend development for enterprise applications. Architecting scalable solutions and mentoring junior developers.",
-        technologies: ["React", "TypeScript", "Next.js", "GraphQL"],
+        year: "2024",
+        period: "Jun 2024 — Present",
+        role: "Frontend Lead",
+        company: "Calida Group Digital GmbH",
+        description: [
+                "Leading frontend architecture and UI consistency across projects while mentoring developers and guiding implementation quality.",
+                "Currently building customer systems including CRM tools, email workflows, and SAP CRM integrations.",
+            ],
+        technologies: ["Node.js", "Typescript", "RabbitMQ", "PHP", "Shopware", "SAP", "Accessibility"],
     },
     {
-        year: "2020",
-        period: "2020 — 2022",
-        role: "Frontend Developer",
-        company: "Digital Agency",
-        description:
-            "Built responsive web applications for clients ranging from startups to Fortune 500 companies. Focused on performance and accessibility.",
-        technologies: ["Vue.js", "React", "Tailwind", "Node.js"],
+        year: "2021",
+        period: "Dec 2021 — Jun 2024",
+        role: "Web Developer",
+        company: "Calida Group Digital GmbH",
+        description: [
+                "Worked on product systems, building backend services to integrate product data into the shop and supporting product page development during platform changes.",
+                "Helped evolve the ecommerce architecture across frontend and backend.",
+            ],
+        technologies: ["Node.js", "Typescript", "RabbitMQ", "MongoDB", "SQL", "PHP", "Shopware"],
     },
     {
-        year: "2018",
-        period: "2018 — 2020",
-        role: "Junior Developer",
-        company: "Startup",
-        description:
-            "Developed features and maintained codebase for SaaS product. Collaborated with designers on pixel-perfect interfaces.",
-        technologies: ["JavaScript", "React", "CSS", "Firebase"],
-    },
-    {
-        year: "2016",
-        period: "2016 — 2018",
-        role: "Freelance Developer",
-        company: "Self-employed",
-        description:
-            "Built websites for local businesses. Learned fundamentals of web development and client communication.",
-        technologies: ["HTML", "CSS", "JavaScript", "WordPress"],
+        year: "2019",
+        period: "Aug 2019 — Dec 2021",
+        role: "Intern & Working Student",
+        company: "Calida Group Digital GmbH",
+        description: [
+                "Built CMS-driven pages and frontend widgets for an ecommerce platform. Worked on reusable UI components connected to a content service and storefront features.",
+                "Learned production workflows and delivering frontend features in a team environment.",
+            ],
+        technologies: ["Node.js", "Typescript", "CMS", "SCSS", "PHP", "Oxid"],
     },
 ];
 
@@ -379,7 +376,7 @@ function MobileTimelineDot({
                 className="w-[11px] h-[11px] rounded-full bg-[hsl(0_0%_8%)] border-2 border-[hsl(0_0%_8%)]"
                 style={prefersReducedMotion ? {} : {scale: dotScale}}
             />
-            <span className="font-mono text-xs tracking-wider">{exp.year}</span>
+            <span className="font-mono text-xs text-center tracking-wider">{exp.year}</span>
         </motion.div>
     );
 }
@@ -476,9 +473,11 @@ function ExperienceCard({
                 {exp.company}
             </p>
 
-            <p className="text-[hsl(0_0%_40%)] leading-relaxed mb-8 max-w-xl text-base md:text-lg">
-                {exp.description}
-            </p>
+            <div className="text-[hsl(0_0%_40%)] leading-relaxed mb-8 max-w-xl text-base md:text-lg space-y-3">
+                {exp.description.map((para, i) => (
+                    <p key={i}>{para}</p>
+                ))}
+            </div>
 
             <div className="flex flex-wrap gap-3" role="list" aria-label="Technologies">
                 {exp.technologies.map((tech) => (

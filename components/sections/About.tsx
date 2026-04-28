@@ -20,8 +20,8 @@ export default function About() {
     const headingWords = "Building digital products with precision and purpose.".split(" ");
 
     const paragraphs = [
-        "I'm a frontend developer based in Rosenheim, Germany, with a passion for creating seamless user experiences. I focus on writing clean, maintainable code and building interfaces that feel intuitive.",
-        "Currently crafting digital experiences at the intersection of design and technology, with expertise in React, TypeScript, and modern web technologies.",
+        "I'm a developer based in Rosenheim, Germany, focused on building fast, intuitive interfaces with a strong attention to detail. I care about clean structure, maintainability, and creating experiences that feel effortless to use.",
+        "While my main focus is frontend quality, I also work across the stack by turning ideas into complete, production-ready applications from concept to deployment.",
     ];
 
     const stats = [
