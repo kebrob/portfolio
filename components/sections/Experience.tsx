@@ -25,10 +25,10 @@ const experiences: Experience[] = [
         role: "Frontend Lead",
         company: "Calida Group Digital GmbH",
         description: [
-                "Leading frontend architecture and UI consistency across projects while mentoring developers and guiding implementation quality.",
-                "Currently building customer systems including CRM tools, email workflows, and SAP CRM integrations.",
-            ],
-        technologies: ["Node.js", "Typescript", "RabbitMQ", "PHP", "Shopware", "SAP", "Accessibility"],
+            "Leading frontend architecture and UI consistency across projects while mentoring developers and guiding implementation quality.",
+            "Currently building customer systems including CRM tools, email workflows, and SAP CRM integrations.",
+        ],
+        technologies: ["Node.js", "Typescript", "RabbitMQ", "PHP", "Shopware", "SAP", "AI"],
     },
     {
         year: "2021",
@@ -36,9 +36,9 @@ const experiences: Experience[] = [
         role: "Web Developer",
         company: "Calida Group Digital GmbH",
         description: [
-                "Worked on product systems, building backend services to integrate product data into the shop and supporting product page development during platform changes.",
-                "Helped evolve the ecommerce architecture across frontend and backend.",
-            ],
+            "Worked on product systems, building backend services to integrate product data into the shop and supporting product page development during platform changes.",
+            "Helped evolve the ecommerce architecture across frontend and backend.",
+        ],
         technologies: ["Node.js", "Typescript", "RabbitMQ", "MongoDB", "SQL", "PHP", "Shopware"],
     },
     {
@@ -47,9 +47,9 @@ const experiences: Experience[] = [
         role: "Intern & Working Student",
         company: "Calida Group Digital GmbH",
         description: [
-                "Built CMS-driven pages and frontend widgets for an ecommerce platform. Worked on reusable UI components connected to a content service and storefront features.",
-                "Learned production workflows and delivering frontend features in a team environment.",
-            ],
+            "Built CMS-driven pages and frontend widgets for an ecommerce platform. Worked on reusable UI components connected to a content service and storefront features.",
+            "Learned production workflows and delivering frontend features in a team environment.",
+        ],
         technologies: ["Node.js", "Typescript", "CMS", "SCSS", "PHP", "Oxid"],
     },
 ];

@@ -2,7 +2,6 @@
 
 import {useRef} from "react";
 import Image from "next/image";
-import {GlassWater} from "lucide-react";
 import {motion, useInView} from "framer-motion";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -26,8 +25,7 @@ export default function About() {
 
     const stats = [
         {value: `${yearsOfExperience}+`, label: "Years Experience"},
-        {value: "25+", label: "Technologies & Tools"},
-        {icon: <GlassWater size={30} strokeWidth={2.5}/>, label: "Running on water"},
+        {value: "35+", label: "Technologies & Tools"},
     ];
 
     return (
@@ -158,22 +156,17 @@ export default function About() {
                                 animate={inView ? {width: "100%"} : {}}
                                 transition={{duration: 0.7, delay: 0.55, ease: EASE}}
                             />
-                            <div className="grid grid-cols-3 gap-8 mt-1 items-start">
-                                {stats.map(({value, icon, label}, i) => (
+                            <div className="grid grid-cols-2 gap-8 mt-1 items-start">
+                                {stats.map(({value, label}, i) => (
                                     <motion.div
                                         key={label}
-                                        className="flex flex-col"
+                                        className="flex flex-row items-center gap-3"
                                         initial={{opacity: 0, y: 16}}
                                         animate={inView ? {opacity: 1, y: 0} : {}}
                                         transition={{duration: 0.5, delay: 0.85 + i * 0.1, ease: EASE}}
                                     >
-                                        <div className="h-10 flex items-center">
-                                            {value
-                                                ? <span className="text-3xl font-bold leading-none">{value}</span>
-                                                : <span>{icon}</span>
-                                            }
-                                        </div>
-                                        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground mt-1">
+                                        <span className="text-3xl font-bold leading-none shrink-0">{value}</span>
+                                        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
                                             {label}
                                         </p>
                                     </motion.div>
