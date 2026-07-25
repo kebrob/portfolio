@@ -23,9 +23,7 @@ export default function ProjectsPage() {
                 <span className="font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_55%)] block mb-6">
                     Selected Work
                 </span>
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-                    All Projects
-                </h1>
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tight">All Projects</h1>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

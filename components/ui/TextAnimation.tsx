@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { animate, useInView } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { animate, useInView, type AnimationPlaybackControls } from "framer-motion";
 
 interface TextAnimationProps {
     text: string;
     className?: string;
     loop?: boolean;
     speed?: number;
-    direction?: "left" | "right";
     delay?: number;
     invertBox?: {
         backgroundColor?: string;
@@ -24,7 +23,6 @@ export default function TextAnimation({
     className = "",
     loop = true,
     speed = 50,
-    direction = "right",
     delay = 0,
     invertBox,
     mode = "wave",
@@ -34,7 +32,6 @@ export default function TextAnimation({
     const containerRef = useRef<HTMLSpanElement>(null);
     const charsRef = useRef<(HTMLSpanElement | null)[]>([]);
     const currentIndexRef = useRef(0);
-    const [isReady, setIsReady] = useState(false);
     const isInView = useInView(containerRef, {
         once: true,
         amount: 1,
@@ -47,15 +44,10 @@ export default function TextAnimation({
     const getRandomChar = () => randomChars[Math.floor(Math.random() * randomChars.length)];
 
     useEffect(() => {
-        setIsReady(true);
-    }, []);
-
-    useEffect(() => {
-        if (!isReady) return;
         if (!shouldAnimate) return;
 
-        let animation: any;
-        let timeoutId: NodeJS.Timeout;
+        let animation: AnimationPlaybackControls | undefined;
+        let timeoutId: ReturnType<typeof setTimeout>;
         let isAnimating = false;
 
         const charCount = chars.length;
@@ -92,7 +84,7 @@ export default function TextAnimation({
 
                     if (loop && isAnimating) {
                         // Reset all characters to hidden
-                        charsRef.current.forEach((charEl, idx) => {
+                        charsRef.current.forEach((charEl) => {
                             if (charEl) {
                                 charEl.style.opacity = "0";
                             }
@@ -142,8 +134,8 @@ export default function TextAnimation({
         };
 
         const runAnimation = () => {
-            const start = direction === "right" ? 0 : charCount - 1;
-            const end = direction === "right" ? charCount - 1 : 0;
+            const start = 0;
+            const end = charCount - 1;
             const duration =
                 Math.exp(mapRange(speed, 0, 100, Math.log(0.3), Math.log(0.01))) * charCount;
 
@@ -230,7 +222,7 @@ export default function TextAnimation({
             animation?.stop();
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [isReady, shouldAnimate]);
+    }, [shouldAnimate]);
 
     return (
         <span ref={containerRef} className={className}>

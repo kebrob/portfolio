@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import GridBackground from "@/components/GridBackground";
 import SmoothScroll from "@/components/SmoothScroll";
 import ClientProviders from "@/components/ClientProviders";
@@ -36,7 +35,6 @@ export default function RootLayout({
                     <GridBackground />
                     <Header />
                     <main>{children}</main>
-                    <Footer />
                 </ClientProviders>
             </body>
         </html>

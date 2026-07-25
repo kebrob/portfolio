@@ -1,8 +1,8 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
-import {motion} from "framer-motion";
-import {useLenis} from "lenis/react";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useLenis } from "lenis/react";
 import TextAnimation from "@/components/ui/TextAnimation";
 
 export default function Hero() {
@@ -120,14 +120,18 @@ export default function Hero() {
                         animate="visible"
                         variants={{
                             hidden: {},
-                            visible: {transition: {staggerChildren: 0.22, delayChildren: 0.3}},
+                            visible: { transition: { staggerChildren: 0.22, delayChildren: 0.3 } },
                         }}
                     >
                         <motion.p
                             className="text-xl font-semibold"
                             variants={{
-                                hidden: {opacity: 0, y: 14},
-                                visible: {opacity: 1, y: 0, transition: {duration: 0.55, ease: "easeOut"}}
+                                hidden: { opacity: 0, y: 14 },
+                                visible: {
+                                    opacity: 1,
+                                    y: 0,
+                                    transition: { duration: 0.55, ease: "easeOut" },
+                                },
                             }}
                         >
                             <span className="inline-block bg-[hsl(0_0%_10%)] text-white font-mono px-1 py-0.5">
@@ -139,8 +143,12 @@ export default function Hero() {
                         <motion.p
                             className="text-lg leading-relaxed text-neutral-900"
                             variants={{
-                                hidden: {opacity: 0, y: 14},
-                                visible: {opacity: 1, y: 0, transition: {duration: 0.55, ease: "easeOut"}}
+                                hidden: { opacity: 0, y: 14 },
+                                visible: {
+                                    opacity: 1,
+                                    y: 0,
+                                    transition: { duration: 0.55, ease: "easeOut" },
+                                },
                             }}
                         >
                             Designing and building scalable web applications with a strong focus on{" "}
@@ -150,13 +158,19 @@ export default function Hero() {
                                         className="font-mono tracking-wide px-1 py-0.5"
                                         animate={
                                             highlightIdx === i
-                                                ? {backgroundColor: "rgba(0,0,0,0.88)", color: "#f8f6f2"}
-                                                : {backgroundColor: "rgba(0,0,0,0.05)", color: "#525252"}
+                                                ? {
+                                                      backgroundColor: "rgba(0,0,0,0.88)",
+                                                      color: "#f8f6f2",
+                                                  }
+                                                : {
+                                                      backgroundColor: "rgba(0,0,0,0.05)",
+                                                      color: "#525252",
+                                                  }
                                         }
                                         transition={
                                             highlightIdx === i
-                                                ? {duration: 0.12}
-                                                : {duration: 0.55, ease: "easeOut"}
+                                                ? { duration: 0.12 }
+                                                : { duration: 0.55, ease: "easeOut" }
                                         }
                                     >
                                         {kw}
@@ -182,7 +196,7 @@ export default function Hero() {
                     {hasAnimated && (
                         <>
                             <span>Robert Kebinger</span>
-                            <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]"/>
+                            <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]" />
                         </>
                     )}
                     {!hasAnimated && isReady && (
@@ -190,7 +204,7 @@ export default function Hero() {
                             text="Robert Kebinger"
                             mode="typing"
                             speed={50}
-                            invertBox={{backgroundColor: "#141414", textColor: "#f8f6f2"}}
+                            invertBox={{ backgroundColor: "#141414", textColor: "#f8f6f2" }}
                             loop={false}
                             startOnView={true}
                             onComplete={handleTypingComplete}
