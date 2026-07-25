@@ -32,7 +32,7 @@ export default function About() {
         <section id="about" ref={sectionRef} className="px-5 md:px-10 lg:px-20 py-32">
             <div className="max-w-6xl mx-auto">
                 <motion.span
-                    className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground mb-16 block"
+                    className="font-mono text-xs uppercase tracking-[0.3em] mb-16 block"
                     initial={{opacity: 0}}
                     animate={inView ? {opacity: 1} : {}}
                     transition={{duration: 0.5, ease: "easeOut"}}
@@ -87,8 +87,6 @@ export default function About() {
                                         className="object-cover object-top"
                                     />
                                 </div>
-                                <div
-                                    className="absolute inset-0 bg-foreground/5 group-hover:bg-transparent transition-colors duration-500"/>
                             </motion.div>
                             {/*
                               Tape strips: center placed exactly at each corner via translate before rotate.
@@ -136,7 +134,7 @@ export default function About() {
                             {paragraphs.map((p, i) => (
                                 <motion.p
                                     key={i}
-                                    className="text-muted-foreground leading-relaxed"
+                                    className="leading-relaxed"
                                     style={{fontSize: i === 0 ? "1.125rem" : "1rem"}}
                                     initial={{opacity: 0, y: 20}}
                                     animate={inView ? {opacity: 1, y: 0} : {}}
@@ -166,7 +164,7 @@ export default function About() {
                                         transition={{duration: 0.5, delay: 0.85 + i * 0.1, ease: EASE}}
                                     >
                                         <span className="text-3xl font-bold leading-none shrink-0">{value}</span>
-                                        <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                                        <p className="font-mono text-xs uppercase tracking-wider">
                                             {label}
                                         </p>
                                     </motion.div>

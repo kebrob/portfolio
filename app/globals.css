@@ -39,17 +39,6 @@ h1 {
     background-attachment: fixed;
 }
 
-.section-gradient::before {
-    content: "";
-    position: absolute;
-    top: -200px;
-    left: 0;
-    right: 0;
-    height: 200px;
-    background: linear-gradient(to bottom, transparent, hsl(0 0% 6%));
-    pointer-events: none;
-}
-
 .nav-blur {
     position: absolute;
     z-index: 0;

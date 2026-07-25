@@ -8,7 +8,6 @@ interface TextAnimationProps {
     className?: string;
     loop?: boolean;
     speed?: number;
-    direction?: "left" | "right";
     delay?: number;
     invertBox?: {
         backgroundColor?: string;
@@ -24,7 +23,6 @@ export default function TextAnimation({
     className = "",
     loop = true,
     speed = 50,
-    direction = "right",
     delay = 0,
     invertBox,
     mode = "wave",
@@ -92,7 +90,7 @@ export default function TextAnimation({
 
                     if (loop && isAnimating) {
                         // Reset all characters to hidden
-                        charsRef.current.forEach((charEl, idx) => {
+                        charsRef.current.forEach((charEl) => {
                             if (charEl) {
                                 charEl.style.opacity = "0";
                             }
@@ -142,8 +140,8 @@ export default function TextAnimation({
         };
 
         const runAnimation = () => {
-            const start = direction === "right" ? 0 : charCount - 1;
-            const end = direction === "right" ? charCount - 1 : 0;
+            const start = 0;
+            const end = charCount - 1;
             const duration =
                 Math.exp(mapRange(speed, 0, 100, Math.log(0.3), Math.log(0.01))) * charCount;
 
