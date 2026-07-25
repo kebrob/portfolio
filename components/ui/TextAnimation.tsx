@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { animate, useInView, type AnimationPlaybackControls } from "framer-motion";
 
 interface TextAnimationProps {
@@ -32,7 +32,6 @@ export default function TextAnimation({
     const containerRef = useRef<HTMLSpanElement>(null);
     const charsRef = useRef<(HTMLSpanElement | null)[]>([]);
     const currentIndexRef = useRef(0);
-    const [isReady, setIsReady] = useState(false);
     const isInView = useInView(containerRef, {
         once: true,
         amount: 1,
@@ -45,11 +44,6 @@ export default function TextAnimation({
     const getRandomChar = () => randomChars[Math.floor(Math.random() * randomChars.length)];
 
     useEffect(() => {
-        setIsReady(true);
-    }, []);
-
-    useEffect(() => {
-        if (!isReady) return;
         if (!shouldAnimate) return;
 
         let animation: AnimationPlaybackControls | undefined;
@@ -228,7 +222,7 @@ export default function TextAnimation({
             animation?.stop();
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [isReady, shouldAnimate]);
+    }, [shouldAnimate]);
 
     return (
         <span ref={containerRef} className={className}>
