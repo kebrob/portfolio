@@ -1,6 +1,6 @@
 "use client";
 
-import {useRef, useMemo} from "react";
+import {useRef} from "react";
 import {
     motion,
     useScroll,
@@ -54,6 +54,18 @@ const experiences: Experience[] = [
     },
 ];
 
+// Phase boundaries within the section's 0→1 scroll progress.
+// ADJUST THESE VALUES to control timing:
+// - INTRO_END: When title fades out (higher = stays longer)
+// - EXIT_START: When section ends (lower = ends sooner)
+const INTRO_END = 0.15;
+const EXIT_START = 0.92;
+const EXPERIENCE_STEP = (EXIT_START - INTRO_END) / experiences.length;
+
+// Total timeline height: dots * spacing between them.
+// Each dot row is 52px high (py-4 = 32px + dot/text height ~20px)
+const TIMELINE_HEIGHT = experiences.length * 52;
+
 export default function Experience() {
     const containerRef = useRef<HTMLDivElement>(null);
     const prefersReducedMotion = useReducedMotion();
@@ -73,37 +85,24 @@ export default function Experience() {
         return Math.max(0, Math.min(1, (y - top) / (height - viewH)));
     });
 
-    // Calculate phase boundaries
-    // ADJUST THESE VALUES to control timing:
-    // - introEnd: When title fades out (higher = stays longer)
-    // - exitStart: When section ends (lower = ends sooner)
-    const {introEnd, exitStart, experienceStep} = useMemo(() => {
-        const introEnd = 0.15;
-        const exitStart = 0.92;
-        const experienceRange = exitStart - introEnd;
-        const experienceStep = experienceRange / experiences.length;
-
-        return {introEnd, exitStart, experienceStep};
-    }, []);
-
     // Transform scroll progress to intro opacity (slower fade)
     const introOpacity = useTransform(
         scrollYProgress,
-        [0, introEnd * 0.7, introEnd],
+        [0, INTRO_END * 0.7, INTRO_END],
         [1, 1, 0], // Stays at full opacity longer, then fades
     );
 
     // Transform for content fade in (synced with title fade out)
     const contentOpacity = useTransform(
         scrollYProgress,
-        [introEnd * 0.9, introEnd * 1.1],
+        [INTRO_END * 0.9, INTRO_END * 1.1],
         [0, 1], // Fades in AFTER title fades out
     );
 
     // Transform for timeline progress - continuous fill with scroll
     const timelineProgress = useTransform(
         scrollYProgress,
-        [introEnd, exitStart],
+        [INTRO_END, EXIT_START],
         [0, 1],
     );
 
@@ -138,8 +137,6 @@ export default function Experience() {
                         {/* Desktop Timeline */}
                         <DesktopTimeline
                             scrollYProgress={scrollYProgress}
-                            introEnd={introEnd}
-                            experienceStep={experienceStep}
                             timelineProgress={timelineProgress}
                             prefersReducedMotion={prefersReducedMotion}
                         />
@@ -147,8 +144,6 @@ export default function Experience() {
                         {/* Mobile Timeline */}
                         <MobileTimeline
                             scrollYProgress={scrollYProgress}
-                            introEnd={introEnd}
-                            experienceStep={experienceStep}
                             timelineProgress={timelineProgress}
                             prefersReducedMotion={prefersReducedMotion}
                         />
@@ -156,8 +151,6 @@ export default function Experience() {
                         {/* Experience content */}
                         <ExperienceContent
                             scrollYProgress={scrollYProgress}
-                            introEnd={introEnd}
-                            experienceStep={experienceStep}
                             prefersReducedMotion={prefersReducedMotion}
                         />
                     </motion.div>
@@ -170,21 +163,13 @@ export default function Experience() {
 // Desktop Timeline Component
 function DesktopTimeline({
                              scrollYProgress,
-                             introEnd,
-                             experienceStep,
                              timelineProgress,
                              prefersReducedMotion,
                          }: {
     scrollYProgress: MotionValue<number>;
-    introEnd: number;
-    experienceStep: number;
     timelineProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
 }) {
-    // Calculate total timeline height: dots * spacing between them
-    // Each dot row is 52px high (py-4 = 32px + dot/text height ~20px)
-    const timelineHeight = (experiences.length) * 52; // Space between dot centers
-
     return (
         <div
             className="hidden md:flex flex-col gap-0 relative py-4 min-w-[100px]"
@@ -194,7 +179,7 @@ function DesktopTimeline({
             {/* Timeline track - light gray background */}
             <div
                 className="absolute left-[5px] w-px bg-[hsl(0_0%_85%)]"
-                style={{height: `${timelineHeight}px`}}
+                style={{height: `${TIMELINE_HEIGHT}px`}}
             />
 
             {/* Progress indicator - fills gradually with scroll */}
@@ -202,9 +187,9 @@ function DesktopTimeline({
                 className="absolute left-[5px] w-px bg-[hsl(0_0%_8%)]"
                 style={
                     prefersReducedMotion
-                        ? {height: `${timelineHeight}px`}
+                        ? {height: `${TIMELINE_HEIGHT}px`}
                         : {
-                            height: `${timelineHeight}px`,
+                            height: `${TIMELINE_HEIGHT}px`,
                             scaleY: timelineProgress,
                             transformOrigin: "top",
                         }
@@ -217,8 +202,6 @@ function DesktopTimeline({
                     exp={exp}
                     index={index}
                     scrollYProgress={scrollYProgress}
-                    introEnd={introEnd}
-                    experienceStep={experienceStep}
                     prefersReducedMotion={prefersReducedMotion}
                 />
             ))}
@@ -231,19 +214,15 @@ function TimelineDot({
                          exp,
                          index,
                          scrollYProgress,
-                         introEnd,
-                         experienceStep,
                          prefersReducedMotion,
                      }: {
     exp: Experience;
     index: number;
     scrollYProgress: MotionValue<number>;
-    introEnd: number;
-    experienceStep: number;
     prefersReducedMotion: boolean | null;
 }) {
-    const expStart = introEnd + index * experienceStep;
-    const expEnd = introEnd + (index + 1) * experienceStep;
+    const expStart = INTRO_END + index * EXPERIENCE_STEP;
+    const expEnd = INTRO_END + (index + 1) * EXPERIENCE_STEP;
 
     // Opacity: future = 0.3, current = 1, past = 0.6
     const dotOpacity = useTransform(
@@ -282,14 +261,10 @@ function TimelineDot({
 // Mobile Timeline Component - Horizontal with progress line
 function MobileTimeline({
                             scrollYProgress,
-                            introEnd,
-                            experienceStep,
                             timelineProgress,
                             prefersReducedMotion,
                         }: {
     scrollYProgress: MotionValue<number>;
-    introEnd: number;
-    experienceStep: number;
     timelineProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
 }) {
@@ -324,8 +299,6 @@ function MobileTimeline({
                         exp={exp}
                         index={index}
                         scrollYProgress={scrollYProgress}
-                        introEnd={introEnd}
-                        experienceStep={experienceStep}
                         prefersReducedMotion={prefersReducedMotion}
                     />
                 ))}
@@ -339,19 +312,15 @@ function MobileTimelineDot({
                                exp,
                                index,
                                scrollYProgress,
-                               introEnd,
-                               experienceStep,
                                prefersReducedMotion,
                            }: {
     exp: Experience;
     index: number;
     scrollYProgress: MotionValue<number>;
-    introEnd: number;
-    experienceStep: number;
     prefersReducedMotion: boolean | null;
 }) {
-    const expStart = introEnd + index * experienceStep;
-    const expEnd = introEnd + (index + 1) * experienceStep;
+    const expStart = INTRO_END + index * EXPERIENCE_STEP;
+    const expEnd = INTRO_END + (index + 1) * EXPERIENCE_STEP;
 
     // Opacity: future = 0.3, current = 1, past = 0.6
     const dotOpacity = useTransform(
@@ -384,13 +353,9 @@ function MobileTimelineDot({
 // Experience Content Component
 function ExperienceContent({
                                scrollYProgress,
-                               introEnd,
-                               experienceStep,
                                prefersReducedMotion,
                            }: {
     scrollYProgress: MotionValue<number>;
-    introEnd: number;
-    experienceStep: number;
     prefersReducedMotion: boolean | null;
 }) {
     return (
@@ -402,8 +367,6 @@ function ExperienceContent({
                     exp={exp}
                     index={index}
                     scrollYProgress={scrollYProgress}
-                    introEnd={introEnd}
-                    experienceStep={experienceStep}
                     prefersReducedMotion={prefersReducedMotion}
                 />
             ))}
@@ -416,27 +379,23 @@ function ExperienceCard({
                             exp,
                             index,
                             scrollYProgress,
-                            introEnd,
-                            experienceStep,
                             prefersReducedMotion,
                         }: {
     exp: Experience;
     index: number;
     scrollYProgress: MotionValue<number>;
-    introEnd: number;
-    experienceStep: number;
     prefersReducedMotion: boolean | null;
 }) {
-    const expStart = introEnd + index * experienceStep;
-    const expEnd = expStart + experienceStep;
+    const expStart = INTRO_END + index * EXPERIENCE_STEP;
+    const expEnd = expStart + EXPERIENCE_STEP;
 
     // Fade in during first 15%, full during middle, fade out during last 15%
     const cardOpacity = useTransform(
         scrollYProgress,
         [
             expStart,
-            expStart + experienceStep * 0.15,
-            expEnd - experienceStep * 0.15,
+            expStart + EXPERIENCE_STEP * 0.15,
+            expEnd - EXPERIENCE_STEP * 0.15,
             expEnd,
         ],
         [0, 1, 1, index < experiences.length - 1 ? 0 : 1],
@@ -444,7 +403,7 @@ function ExperienceCard({
 
     const cardY = useTransform(
         scrollYProgress,
-        [expStart, expStart + experienceStep * 0.15],
+        [expStart, expStart + EXPERIENCE_STEP * 0.15],
         [20, 0],
     );
 
