@@ -66,6 +66,20 @@ const EXPERIENCE_STEP = (EXIT_START - INTRO_END) / experiences.length;
 // Each dot row is 52px high (py-4 = 32px + dot/text height ~20px)
 const TIMELINE_HEIGHT = experiences.length * 52;
 
+// Shared by the desktop and mobile timeline dots — same state, different layout.
+// Opacity: future = 0.3, current = 1, past = 0.6.
+// Scale: stays big for the entire experience duration.
+function useDotTransforms(scrollYProgress: MotionValue<number>, index: number) {
+    const expStart = INTRO_END + index * EXPERIENCE_STEP;
+    const expEnd = INTRO_END + (index + 1) * EXPERIENCE_STEP;
+    const range = [expStart - 0.01, expStart, expEnd, expEnd + 0.01];
+
+    return {
+        opacity: useTransform(scrollYProgress, range, [0.3, 1, 0.6, 0.6]),
+        scale: useTransform(scrollYProgress, range, [1, 1.25, 1.25, 1]),
+    };
+}
+
 export default function Experience() {
     const containerRef = useRef<HTMLDivElement>(null);
     const prefersReducedMotion = useReducedMotion();
@@ -221,22 +235,7 @@ function TimelineDot({
     scrollYProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
 }) {
-    const expStart = INTRO_END + index * EXPERIENCE_STEP;
-    const expEnd = INTRO_END + (index + 1) * EXPERIENCE_STEP;
-
-    // Opacity: future = 0.3, current = 1, past = 0.6
-    const dotOpacity = useTransform(
-        scrollYProgress,
-        [expStart - 0.01, expStart, expEnd, expEnd + 0.01],
-        [0.3, 1, 0.6, 0.6], // Future → Current → Past
-    );
-
-    // Dot stays big for entire experience duration
-    const dotScale = useTransform(
-        scrollYProgress,
-        [expStart - 0.01, expStart, expEnd, expEnd + 0.01],
-        [1, 1.25, 1.25, 1], // Big throughout current experience
-    );
+    const {opacity: dotOpacity, scale: dotScale} = useDotTransforms(scrollYProgress, index);
 
     return (
         <motion.div
@@ -319,22 +318,7 @@ function MobileTimelineDot({
     scrollYProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
 }) {
-    const expStart = INTRO_END + index * EXPERIENCE_STEP;
-    const expEnd = INTRO_END + (index + 1) * EXPERIENCE_STEP;
-
-    // Opacity: future = 0.3, current = 1, past = 0.6
-    const dotOpacity = useTransform(
-        scrollYProgress,
-        [expStart - 0.01, expStart, expEnd, expEnd + 0.01],
-        [0.3, 1, 0.6, 0.6],
-    );
-
-    // Dot stays big for entire experience duration (same as desktop)
-    const dotScale = useTransform(
-        scrollYProgress,
-        [expStart - 0.01, expStart, expEnd, expEnd + 0.01],
-        [1, 1.25, 1.25, 1], // Same scale as desktop
-    );
+    const {opacity: dotOpacity, scale: dotScale} = useDotTransforms(scrollYProgress, index);
 
     return (
         <motion.div
