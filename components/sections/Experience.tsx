@@ -1,13 +1,8 @@
 "use client";
 
-import {useRef} from "react";
-import {
-    motion,
-    useTransform,
-    MotionValue,
-    useReducedMotion,
-} from "framer-motion";
-import {useSectionProgress} from "@/lib/use-section-progress";
+import { useRef } from "react";
+import { motion, useTransform, MotionValue, useReducedMotion } from "framer-motion";
+import { useSectionProgress } from "@/lib/use-section-progress";
 
 interface Experience {
     year: string;
@@ -90,28 +85,24 @@ export default function Experience() {
     const introOpacity = useTransform(
         scrollYProgress,
         [0, INTRO_END * 0.7, INTRO_END],
-        [1, 1, 0], // Stays at full opacity longer, then fades
+        [1, 1, 0] // Stays at full opacity longer, then fades
     );
 
     // Transform for content fade in (synced with title fade out)
     const contentOpacity = useTransform(
         scrollYProgress,
         [INTRO_END * 0.9, INTRO_END * 1.1],
-        [0, 1], // Fades in AFTER title fades out
+        [0, 1] // Fades in AFTER title fades out
     );
 
     // Transform for timeline progress - continuous fill with scroll
-    const timelineProgress = useTransform(
-        scrollYProgress,
-        [INTRO_END, EXIT_START],
-        [0, 1],
-    );
+    const timelineProgress = useTransform(scrollYProgress, [INTRO_END, EXIT_START], [0, 1]);
 
     return (
         <section
             ref={containerRef}
             className="relative"
-            style={{height: `${(experiences.length + 2) * 100}vh`}}
+            style={{ height: `${(experiences.length + 2) * 100}vh` }}
             aria-label="Work Experience"
         >
             {/* Sticky container */}
@@ -120,7 +111,7 @@ export default function Experience() {
                     {/* Intro headline */}
                     <motion.div
                         className="absolute inset-0 flex items-center justify-center"
-                        style={{opacity: prefersReducedMotion ? 1 : introOpacity}}
+                        style={{ opacity: prefersReducedMotion ? 1 : introOpacity }}
                         aria-hidden={prefersReducedMotion ? "false" : undefined}
                     >
                         <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
@@ -163,10 +154,10 @@ export default function Experience() {
 
 // Desktop Timeline Component
 function DesktopTimeline({
-                             scrollYProgress,
-                             timelineProgress,
-                             prefersReducedMotion,
-                         }: {
+    scrollYProgress,
+    timelineProgress,
+    prefersReducedMotion,
+}: {
     scrollYProgress: MotionValue<number>;
     timelineProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
@@ -180,7 +171,7 @@ function DesktopTimeline({
             {/* Timeline track - light gray background */}
             <div
                 className="absolute left-[5px] w-px bg-[hsl(0_0%_85%)]"
-                style={{height: `${TIMELINE_HEIGHT}px`}}
+                style={{ height: `${TIMELINE_HEIGHT}px` }}
             />
 
             {/* Progress indicator - fills gradually with scroll */}
@@ -188,12 +179,12 @@ function DesktopTimeline({
                 className="absolute left-[5px] w-px bg-[hsl(0_0%_8%)]"
                 style={
                     prefersReducedMotion
-                        ? {height: `${TIMELINE_HEIGHT}px`}
+                        ? { height: `${TIMELINE_HEIGHT}px` }
                         : {
-                            height: `${TIMELINE_HEIGHT}px`,
-                            scaleY: timelineProgress,
-                            transformOrigin: "top",
-                        }
+                              height: `${TIMELINE_HEIGHT}px`,
+                              scaleY: timelineProgress,
+                              transformOrigin: "top",
+                          }
                 }
             />
 
@@ -212,40 +203,38 @@ function DesktopTimeline({
 
 // Timeline Dot Component
 function TimelineDot({
-                         exp,
-                         index,
-                         scrollYProgress,
-                         prefersReducedMotion,
-                     }: {
+    exp,
+    index,
+    scrollYProgress,
+    prefersReducedMotion,
+}: {
     exp: Experience;
     index: number;
     scrollYProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
 }) {
-    const {opacity: dotOpacity, scale: dotScale} = useDotTransforms(scrollYProgress, index);
+    const { opacity: dotOpacity, scale: dotScale } = useDotTransforms(scrollYProgress, index);
 
     return (
         <motion.div
             className="flex items-center gap-4 py-4"
-            style={{opacity: prefersReducedMotion ? 1 : dotOpacity}}
+            style={{ opacity: prefersReducedMotion ? 1 : dotOpacity }}
         >
             <motion.div
                 className="w-[11px] h-[11px] rounded-full border-2 border-[hsl(0_0%_8%)] bg-[hsl(0_0%_8%)] z-10"
-                style={prefersReducedMotion ? {} : {scale: dotScale}}
+                style={prefersReducedMotion ? {} : { scale: dotScale }}
             />
-            <span className="font-mono text-sm tracking-wider text-[hsl(0_0%_8%)]">
-                {exp.year}
-            </span>
+            <span className="font-mono text-sm tracking-wider text-[hsl(0_0%_8%)]">{exp.year}</span>
         </motion.div>
     );
 }
 
 // Mobile Timeline Component - Horizontal with progress line
 function MobileTimeline({
-                            scrollYProgress,
-                            timelineProgress,
-                            prefersReducedMotion,
-                        }: {
+    scrollYProgress,
+    timelineProgress,
+    prefersReducedMotion,
+}: {
     scrollYProgress: MotionValue<number>;
     timelineProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
@@ -258,19 +247,19 @@ function MobileTimeline({
         >
             <div className="flex justify-between items-start w-full relative">
                 {/* Timeline track - horizontal, positioned at dot center */}
-                <div className="absolute left-0 right-0 top-[5.5px] h-px bg-[hsl(0_0%_85%)]"/>
+                <div className="absolute left-0 right-0 top-[5.5px] h-px bg-[hsl(0_0%_85%)]" />
 
                 {/* Progress indicator - fills horizontally with scroll */}
                 <motion.div
                     className="absolute left-0 top-[5.5px] h-px bg-[hsl(0_0%_8%)]"
                     style={
                         prefersReducedMotion
-                            ? {width: "100%"}
+                            ? { width: "100%" }
                             : {
-                                scaleX: timelineProgress,
-                                transformOrigin: "left",
-                                width: "100%",
-                            }
+                                  scaleX: timelineProgress,
+                                  transformOrigin: "left",
+                                  width: "100%",
+                              }
                     }
                 />
 
@@ -291,26 +280,26 @@ function MobileTimeline({
 
 // Mobile Timeline Dot Component
 function MobileTimelineDot({
-                               exp,
-                               index,
-                               scrollYProgress,
-                               prefersReducedMotion,
-                           }: {
+    exp,
+    index,
+    scrollYProgress,
+    prefersReducedMotion,
+}: {
     exp: Experience;
     index: number;
     scrollYProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
 }) {
-    const {opacity: dotOpacity, scale: dotScale} = useDotTransforms(scrollYProgress, index);
+    const { opacity: dotOpacity, scale: dotScale } = useDotTransforms(scrollYProgress, index);
 
     return (
         <motion.div
             className="flex flex-col items-center gap-2 relative z-10"
-            style={{opacity: prefersReducedMotion ? 1 : dotOpacity}}
+            style={{ opacity: prefersReducedMotion ? 1 : dotOpacity }}
         >
             <motion.div
                 className="w-[11px] h-[11px] rounded-full bg-[hsl(0_0%_8%)] border-2 border-[hsl(0_0%_8%)]"
-                style={prefersReducedMotion ? {} : {scale: dotScale}}
+                style={prefersReducedMotion ? {} : { scale: dotScale }}
             />
             <span className="font-mono text-xs text-center tracking-wider">{exp.year}</span>
         </motion.div>
@@ -319,9 +308,9 @@ function MobileTimelineDot({
 
 // Experience Content Component
 function ExperienceContent({
-                               scrollYProgress,
-                               prefersReducedMotion,
-                           }: {
+    scrollYProgress,
+    prefersReducedMotion,
+}: {
     scrollYProgress: MotionValue<number>;
     prefersReducedMotion: boolean | null;
 }) {
@@ -343,11 +332,11 @@ function ExperienceContent({
 
 // Experience Card Component
 function ExperienceCard({
-                            exp,
-                            index,
-                            scrollYProgress,
-                            prefersReducedMotion,
-                        }: {
+    exp,
+    index,
+    scrollYProgress,
+    prefersReducedMotion,
+}: {
     exp: Experience;
     index: number;
     scrollYProgress: MotionValue<number>;
@@ -359,19 +348,14 @@ function ExperienceCard({
     // Fade in during first 15%, full during middle, fade out during last 15%
     const cardOpacity = useTransform(
         scrollYProgress,
-        [
-            expStart,
-            expStart + EXPERIENCE_STEP * 0.15,
-            expEnd - EXPERIENCE_STEP * 0.15,
-            expEnd,
-        ],
-        [0, 1, 1, index < experiences.length - 1 ? 0 : 1],
+        [expStart, expStart + EXPERIENCE_STEP * 0.15, expEnd - EXPERIENCE_STEP * 0.15, expEnd],
+        [0, 1, 1, index < experiences.length - 1 ? 0 : 1]
     );
 
     const cardY = useTransform(
         scrollYProgress,
         [expStart, expStart + EXPERIENCE_STEP * 0.15],
-        [20, 0],
+        [20, 0]
     );
 
     return (
@@ -381,11 +365,11 @@ function ExperienceCard({
             // writes no transform at all rather than translateY(0px).
             style={
                 prefersReducedMotion
-                    ? {opacity: 1}
+                    ? { opacity: 1 }
                     : {
-                        opacity: cardOpacity,
-                        y: cardY,
-                    }
+                          opacity: cardOpacity,
+                          y: cardY,
+                      }
             }
             aria-label={`${exp.role} at ${exp.company}`}
         >
@@ -397,9 +381,7 @@ function ExperienceCard({
                 {exp.role}
             </h3>
 
-            <p className="text-xl md:text-2xl text-[hsl(0_0%_40%)] mb-6">
-                {exp.company}
-            </p>
+            <p className="text-xl md:text-2xl text-[hsl(0_0%_40%)] mb-6">{exp.company}</p>
 
             <div className="text-[hsl(0_0%_40%)] leading-relaxed mb-8 max-w-xl text-base md:text-lg space-y-3">
                 {exp.description.map((para, i) => (

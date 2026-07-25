@@ -12,10 +12,9 @@ export default function Projects() {
     const isHovering = useRef(false);
     const [isPlaying, setIsPlaying] = useState(true);
 
-    const [emblaRef, emblaApi] = useEmblaCarousel(
-        { loop: true, align: "start", dragFree: true },
-        [AutoScroll({ speed: 1.2, startDelay: 0, stopOnInteraction: true, stopOnMouseEnter: false })],
-    );
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start", dragFree: true }, [
+        AutoScroll({ speed: 1.2, startDelay: 0, stopOnInteraction: true, stopOnMouseEnter: false }),
+    ]);
 
     // embla-carousel-auto-scroll augments EmblaPluginsType, so this is already
     // typed as AutoScrollType — no cast needed.
@@ -31,7 +30,9 @@ export default function Projects() {
             }
         };
         emblaApi.on("settle", onSettle);
-        return () => { emblaApi.off("settle", onSettle); };
+        return () => {
+            emblaApi.off("settle", onSettle);
+        };
     }, [emblaApi, getAS]);
 
     const togglePlay = useCallback(() => {
@@ -71,7 +72,11 @@ export default function Projects() {
                         className="hoverable cursor-pointer flex items-center gap-2 border border-[hsl(0_0%_40%)] px-3 py-1.5 text-[hsl(0_0%_75%)] hover:border-[hsl(45_30%_96%)] hover:text-[hsl(45_30%_96%)] transition-colors"
                         aria-label={isPlaying ? "Pause" : "Play"}
                     >
-                        {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                        {isPlaying ? (
+                            <Pause className="w-3.5 h-3.5" />
+                        ) : (
+                            <Play className="w-3.5 h-3.5" />
+                        )}
                         <span className="font-mono text-[10px] uppercase tracking-wider">
                             {isPlaying ? "Pause" : "Play"}
                         </span>
@@ -138,7 +143,9 @@ export default function Projects() {
                 {/* Drag hint */}
                 <div className="flex items-center justify-center gap-2 mt-5 text-[hsl(0_0%_40%)]">
                     <GripHorizontal className="w-3.5 h-3.5" />
-                    <span className="font-mono text-[10px] uppercase tracking-widest">Drag to explore</span>
+                    <span className="font-mono text-[10px] uppercase tracking-widest">
+                        Drag to explore
+                    </span>
                 </div>
             </div>
 
@@ -157,5 +164,3 @@ export default function Projects() {
         </section>
     );
 }
-
-
