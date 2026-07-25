@@ -77,23 +77,13 @@ export default function ProjectsTransition() {
                 {/* Dark background overlay */}
                 <motion.div
                     className="absolute inset-0"
-                    style={
-                        prefersReducedMotion
-                            ? {
-                                opacity: 1,
-                                backgroundColor: "hsl(0 0% 6%)",
-                                backgroundImage:
-                                    "radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px)",
-                                backgroundSize: "20px 20px",
-                            }
-                            : {
-                                opacity: darkOverlayOpacity,
-                                backgroundColor: "hsl(0 0% 6%)",
-                                backgroundImage:
-                                    "radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px)",
-                                backgroundSize: "20px 20px",
-                            }
-                    }
+                    style={{
+                        opacity: prefersReducedMotion ? 1 : darkOverlayOpacity,
+                        backgroundColor: "hsl(0 0% 6%)",
+                        backgroundImage:
+                            "radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px)",
+                        backgroundSize: "20px 20px",
+                    }}
                 />
 
                 {/* "Selected Work" title — fades in quickly, then fades out as bg turns dark */}
@@ -109,11 +99,10 @@ export default function ProjectsTransition() {
                 {/* Projects section — fades in once bg is black */}
                 <motion.div
                     className="absolute inset-0 z-20"
-                    style={
-                        prefersReducedMotion
-                            ? {opacity: 1, pointerEvents: "auto"}
-                            : {opacity: projectsOpacity, pointerEvents: projectsPointerEvents}
-                    }
+                    style={{
+                        opacity: prefersReducedMotion ? 1 : projectsOpacity,
+                        pointerEvents: prefersReducedMotion ? "auto" : projectsPointerEvents,
+                    }}
                 >
                     <Projects/>
                 </motion.div>

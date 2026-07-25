@@ -227,11 +227,7 @@ function TimelineDot({
     return (
         <motion.div
             className="flex items-center gap-4 py-4"
-            style={
-                prefersReducedMotion
-                    ? {opacity: 1}
-                    : {opacity: dotOpacity}
-            }
+            style={{opacity: prefersReducedMotion ? 1 : dotOpacity}}
         >
             <motion.div
                 className="w-[11px] h-[11px] rounded-full border-2 border-[hsl(0_0%_8%)] bg-[hsl(0_0%_8%)] z-10"
@@ -310,7 +306,7 @@ function MobileTimelineDot({
     return (
         <motion.div
             className="flex flex-col items-center gap-2 relative z-10"
-            style={prefersReducedMotion ? {opacity: 1} : {opacity: dotOpacity}}
+            style={{opacity: prefersReducedMotion ? 1 : dotOpacity}}
         >
             <motion.div
                 className="w-[11px] h-[11px] rounded-full bg-[hsl(0_0%_8%)] border-2 border-[hsl(0_0%_8%)]"
@@ -381,6 +377,8 @@ function ExperienceCard({
     return (
         <motion.article
             className="absolute inset-0 w-full"
+            // Key sets differ on purpose: no `y` when reduced, so framer-motion
+            // writes no transform at all rather than translateY(0px).
             style={
                 prefersReducedMotion
                     ? {opacity: 1}
