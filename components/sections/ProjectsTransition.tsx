@@ -77,7 +77,7 @@ export default function ProjectsTransition() {
                     className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
                     style={prefersReducedMotion ? { opacity: 0 } : { opacity: titleOpacity }}
                 >
-                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-[hsl(0_0%_8%)]">
+                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-ink">
                         Selected Work
                     </h2>
                 </motion.div>
@@ -99,7 +99,7 @@ export default function ProjectsTransition() {
                     style={prefersReducedMotion ? { opacity: 1 } : { opacity: hintOpacity }}
                 >
                     <motion.div style={prefersReducedMotion ? {} : { scale: hintScale }}>
-                        <ChevronDown className="w-7 h-7 text-[hsl(0_0%_40%)] animate-bounce" />
+                        <ChevronDown className="w-7 h-7 text-grey-40 animate-bounce" />
                     </motion.div>
                 </motion.div>
             </div>

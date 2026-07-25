@@ -1,6 +1,58 @@
 @import "tailwindcss";
 @import "lenis/dist/lenis.css";
 
+/*
+ * The palette, in one place. Tailwind v4 turns each entry into both a utility
+ * (bg-paper, text-grey-40) and a CSS variable (var(--color-paper)) usable by the
+ * hand-written rules below.
+ *
+ * Greys are named for their HSL lightness rather than semantically, because the
+ * design does not use them consistently enough for semantic names to be honest —
+ * grey-40 is muted text on both light and dark backgrounds.
+ *
+ * RESTART THE DEV SERVER after adding or renaming anything here. Tailwind v4
+ * does not reliably hot-reload a new @theme variable, and a stale dev server
+ * looks exactly like a real regression: dark sections turn light, inverted
+ * boxes lose their background, borders vanish — because the utilities and the
+ * variables genuinely are not in the served CSS. Check with:
+ *   curl -s localhost:3000/_next/static/chunks/<sheet>.css | grep -c color-paper
+ */
+@theme {
+    /* The two primary colours: page background and body text. */
+    --color-paper: hsl(45 30% 96%);
+    --color-ink: hsl(0 0% 8%);
+
+    /*
+     * Translucent paper, for accents on dark backgrounds.
+     *
+     * Use these rather than Tailwind's `bg-paper/30` opacity modifier: the
+     * modifier compiles to color-mix(in oklab, ...), which round-trips the
+     * colour through oklab and changes the computed value. These explicit
+     * tokens compile straight to #f8f6f24d / #f8f6f214 / #f8f6f20a, byte for
+     * byte what the equivalent arbitrary values produce.
+     */
+    --color-paper-30: hsl(45 30% 96% / 0.3);
+    --color-paper-8: hsl(45 30% 96% / 0.08);
+    --color-paper-4: hsl(45 30% 96% / 0.04);
+
+    /* Neutrals. */
+    --color-grey-6: hsl(0 0% 6%);
+    --color-grey-10: hsl(0 0% 10%);
+    --color-grey-13: hsl(0 0% 13%);
+    --color-grey-20: hsl(0 0% 20%);
+    --color-grey-25: hsl(0 0% 25%);
+    --color-grey-30: hsl(0 0% 30%);
+    --color-grey-35: hsl(0 0% 35%);
+    --color-grey-40: hsl(0 0% 40%);
+    --color-grey-45: hsl(0 0% 45%);
+    --color-grey-50: hsl(0 0% 50%);
+    --color-grey-55: hsl(0 0% 55%);
+    --color-grey-65: hsl(0 0% 65%);
+    --color-grey-75: hsl(0 0% 75%);
+    --color-grey-80: hsl(0 0% 80%);
+    --color-grey-85: hsl(0 0% 85%);
+}
+
 @layer base {
     html {
         position: relative;
@@ -18,8 +70,8 @@
 
         cursor: none;
         position: relative;
-        background-color: hsl(45 30% 96%);
-        color: hsl(0 0% 8%);
+        background-color: var(--color-paper);
+        color: var(--color-ink);
     }
 }
 
@@ -29,10 +81,10 @@ h1 {
 }
 
 .dark-section {
-    background-color: hsl(0 0% 6%);
-    color: hsl(45 30% 96%);
+    background-color: var(--color-grey-6);
+    color: var(--color-paper);
     position: relative;
-    /* Dot pattern - aligned to graph paper grid */
+    /* Dot pattern - aligned to graph paper grid. White at 2.5% alpha; see grid-bg. */
     background-image: radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px);
     background-size: 20px 20px;
     background-position: 0 0;
@@ -122,7 +174,11 @@ h1 {
         height: 100% !important;
         pointer-events: none !important;
         z-index: 0 !important;
-        /* Graph paper pattern */
+        /*
+         * Graph paper pattern. These are --color-ink at 1.5% and 3% alpha, kept
+         * as literals because plain CSS has no equivalent of Tailwind's /opacity
+         * modifier — keep them in sync with --color-ink by hand.
+         */
         background-image:
             linear-gradient(0deg, hsl(0 0% 8% / 0.015) 1px, transparent 1px),
             linear-gradient(90deg, hsl(0 0% 8% / 0.015) 1px, transparent 1px),

@@ -2,23 +2,27 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useLenis } from "lenis/react";
-import TextAnimation from "@/components/ui/TextAnimation";
+import ScrambleText from "@/components/ui/ScrambleText";
 import { useHeaderTheme } from "@/lib/header-theme";
 
+// `background`/`textColor` are raw CSS values, not var(--color-*) references,
+// because ScrambleText writes them straight onto element.style — and a var()
+// that fails to resolve there yields no colour at all, silently. They mirror
+// --color-paper (#f8f6f2) and --color-ink (#141414) in globals.css.
 const COLORS = {
     light: {
-        textInverted: "text-[hsl(45_30%_96%)]",
-        text: "text-[hsl(0_0%_8%)]",
+        textInverted: "text-paper",
+        text: "text-ink",
         background: "#f8f6f2",
-        textHex: "#141414",
-        backgroundInverted: "bg-[hsl(0_0%_8%)]",
+        textColor: "#141414",
+        backgroundInverted: "bg-ink",
     },
     dark: {
-        textInverted: "text-[hsl(0_0%_8%)]",
-        text: "text-[hsl(45_30%_96%)]",
+        textInverted: "text-ink",
+        text: "text-paper",
         background: "#141414",
-        textHex: "#f8f6f2",
-        backgroundInverted: "bg-[hsl(45_30%_96%)]",
+        textColor: "#f8f6f2",
+        backgroundInverted: "bg-paper",
     },
 };
 
@@ -117,13 +121,13 @@ export default function Header() {
         if (isContact) {
             return {
                 backgroundColor: isDark ? COLORS.dark.background : COLORS.light.background,
-                textColor: isDark ? COLORS.dark.textHex : COLORS.light.textHex,
+                textColor: isDark ? COLORS.dark.textColor : COLORS.light.textColor,
             };
         }
 
         return {
             backgroundColor: isDark ? COLORS.light.background : COLORS.dark.background,
-            textColor: isDark ? COLORS.light.textHex : COLORS.dark.textHex,
+            textColor: isDark ? COLORS.light.textColor : COLORS.dark.textColor,
         };
     };
 
@@ -160,7 +164,7 @@ export default function Header() {
                                 >
                                     <span className={getContactButtonClasses(isContact)}>
                                         {isHovered ? (
-                                            <TextAnimation
+                                            <ScrambleText
                                                 key={`${item}-${hoveredItem}`}
                                                 text={item}
                                                 loop={false}

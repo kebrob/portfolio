@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimate } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import TextAnimation from "@/components/ui/TextAnimation";
+import ScrambleText from "@/components/ui/ScrambleText";
 
 /* Glitch square — starts 5s after in-view, then randomly single or double glitches every 3–10s */
 function GlitchSquare() {
@@ -46,7 +46,7 @@ function GlitchSquare() {
     return (
         <span
             ref={scope}
-            className="inline-block align-middle ml-[0.2em] w-[0.32em] h-[0.32em] bg-[hsl(45_30%_96%)]"
+            className="inline-block align-middle ml-[0.2em] w-[0.32em] h-[0.32em] bg-paper"
         />
     );
 }
@@ -83,7 +83,7 @@ export default function Contact() {
     return (
         <footer
             id="contact"
-            className="dark-section px-[20px] md:px-[40px] lg:px-[80px] pt-20 pb-6 bg-[hsl(0_0%_6%)] text-[hsl(45_30%_96%)] min-h-screen flex flex-col justify-between"
+            className="dark-section px-[20px] md:px-[40px] lg:px-[80px] pt-20 pb-6 bg-grey-6 text-paper min-h-screen flex flex-col justify-between"
         >
             {/* Headline */}
             <div ref={headlineRef} className="overflow-hidden">
@@ -107,11 +107,11 @@ export default function Contact() {
             <div className="mt-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
                 {/* Email me */}
                 <div ref={emailRowRef} className="flex items-center gap-2 flex-wrap">
-                    <span className="text-base md:text-lg font-medium uppercase tracking-tight text-[hsl(45_30%_96%)]">
+                    <span className="text-base md:text-lg font-medium uppercase tracking-tight text-paper">
                         Email me
                     </span>
                     <motion.span
-                        className="hidden sm:block h-px bg-[hsl(45_30%_96%)]"
+                        className="hidden sm:block h-px bg-paper"
                         initial={{ width: 0 }}
                         animate={emailRowInView ? { width: 80 } : {}}
                         transition={{ duration: 0.6, delay: 0.2, ease: STAGGER_EASE }}
@@ -120,10 +120,10 @@ export default function Contact() {
                         href={`mailto:${email}`}
                         onMouseEnter={() => setEmailHovered(true)}
                         onMouseLeave={() => setEmailHovered(false)}
-                        className="group font-mono text-sm md:text-base hoverable inline-flex items-center gap-1.5 px-1 py-0.5 bg-[hsl(45_30%_96%)] text-[hsl(0_0%_8%)] leading-snug"
+                        className="group font-mono text-sm md:text-base hoverable inline-flex items-center gap-1.5 px-1 py-0.5 bg-paper text-ink leading-snug"
                     >
                         {emailHovered ? (
-                            <TextAnimation
+                            <ScrambleText
                                 key="email-hover"
                                 text={email}
                                 loop={false}
@@ -147,10 +147,10 @@ export default function Contact() {
                                 rel="noopener noreferrer"
                                 onMouseEnter={() => setHoveredSocial(s.label)}
                                 onMouseLeave={() => setHoveredSocial(null)}
-                                className="group font-mono text-sm uppercase tracking-widest text-[hsl(45_30%_96%)] opacity-50 hover:opacity-100 transition-opacity hoverable inline-flex items-center gap-1"
+                                className="group font-mono text-sm uppercase tracking-widest text-paper opacity-50 hover:opacity-100 transition-opacity hoverable inline-flex items-center gap-1"
                             >
                                 {hoveredSocial === s.label ? (
-                                    <TextAnimation
+                                    <ScrambleText
                                         key={`social-${s.label}-hover`}
                                         text={s.label}
                                         loop={false}
@@ -169,7 +169,7 @@ export default function Contact() {
 
             {/* Footer */}
             <div className="mt-12">
-                <span className="font-mono text-xs text-[hsl(0_0%_65%)]">
+                <span className="font-mono text-xs text-grey-65">
                     © {new Date().getFullYear()} Robert Kebinger — All rights reserved
                 </span>
             </div>
