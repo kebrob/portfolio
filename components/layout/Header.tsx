@@ -5,21 +5,23 @@ import { useLenis } from "lenis/react";
 import ScrambleText from "@/components/ui/ScrambleText";
 import { useHeaderTheme } from "@/lib/header-theme";
 
-// `background`/`textColor` are raw CSS values because they are handed to
-// ScrambleText, which writes them straight onto element.style.
+// `background`/`textColor` are raw CSS values, not var(--color-*) references,
+// because ScrambleText writes them straight onto element.style — and a var()
+// that fails to resolve there yields no colour at all, silently. They mirror
+// --color-paper (#f8f6f2) and --color-ink (#141414) in globals.css.
 const COLORS = {
     light: {
         textInverted: "text-paper",
         text: "text-ink",
-        background: "var(--color-paper)",
-        textColor: "var(--color-ink)",
+        background: "#f8f6f2",
+        textColor: "#141414",
         backgroundInverted: "bg-ink",
     },
     dark: {
         textInverted: "text-ink",
         text: "text-paper",
-        background: "var(--color-ink)",
-        textColor: "var(--color-paper)",
+        background: "#141414",
+        textColor: "#f8f6f2",
         backgroundInverted: "bg-paper",
     },
 };

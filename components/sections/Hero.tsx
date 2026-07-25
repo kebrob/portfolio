@@ -209,8 +209,8 @@ export default function Hero() {
                             text="Robert Kebinger"
                             speed={50}
                             invertBox={{
-                                backgroundColor: "var(--color-ink)",
-                                textColor: "var(--color-paper)",
+                                backgroundColor: "#141414",
+                                textColor: "#f8f6f2",
                             }}
                             startOnView={true}
                             onComplete={handleTypingComplete}

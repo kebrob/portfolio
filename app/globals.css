@@ -4,11 +4,18 @@
 /*
  * The palette, in one place. Tailwind v4 turns each entry into both a utility
  * (bg-paper, text-grey-40) and a CSS variable (var(--color-paper)) usable by the
- * hand-written rules below and by inline styles set from JS.
+ * hand-written rules below.
  *
  * Greys are named for their HSL lightness rather than semantically, because the
  * design does not use them consistently enough for semantic names to be honest —
  * grey-40 is muted text on both light and dark backgrounds.
+ *
+ * RESTART THE DEV SERVER after adding or renaming anything here. Tailwind v4
+ * does not reliably hot-reload a new @theme variable, and a stale dev server
+ * looks exactly like a real regression: dark sections turn light, inverted
+ * boxes lose their background, borders vanish — because the utilities and the
+ * variables genuinely are not in the served CSS. Check with:
+ *   curl -s localhost:3000/_next/static/chunks/<sheet>.css | grep -c color-paper
  */
 @theme {
     /* The two primary colours: page background and body text. */

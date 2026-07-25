@@ -65,7 +65,7 @@ export default function ProjectsTransition() {
                     className="absolute inset-0"
                     style={{
                         opacity: prefersReducedMotion ? 1 : darkOverlayOpacity,
-                        backgroundColor: "var(--color-grey-6)",
+                        backgroundColor: "hsl(0 0% 6%)",
                         backgroundImage:
                             "radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px)",
                         backgroundSize: "20px 20px",

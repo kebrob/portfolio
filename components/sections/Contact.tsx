@@ -59,8 +59,8 @@ const socials = [
     { label: "Instagram", href: "https://instagram.com/robertkebinger" },
 ];
 
-const socialInvertBox = { backgroundColor: "var(--color-paper)", textColor: "var(--color-ink)" };
-const emailInvertBox = { backgroundColor: "var(--color-ink)", textColor: "var(--color-paper)" };
+const socialInvertBox = { backgroundColor: "#f8f6f2", textColor: "#141414" };
+const emailInvertBox = { backgroundColor: "#141414", textColor: "#f8f6f2" };
 
 const STAGGER_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
