@@ -28,11 +28,11 @@ export default async function ProjectPage({ params }: PageProps) {
     if (!project) notFound();
 
     return (
-        <div className="dark-section min-h-screen px-5 md:px-10 lg:px-20 py-32 text-[hsl(45_30%_96%)]">
+        <div className="dark-section min-h-screen px-5 md:px-10 lg:px-20 py-32 text-paper">
             {/* Back */}
             <Link
                 href="/projects"
-                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_55%)] hover:text-[hsl(45_30%_96%)] transition-colors mb-20 hoverable"
+                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-grey-55 hover:text-paper transition-colors mb-20 hoverable"
             >
                 <span className="text-base leading-none">←</span>
                 <span>All projects</span>
@@ -41,10 +41,10 @@ export default async function ProjectPage({ params }: PageProps) {
             <div className="max-w-3xl">
                 {/* Meta */}
                 <div className="flex flex-wrap items-center gap-6 mb-8">
-                    <span className="font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_55%)]">
+                    <span className="font-mono text-xs uppercase tracking-[0.3em] text-grey-55">
                         {project.year}
                     </span>
-                    <span className="font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_55%)]">
+                    <span className="font-mono text-xs uppercase tracking-[0.3em] text-grey-55">
                         {project.role}
                     </span>
                 </div>
@@ -59,7 +59,7 @@ export default async function ProjectPage({ params }: PageProps) {
                     {project.tags.map((tag) => (
                         <span
                             key={tag}
-                            className="font-mono text-xs uppercase tracking-wider text-[hsl(0_0%_55%)] border border-[hsl(0_0%_25%)] px-3 py-1.5"
+                            className="font-mono text-xs uppercase tracking-wider text-grey-55 border border-grey-25 px-3 py-1.5"
                         >
                             {tag}
                         </span>
@@ -67,23 +67,23 @@ export default async function ProjectPage({ params }: PageProps) {
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-px bg-[hsl(0_0%_20%)] mb-16" />
+                <div className="w-full h-px bg-grey-20 mb-16" />
 
                 {/* Long description */}
-                <p className="text-lg md:text-xl text-[hsl(0_0%_65%)] leading-relaxed mb-20">
+                <p className="text-lg md:text-xl text-grey-65 leading-relaxed mb-20">
                     {project.longDescription}
                 </p>
 
                 {/* Tech stack */}
                 <div className="mb-16">
-                    <span className="font-mono text-xs uppercase tracking-[0.3em] text-[hsl(0_0%_55%)] block mb-6">
+                    <span className="font-mono text-xs uppercase tracking-[0.3em] text-grey-55 block mb-6">
                         Tech Stack
                     </span>
                     <div className="flex flex-wrap gap-3">
                         {project.tech.map((t) => (
                             <span
                                 key={t}
-                                className="font-mono text-sm text-[hsl(45_30%_96%)] border border-[hsl(0_0%_25%)] px-4 py-2 hover:border-[hsl(0_0%_45%)] transition-colors"
+                                className="font-mono text-sm text-paper border border-grey-25 px-4 py-2 hover:border-grey-45 transition-colors"
                             >
                                 {t}
                             </span>
@@ -97,7 +97,7 @@ export default async function ProjectPage({ params }: PageProps) {
                         href={project.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group hoverable inline-flex items-center gap-3 border border-[hsl(0_0%_25%)] px-8 py-4 transition-all duration-300 hover:border-[hsl(0_0%_50%)] hover:bg-[hsl(0_0%_10%)]"
+                        className="group hoverable inline-flex items-center gap-3 border border-grey-25 px-8 py-4 transition-all duration-300 hover:border-grey-50 hover:bg-grey-10"
                     >
                         <span className="font-mono text-sm uppercase tracking-wider">
                             View Project

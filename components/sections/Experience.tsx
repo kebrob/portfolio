@@ -170,13 +170,13 @@ function DesktopTimeline({
         >
             {/* Timeline track - light gray background */}
             <div
-                className="absolute left-[5px] w-px bg-[hsl(0_0%_85%)]"
+                className="absolute left-[5px] w-px bg-grey-85"
                 style={{ height: `${TIMELINE_HEIGHT}px` }}
             />
 
             {/* Progress indicator - fills gradually with scroll */}
             <motion.div
-                className="absolute left-[5px] w-px bg-[hsl(0_0%_8%)]"
+                className="absolute left-[5px] w-px bg-ink"
                 style={
                     prefersReducedMotion
                         ? { height: `${TIMELINE_HEIGHT}px` }
@@ -221,10 +221,10 @@ function TimelineDot({
             style={{ opacity: prefersReducedMotion ? 1 : dotOpacity }}
         >
             <motion.div
-                className="w-[11px] h-[11px] rounded-full border-2 border-[hsl(0_0%_8%)] bg-[hsl(0_0%_8%)] z-10"
+                className="w-[11px] h-[11px] rounded-full border-2 border-ink bg-ink z-10"
                 style={prefersReducedMotion ? {} : { scale: dotScale }}
             />
-            <span className="font-mono text-sm tracking-wider text-[hsl(0_0%_8%)]">{exp.year}</span>
+            <span className="font-mono text-sm tracking-wider text-ink">{exp.year}</span>
         </motion.div>
     );
 }
@@ -247,11 +247,11 @@ function MobileTimeline({
         >
             <div className="flex justify-between items-start w-full relative">
                 {/* Timeline track - horizontal, positioned at dot center */}
-                <div className="absolute left-0 right-0 top-[5.5px] h-px bg-[hsl(0_0%_85%)]" />
+                <div className="absolute left-0 right-0 top-[5.5px] h-px bg-grey-85" />
 
                 {/* Progress indicator - fills horizontally with scroll */}
                 <motion.div
-                    className="absolute left-0 top-[5.5px] h-px bg-[hsl(0_0%_8%)]"
+                    className="absolute left-0 top-[5.5px] h-px bg-ink"
                     style={
                         prefersReducedMotion
                             ? { width: "100%" }
@@ -298,7 +298,7 @@ function MobileTimelineDot({
             style={{ opacity: prefersReducedMotion ? 1 : dotOpacity }}
         >
             <motion.div
-                className="w-[11px] h-[11px] rounded-full bg-[hsl(0_0%_8%)] border-2 border-[hsl(0_0%_8%)]"
+                className="w-[11px] h-[11px] rounded-full bg-ink border-2 border-ink"
                 style={prefersReducedMotion ? {} : { scale: dotScale }}
             />
             <span className="font-mono text-xs text-center tracking-wider">{exp.year}</span>
@@ -373,7 +373,7 @@ function ExperienceCard({
             }
             aria-label={`${exp.role} at ${exp.company}`}
         >
-            <span className="font-mono text-xs text-[hsl(0_0%_40%)] tracking-wider block mb-4">
+            <span className="font-mono text-xs text-grey-40 tracking-wider block mb-4">
                 {exp.period}
             </span>
 
@@ -381,9 +381,9 @@ function ExperienceCard({
                 {exp.role}
             </h3>
 
-            <p className="text-xl md:text-2xl text-[hsl(0_0%_40%)] mb-6">{exp.company}</p>
+            <p className="text-xl md:text-2xl text-grey-40 mb-6">{exp.company}</p>
 
-            <div className="text-[hsl(0_0%_40%)] leading-relaxed mb-8 max-w-xl text-base md:text-lg space-y-3">
+            <div className="text-grey-40 leading-relaxed mb-8 max-w-xl text-base md:text-lg space-y-3">
                 {exp.description.map((para, i) => (
                     <p key={i}>{para}</p>
                 ))}
@@ -393,7 +393,7 @@ function ExperienceCard({
                 {exp.technologies.map((tech) => (
                     <span
                         key={tech}
-                        className="font-mono text-xs tracking-wide text-[hsl(0_0%_40%)] px-3 py-1.5 border border-[hsl(0_0%_80%)]"
+                        className="font-mono text-xs tracking-wide text-grey-40 px-3 py-1.5 border border-grey-80"
                         role="listitem"
                     >
                         {tech}

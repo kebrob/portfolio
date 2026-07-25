@@ -5,20 +5,22 @@ import { useLenis } from "lenis/react";
 import ScrambleText from "@/components/ui/ScrambleText";
 import { useHeaderTheme } from "@/lib/header-theme";
 
+// `background`/`textColor` are raw CSS values because they are handed to
+// ScrambleText, which writes them straight onto element.style.
 const COLORS = {
     light: {
-        textInverted: "text-[hsl(45_30%_96%)]",
-        text: "text-[hsl(0_0%_8%)]",
-        background: "#f8f6f2",
-        textHex: "#141414",
-        backgroundInverted: "bg-[hsl(0_0%_8%)]",
+        textInverted: "text-paper",
+        text: "text-ink",
+        background: "var(--color-paper)",
+        textColor: "var(--color-ink)",
+        backgroundInverted: "bg-ink",
     },
     dark: {
-        textInverted: "text-[hsl(0_0%_8%)]",
-        text: "text-[hsl(45_30%_96%)]",
-        background: "#141414",
-        textHex: "#f8f6f2",
-        backgroundInverted: "bg-[hsl(45_30%_96%)]",
+        textInverted: "text-ink",
+        text: "text-paper",
+        background: "var(--color-ink)",
+        textColor: "var(--color-paper)",
+        backgroundInverted: "bg-paper",
     },
 };
 
@@ -117,13 +119,13 @@ export default function Header() {
         if (isContact) {
             return {
                 backgroundColor: isDark ? COLORS.dark.background : COLORS.light.background,
-                textColor: isDark ? COLORS.dark.textHex : COLORS.light.textHex,
+                textColor: isDark ? COLORS.dark.textColor : COLORS.light.textColor,
             };
         }
 
         return {
             backgroundColor: isDark ? COLORS.light.background : COLORS.dark.background,
-            textColor: isDark ? COLORS.light.textHex : COLORS.dark.textHex,
+            textColor: isDark ? COLORS.light.textColor : COLORS.dark.textColor,
         };
     };
 

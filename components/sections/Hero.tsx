@@ -35,8 +35,7 @@ export default function Hero() {
 
             // Create temporary span for cube to measure total width
             const tempSpan = document.createElement("span");
-            tempSpan.className =
-                "inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]";
+            tempSpan.className = "inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-ink";
             element.appendChild(tempSpan);
 
             // Binary search to find the largest font size that fits
@@ -135,7 +134,7 @@ export default function Hero() {
                                 },
                             }}
                         >
-                            <span className="inline-block bg-[hsl(0_0%_10%)] text-white font-mono px-1 py-0.5">
+                            <span className="inline-block bg-grey-10 text-white font-mono px-1 py-0.5">
                                 Frontend-focused
                             </span>{" "}
                             Full-Stack Developer
@@ -155,6 +154,11 @@ export default function Hero() {
                             Designing and building scalable web applications with a strong focus on{" "}
                             {(["architecture", "performance", "detail"] as const).map((kw, i) => (
                                 <span key={kw}>
+                                    {/*
+                                      Literal colours, not --color-* tokens: framer-motion
+                                      interpolates these, and it cannot tween a var().
+                                      #f8f6f2 is --color-paper.
+                                    */}
                                     <motion.span
                                         className="font-mono tracking-wide px-1 py-0.5"
                                         animate={
@@ -197,14 +201,17 @@ export default function Hero() {
                     {hasAnimated && (
                         <>
                             <span>Robert Kebinger</span>
-                            <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-[hsl(0_0%_8%)]" />
+                            <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-ink" />
                         </>
                     )}
                     {!hasAnimated && isReady && (
                         <TypeText
                             text="Robert Kebinger"
                             speed={50}
-                            invertBox={{ backgroundColor: "#141414", textColor: "#f8f6f2" }}
+                            invertBox={{
+                                backgroundColor: "var(--color-ink)",
+                                textColor: "var(--color-paper)",
+                            }}
                             startOnView={true}
                             onComplete={handleTypingComplete}
                         />
@@ -214,7 +221,7 @@ export default function Hero() {
 
             <button
                 onClick={scrollToAbout}
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] hover:text-[hsl(0_0%_00%)] transition-colors hoverable cursor-pointer"
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-grey-40 hover:text-black transition-colors hoverable cursor-pointer"
             >
                 <ScrambleText
                     text="[scroll to explore]"
