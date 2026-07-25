@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useLenis } from "lenis/react";
-import TextAnimation from "@/components/ui/TextAnimation";
+import ScrambleText from "@/components/ui/ScrambleText";
+import TypeText from "@/components/ui/TypeText";
 
 export default function Hero() {
     const lenis = useLenis();
@@ -200,12 +201,10 @@ export default function Hero() {
                         </>
                     )}
                     {!hasAnimated && isReady && (
-                        <TextAnimation
+                        <TypeText
                             text="Robert Kebinger"
-                            mode="typing"
                             speed={50}
                             invertBox={{ backgroundColor: "#141414", textColor: "#f8f6f2" }}
-                            loop={false}
                             startOnView={true}
                             onComplete={handleTypingComplete}
                         />
@@ -217,7 +216,7 @@ export default function Hero() {
                 onClick={scrollToAbout}
                 className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-[hsl(0_0%_40%)] hover:text-[hsl(0_0%_00%)] transition-colors hoverable cursor-pointer"
             >
-                <TextAnimation
+                <ScrambleText
                     text="[scroll to explore]"
                     invertBox={{
                         backgroundColor: "#000",

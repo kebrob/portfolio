@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimate } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import TextAnimation from "@/components/ui/TextAnimation";
+import ScrambleText from "@/components/ui/ScrambleText";
 
 /* Glitch square — starts 5s after in-view, then randomly single or double glitches every 3–10s */
 function GlitchSquare() {
@@ -123,7 +123,7 @@ export default function Contact() {
                         className="group font-mono text-sm md:text-base hoverable inline-flex items-center gap-1.5 px-1 py-0.5 bg-[hsl(45_30%_96%)] text-[hsl(0_0%_8%)] leading-snug"
                     >
                         {emailHovered ? (
-                            <TextAnimation
+                            <ScrambleText
                                 key="email-hover"
                                 text={email}
                                 loop={false}
@@ -150,7 +150,7 @@ export default function Contact() {
                                 className="group font-mono text-sm uppercase tracking-widest text-[hsl(45_30%_96%)] opacity-50 hover:opacity-100 transition-opacity hoverable inline-flex items-center gap-1"
                             >
                                 {hoveredSocial === s.label ? (
-                                    <TextAnimation
+                                    <ScrambleText
                                         key={`social-${s.label}-hover`}
                                         text={s.label}
                                         loop={false}

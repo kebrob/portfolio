@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useLenis } from "lenis/react";
-import TextAnimation from "@/components/ui/TextAnimation";
+import ScrambleText from "@/components/ui/ScrambleText";
 import { useHeaderTheme } from "@/lib/header-theme";
 
 const COLORS = {
@@ -160,7 +160,7 @@ export default function Header() {
                                 >
                                     <span className={getContactButtonClasses(isContact)}>
                                         {isHovered ? (
-                                            <TextAnimation
+                                            <ScrambleText
                                                 key={`${item}-${hoveredItem}`}
                                                 text={item}
                                                 loop={false}
