@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function ProjectsPage() {
     return (
-        <main className="dark-section min-h-screen px-5 md:px-10 lg:px-20 py-32 text-[hsl(45_30%_96%)]">
+        <div className="dark-section min-h-screen px-5 md:px-10 lg:px-20 py-32 text-[hsl(45_30%_96%)]">
             {/* Back home */}
             <Link
                 href="/"
@@ -67,6 +67,6 @@ export default function ProjectsPage() {
                     </Link>
                 ))}
             </div>
-        </main>
+        </div>
     );
 }

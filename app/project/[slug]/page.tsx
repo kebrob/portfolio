@@ -28,7 +28,7 @@ export default async function ProjectPage({ params }: PageProps) {
     if (!project) notFound();
 
     return (
-        <main className="dark-section min-h-screen px-5 md:px-10 lg:px-20 py-32 text-[hsl(45_30%_96%)]">
+        <div className="dark-section min-h-screen px-5 md:px-10 lg:px-20 py-32 text-[hsl(45_30%_96%)]">
             {/* Back */}
             <Link
                 href="/projects"
@@ -106,6 +106,6 @@ export default async function ProjectPage({ params }: PageProps) {
                     </a>
                 )}
             </div>
-        </main>
+        </div>
     );
 }
