@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { animate, useInView } from "framer-motion";
+import { animate, useInView, type AnimationPlaybackControls } from "framer-motion";
 
 interface TextAnimationProps {
     text: string;
@@ -52,8 +52,8 @@ export default function TextAnimation({
         if (!isReady) return;
         if (!shouldAnimate) return;
 
-        let animation: any;
-        let timeoutId: NodeJS.Timeout;
+        let animation: AnimationPlaybackControls | undefined;
+        let timeoutId: ReturnType<typeof setTimeout>;
         let isAnimating = false;
 
         const charCount = chars.length;

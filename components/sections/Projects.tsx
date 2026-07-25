@@ -17,13 +17,9 @@ export default function Projects() {
         [AutoScroll({ speed: 1.2, startDelay: 0, stopOnInteraction: true, stopOnMouseEnter: false })],
     );
 
-    const getAS = useCallback(
-        () =>
-            emblaApi?.plugins()?.autoScroll as
-                | { play: () => void; stop: () => void; isPlaying: () => boolean }
-                | undefined,
-        [emblaApi],
-    );
+    // embla-carousel-auto-scroll augments EmblaPluginsType, so this is already
+    // typed as AutoScrollType — no cast needed.
+    const getAS = useCallback(() => emblaApi?.plugins()?.autoScroll, [emblaApi]);
 
     // After the carousel settles post-drag, restart only if not hovering and not manually paused
     useEffect(() => {
