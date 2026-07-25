@@ -2,9 +2,10 @@
 
 import {useRef} from "react";
 import {ChevronDown} from "lucide-react";
-import {motion, useScroll, useTransform, useReducedMotion, useMotionValueEvent} from "framer-motion";
+import {motion, useTransform, useReducedMotion, useMotionValueEvent} from "framer-motion";
 import Projects from "@/components/sections/Projects";
 import {useHeaderTheme} from "@/lib/header-theme";
+import {useSectionProgress} from "@/lib/use-section-progress";
 
 // Animation constants — update these if you change the container height or keyframes.
 // Sentinel positions are derived from these values, so nothing else needs to change.
@@ -23,16 +24,7 @@ export default function ProjectsTransition() {
     const prefersReducedMotion = useReducedMotion();
     const {setForceDark} = useHeaderTheme();
 
-    const {scrollY} = useScroll();
-
-    // Manually compute 0→1 progress scoped to this section (same pattern as Experience)
-    const scrollYProgress = useTransform(scrollY, (y) => {
-        if (!containerRef.current) return 0;
-        const top = containerRef.current.offsetTop;
-        const height = containerRef.current.offsetHeight;
-        const viewH = window.innerHeight;
-        return Math.max(0, Math.min(1, (y - top) / (height - viewH)));
-    });
+    const scrollYProgress = useSectionProgress(containerRef);
 
     // Phase 1 (0 → 0.08): title fades in almost immediately
     // Phase 2 (0.08 → 0.35): title is fully visible on white bg
