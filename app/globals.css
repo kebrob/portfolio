@@ -2,6 +2,27 @@
 @import "lenis/dist/lenis.css";
 
 /*
+ * Height-based variant for the pinned scrollytelling sections (Experience,
+ * ProjectsTransition). Their content has to fit inside a `sticky h-screen
+ * overflow-hidden` panel, and a pinned panel cannot scroll — anything that
+ * overflows is not merely hidden, it is unreachable. The roomy desktop spacing
+ * and type scale stop fitting below roughly 700px of viewport height, so base
+ * utilities carry the compact values and `tall:` restores the design values.
+ *
+ * Deliberately a breakpoint rather than clamp() on each property: this keeps the
+ * design above the threshold byte-for-byte identical, and puts the single magic
+ * number in one documented place.
+ *
+ * GOTCHA: custom variants sort AFTER the built-in width breakpoints, so a bare
+ * `tall:gap-8` beats `lg:gap-24` on a tall desktop viewport — same specificity,
+ * later in the sheet. When a property already has a `md:`/`lg:` value, either
+ * stack the variants (`md:tall:text-4xl`) or scope the height rule away from the
+ * widths (`max-md:tall:gap-8`). Never mix a bare `tall:` with a `md:`/`lg:` on
+ * the same property.
+ */
+@custom-variant tall (@media (min-height: 700px));
+
+/*
  * The palette, in one place. Tailwind v4 turns each entry into both a utility
  * (bg-paper, text-grey-40) and a CSS variable (var(--color-paper)) usable by the
  * hand-written rules below.

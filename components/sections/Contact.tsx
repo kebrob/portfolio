@@ -80,10 +80,20 @@ export default function Contact() {
         { text: "IT", offset: true, isLast: true },
     ];
 
+    /*
+     * -mt-px closes a hairline seam at the top edge. This footer sits directly
+     * below ProjectsTransition's pinned panel, whose bottom edge lands on a
+     * fractional pixel (that container is sized in vh). Firefox snaps the panel's
+     * background and this one to device pixels independently, so a 1px row of the
+     * paper page background shows through between them; Chrome happens to round
+     * both the same way and looks seamless. Overlapping by 1px removes the seam
+     * for good — the footer paints above the panel and both backgrounds are
+     * grey-6, so the overlap itself is invisible.
+     */
     return (
         <footer
             id="contact"
-            className="dark-section px-[20px] md:px-[40px] lg:px-[80px] pt-20 pb-6 bg-grey-6 text-paper min-h-screen flex flex-col justify-between"
+            className="dark-section -mt-px px-[20px] md:px-[40px] lg:px-[80px] pt-20 pb-6 bg-grey-6 text-paper min-h-screen flex flex-col justify-between"
         >
             {/* Headline */}
             <div ref={headlineRef} className="overflow-hidden">
@@ -103,10 +113,14 @@ export default function Contact() {
                 </h2>
             </div>
 
-            {/* Bottom row */}
-            <div className="mt-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
+            {/* Bottom row. The socials column is `auto`, not a second 1fr: its widest
+                item is LINKEDIN at ~94px, whereas the email row needs ~440px ("Email me"
+                + the 80px rule + a 24-char mono address). Splitting the width evenly
+                starved the email column and made the address wrap onto a second line
+                everywhere from md up to ~1024px. */}
+            <div className="mt-32 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-y-12 gap-x-8 items-end">
                 {/* Email me */}
-                <div ref={emailRowRef} className="flex items-center gap-2 flex-wrap">
+                <div ref={emailRowRef} className="flex items-center gap-2 flex-wrap min-w-0">
                     <span className="text-base md:text-lg font-medium uppercase tracking-tight text-paper">
                         Email me
                     </span>
@@ -120,7 +134,11 @@ export default function Contact() {
                         href={`mailto:${email}`}
                         onMouseEnter={() => setEmailHovered(true)}
                         onMouseLeave={() => setEmailHovered(false)}
-                        className="group font-mono text-sm md:text-base hoverable inline-flex items-center gap-1.5 px-1 py-0.5 bg-paper text-ink leading-snug"
+                        // whitespace-nowrap keeps the address atomic. On hover ScrambleText
+                        // swaps the single text node for one span per character, which
+                        // introduces a line-break opportunity between every character —
+                        // without this, hovering could re-wrap the chip mid-address.
+                        className="group font-mono text-sm md:text-base hoverable inline-flex items-center gap-1.5 px-1 py-0.5 bg-paper text-ink leading-snug whitespace-nowrap"
                     >
                         {emailHovered ? (
                             <ScrambleText

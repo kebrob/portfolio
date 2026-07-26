@@ -105,8 +105,11 @@ export default function Experience() {
             style={{ height: `${(experiences.length + 2) * 100}vh` }}
             aria-label="Work Experience"
         >
-            {/* Sticky container */}
-            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+            {/* Sticky container. pt-20 below `tall` reserves .nav-blur's 80px so the
+                vertically centred card cannot ride up under the header on short
+                viewports; it does not move the intro headline below, which is
+                `absolute inset-0` and so resolves against the padding box. */}
+            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden pt-20 tall:pt-0">
                 <div className="w-full max-w-6xl mx-auto px-[20px] md:px-[40px] lg:px-[80px]">
                     {/* Intro headline */}
                     <motion.div
@@ -121,7 +124,14 @@ export default function Experience() {
 
                     {/* Main content - timeline + experience */}
                     <motion.div
-                        className="flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-24 items-start"
+                        // The height-gated gap is scoped to `max-md:` on purpose. Below md
+                        // this is a column, so the gap costs vertical space and has to
+                        // shrink on short viewports; from md up it is a row gap that costs
+                        // no height. It also MUST be scoped: `tall:` is a custom variant, so
+                        // Tailwind sorts it after the built-in breakpoints, and a bare
+                        // `tall:gap-8` would override `md:gap-16`/`lg:gap-24` on any tall
+                        // desktop viewport.
+                        className="flex flex-col md:flex-row gap-4 max-md:tall:gap-8 md:gap-16 lg:gap-24 items-start"
                         style={{
                             opacity: prefersReducedMotion ? 1 : contentOpacity,
                         }}
@@ -241,7 +251,7 @@ function MobileTimeline({
 }) {
     return (
         <div
-            className="flex md:hidden relative w-full mb-8 px-4"
+            className="flex md:hidden relative w-full mb-4 tall:mb-8 px-4"
             role="navigation"
             aria-label="Timeline"
         >
@@ -315,8 +325,15 @@ function ExperienceContent({
     prefersReducedMotion: boolean | null;
 }) {
     return (
-        <div className="flex-1 relative min-h-[350px] w-full">
-            {/* minHeight keeps content centered vertically in sticky container */}
+        // A 1x1 grid: every card is placed in the same cell (col-start-1 row-start-1),
+        // so they stack like absolute positioning did, but the implicit track sizes
+        // itself to the TALLEST card. That matters because the sticky panel centres
+        // this box with `items-center` — the previous `min-h-[350px]` was a hand-guessed
+        // stand-in for the cards' height (they were absolute, so they contributed none),
+        // and it guessed low: real cards run 351-380px. The panel was centring 350px
+        // while the content spilled past it, so the block always sat visually low and
+        // short viewports clipped it. Sizing to content removes the guess for good.
+        <div className="flex-1 grid w-full">
             {experiences.map((exp, index) => (
                 <ExperienceCard
                     key={index}
@@ -360,7 +377,7 @@ function ExperienceCard({
 
     return (
         <motion.article
-            className="absolute inset-0 w-full"
+            className="col-start-1 row-start-1 w-full"
             // Key sets differ on purpose: no `y` when reduced, so framer-motion
             // writes no transform at all rather than translateY(0px).
             style={
@@ -373,23 +390,27 @@ function ExperienceCard({
             }
             aria-label={`${exp.role} at ${exp.company}`}
         >
-            <span className="font-mono text-xs text-grey-40 tracking-wider block mb-4">
+            {/* The `md:tall:` / `lg:tall:` steps read as "only go up a type size when
+                there is both width AND height to spare" — the card has to fit inside a
+                100vh pinned panel that clips, so a short-but-wide window (a landscape
+                phone, a half-height desktop window) stays on the compact scale. */}
+            <span className="font-mono text-xs text-grey-40 tracking-wider block mb-2 tall:mb-4">
                 {exp.period}
             </span>
 
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+            <h3 className="text-3xl md:tall:text-4xl lg:tall:text-5xl font-bold mb-2 tall:mb-3 leading-tight">
                 {exp.role}
             </h3>
 
-            <p className="text-xl md:text-2xl text-grey-40 mb-6">{exp.company}</p>
+            <p className="text-xl md:tall:text-2xl text-grey-40 mb-3 tall:mb-6">{exp.company}</p>
 
-            <div className="text-grey-40 leading-relaxed mb-8 max-w-xl text-base md:text-lg space-y-3">
+            <div className="text-grey-40 leading-relaxed mb-4 tall:mb-8 max-w-xl text-base md:tall:text-lg space-y-2 tall:space-y-3">
                 {exp.description.map((para, i) => (
                     <p key={i}>{para}</p>
                 ))}
             </div>
 
-            <div className="flex flex-wrap gap-3" role="list" aria-label="Technologies">
+            <div className="flex flex-wrap gap-2 tall:gap-3" role="list" aria-label="Technologies">
                 {exp.technologies.map((tech) => (
                     <span
                         key={tech}

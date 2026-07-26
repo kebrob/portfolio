@@ -63,9 +63,14 @@ export default function Projects() {
     }, [getAS]);
 
     return (
-        <section className="pt-[15vh] pb-16 text-paper">
+        // This section is rendered inside ProjectsTransition's pinned panel, which is
+        // exactly 100vh and clips overflow with no way to scroll it. Every vertical
+        // value below therefore has a compact base and a `tall:` variant: base pt-20
+        // matches .nav-blur's 80px so the Pause button clears the header, and base
+        // pb-14 clears the panel's `absolute bottom-6` scroll hint.
+        <section className="pt-20 tall:pt-[15vh] pb-14 tall:pb-16 text-paper">
             {/* Header row: pause/play on right */}
-            <div className="px-5 md:px-10 lg:px-20 mb-10">
+            <div className="px-5 md:px-10 lg:px-20 mb-4 tall:mb-10">
                 <div className="flex items-center justify-end">
                     <button
                         onClick={togglePlay}
@@ -98,7 +103,7 @@ export default function Projects() {
                                 href={`/project/${project.slug}`}
                                 className="group hoverable flex-shrink-0 w-[360px] md:w-[440px] mr-6"
                             >
-                                <div className="relative border border-grey-20 bg-grey-10 p-8 h-[280px] flex flex-col justify-between transition-all duration-500 group-hover:bg-grey-13 group-hover:border-grey-35 group-hover:scale-[1.02]">
+                                <div className="relative border border-grey-20 bg-grey-10 p-6 tall:p-8 h-[220px] tall:h-[280px] flex flex-col justify-between transition-all duration-500 group-hover:bg-grey-13 group-hover:border-grey-35 group-hover:scale-[1.02]">
                                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
                                         <div className="absolute inset-0 bg-gradient-to-br from-paper-4 to-transparent" />
                                     </div>
@@ -141,7 +146,7 @@ export default function Projects() {
                 <div className="absolute right-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-grey-6 to-transparent pointer-events-none z-10" />
 
                 {/* Drag hint */}
-                <div className="flex items-center justify-center gap-2 mt-5 text-grey-40">
+                <div className="flex items-center justify-center gap-2 mt-3 tall:mt-5 text-grey-40">
                     <GripHorizontal className="w-3.5 h-3.5" />
                     <span className="font-mono text-[10px] uppercase tracking-widest">
                         Drag to explore
@@ -150,7 +155,7 @@ export default function Projects() {
             </div>
 
             {/* See all projects */}
-            <div className="flex justify-center px-5 md:px-10 lg:px-20 mt-14">
+            <div className="flex justify-center px-5 md:px-10 lg:px-20 mt-6 tall:mt-14">
                 <Link
                     href="/projects"
                     className="group hoverable inline-flex items-center gap-3 border border-grey-35 px-8 py-4 transition-all duration-300 hover:border-paper hover:bg-grey-10"
