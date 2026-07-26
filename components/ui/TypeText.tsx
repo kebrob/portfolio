@@ -13,6 +13,12 @@ interface TypeTextProps {
     onComplete?: () => void;
     /** Hold off until the text is fully in view. */
     startOnView?: boolean;
+    /**
+     * Hide the reveal from assistive tech. The animation renders one span per
+     * character, which screen readers announce letter by letter, so a caller
+     * that exposes the string some other way should set this.
+     */
+    "aria-hidden"?: boolean;
 }
 
 /**
@@ -30,6 +36,7 @@ export default function TypeText({
     invertBox,
     onComplete,
     startOnView = false,
+    "aria-hidden": ariaHidden,
 }: Readonly<TypeTextProps>) {
     const containerRef = useRef<HTMLSpanElement>(null);
     const charsRef = useRef<(HTMLSpanElement | null)[]>([]);
@@ -90,7 +97,7 @@ export default function TypeText({
     }, [shouldAnimate]);
 
     return (
-        <span ref={containerRef} className={className}>
+        <span ref={containerRef} className={className} aria-hidden={ariaHidden}>
             {chars.map((char, i) => (
                 <span
                     key={i}

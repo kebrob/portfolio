@@ -1,105 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import ScrambleText from "@/components/ui/ScrambleText";
 import TypeText from "@/components/ui/TypeText";
+import HeroKeywords from "@/components/sections/HeroKeywords";
+import { useFittedHeadline } from "@/lib/use-fitted-headline";
+
+const HEADLINE = "Robert Kebinger";
+
+/**
+ * Typography that decides the fitted size. The hidden sizer and the <h1> have to
+ * carry it identically, or the measured width is not the rendered width.
+ * `headline-metrics` pulls in the kerning reset that globals.css otherwise
+ * applies to `h1` by element selector.
+ */
+const HEADLINE_CLASS = "headline-metrics font-bold leading-[1.2] tracking-tighter whitespace-nowrap";
+
+/** The square trailing the headline. Sized in `em`, so it scales with the fit. */
+function HeadlineCube({ "aria-hidden": ariaHidden }: { "aria-hidden"?: boolean }) {
+    return (
+        <span
+            aria-hidden={ariaHidden}
+            className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-ink"
+        />
+    );
+}
 
 export default function Hero() {
     const lenis = useLenis();
-    const h1Ref = useRef<HTMLHeadingElement>(null);
-    const [isReady, setIsReady] = useState(false);
     const [hasAnimated, setHasAnimated] = useState(false);
-    const [fontSize, setFontSize] = useState("10px");
-    const [textWidth, setTextWidth] = useState(0);
-
-    useEffect(() => {
-        const resizeText = () => {
-            const element = h1Ref.current;
-            if (!element) return;
-
-            // Don't modify DOM if typing animation is in progress
-            if (isReady && !hasAnimated) {
-                return;
-            }
-
-            // Store current content
-            const currentContent = element.innerHTML;
-
-            // Reset width to auto for accurate measurement
-            element.style.width = "auto";
-
-            // Temporarily set full text to measure
-            element.textContent = "Robert Kebinger";
-
-            // Create temporary span for cube to measure total width
-            const tempSpan = document.createElement("span");
-            tempSpan.className = "inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-ink";
-            element.appendChild(tempSpan);
-
-            // Binary search to find the largest font size that fits
-            let minSize = 10;
-            let maxSize = 2000;
-            let bestSize = minSize;
-
-            while (maxSize - minSize > 0.5) {
-                const midSize = (minSize + maxSize) / 2;
-                element.style.fontSize = `${midSize}px`;
-
-                // Check if text fits within viewport
-                if (element.scrollWidth < window.innerWidth) {
-                    bestSize = midSize;
-                    minSize = midSize;
-                } else {
-                    maxSize = midSize;
-                }
-            }
-
-            // Apply the best size that fits with a small buffer for character width variance
-            const finalSize = `${bestSize * 0.96}px`;
-            element.style.fontSize = finalSize;
-            setFontSize(finalSize);
-
-            // Capture the full text width for centering
-            setTextWidth(element.scrollWidth);
-
-            // Clear text before showing typing animation (only if not animated yet)
-            if (!hasAnimated) {
-                element.textContent = "";
-                setIsReady(true);
-            } else {
-                // Restore content if animation already completed
-                element.innerHTML = currentContent;
-            }
-        };
-
-        setTimeout(resizeText, 100);
-        window.addEventListener("resize", resizeText);
-        return () => window.removeEventListener("resize", resizeText);
-    }, [hasAnimated, isReady]);
-
-    // Keyword highlight sequence — fires after typing animation completes
-    const [highlightIdx, setHighlightIdx] = useState<number | null>(null);
-    const highlightTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-    const startKeywordHighlight = () => {
-        highlightTimers.current = [
-            setTimeout(() => setHighlightIdx(0), 500),
-            setTimeout(() => setHighlightIdx(1), 1000),
-            setTimeout(() => setHighlightIdx(2), 1500),
-            setTimeout(() => setHighlightIdx(null), 2000),
-        ];
-    };
-
-    useEffect(() => {
-        return () => highlightTimers.current.forEach(clearTimeout);
-    }, []);
-
-    const handleTypingComplete = () => {
-        setHasAnimated(true);
-        startKeywordHighlight();
-    };
+    const { measureRef, fontSize, width } = useFittedHeadline({ settled: hasAnimated });
 
     const scrollToAbout = () => {
         lenis?.scrollTo("#about", {
@@ -111,6 +43,21 @@ export default function Hero() {
 
     return (
         <section className="min-h-screen flex flex-col relative">
+            {/*
+              Sizer for useFittedHeadline. Hidden with `invisible` rather than
+              `hidden`, because it still has to lay out for scrollWidth to mean
+              anything, and held out of the a11y tree since the <h1> below
+              already carries the real text.
+            */}
+            <div
+                ref={measureRef}
+                aria-hidden="true"
+                className={`${HEADLINE_CLASS} absolute top-0 left-0 invisible pointer-events-none`}
+            >
+                {HEADLINE}
+                <HeadlineCube />
+            </div>
+
             <div className="flex-1 flex items-center pb-32 md:pb-40 lg:pb-48">
                 <div className="w-full flex items-center justify-between px-[20px] md:px-[40px] lg:px-[80px]">
                     {/* Statement block */}
@@ -140,80 +87,57 @@ export default function Hero() {
                             Full-Stack Developer
                         </motion.p>
 
-                        <motion.p
-                            className="text-lg leading-relaxed text-neutral-900"
-                            variants={{
-                                hidden: { opacity: 0, y: 14 },
-                                visible: {
-                                    opacity: 1,
-                                    y: 0,
-                                    transition: { duration: 0.55, ease: "easeOut" },
-                                },
-                            }}
-                        >
-                            Designing and building scalable web applications with a strong focus on{" "}
-                            {(["architecture", "performance", "detail"] as const).map((kw, i) => (
-                                <span key={kw}>
-                                    {/*
-                                      Literal colours, not --color-* tokens: framer-motion
-                                      interpolates these, and it cannot tween a var().
-                                      #f8f6f2 is --color-paper.
-                                    */}
-                                    <motion.span
-                                        className="font-mono tracking-wide px-1 py-0.5"
-                                        animate={
-                                            highlightIdx === i
-                                                ? {
-                                                      backgroundColor: "rgba(0,0,0,0.88)",
-                                                      color: "#f8f6f2",
-                                                  }
-                                                : {
-                                                      backgroundColor: "rgba(0,0,0,0.05)",
-                                                      color: "#525252",
-                                                  }
-                                        }
-                                        transition={
-                                            highlightIdx === i
-                                                ? { duration: 0.12 }
-                                                : { duration: 0.55, ease: "easeOut" }
-                                        }
-                                    >
-                                        {kw}
-                                    </motion.span>
-                                    {i === 0 ? ", " : i === 1 ? ", and " : ""}
-                                </span>
-                            ))}
-                        </motion.p>
+                        <HeroKeywords start={hasAnimated} />
                     </motion.div>
                 </div>
             </div>
 
             <div className="absolute bottom-10 left-0 right-0 flex justify-center">
                 <h1
-                    ref={h1Ref}
-                    className="font-bold leading-[1.2] tracking-tighter whitespace-nowrap"
+                    className={HEADLINE_CLASS}
                     style={{
-                        opacity: isReady || hasAnimated ? 1 : 0,
-                        fontSize,
-                        width: textWidth > 0 ? `${textWidth}px` : "auto",
+                        opacity: fontSize ? 1 : 0,
+                        fontSize: fontSize ?? "10px",
+                        /*
+                          Pinned to the measured width for the reveal only.
+                          TypeText swaps the character it is revealing for a
+                          random symbol, so the natural width changes on every
+                          tick — under `justify-center` that swings the whole
+                          headline sideways. Once the real text is in place the
+                          natural width is the right one.
+                        */
+                        width: hasAnimated || width === null ? "auto" : `${width}px`,
                     }}
                 >
+                    {/*
+                      The animation renders one span per character, which screen
+                      readers announce letter by letter, and it starts empty so
+                      the served HTML has no headline text at all. Carry the real
+                      string here and hide the moving parts from the a11y tree.
+
+                      Marked per element rather than through one wrapper span on
+                      purpose: an extra inline box makes the cube's
+                      `vertical-align: middle` resolve against the wrapper
+                      instead of the heading, which drops it a pixel.
+                    */}
+                    <span className="sr-only">{HEADLINE}</span>
                     {hasAnimated && (
                         <>
-                            <span>Robert Kebinger</span>
-                            <span className="inline-block w-[0.15em] h-[0.15em] mx-1 align-middle bg-ink" />
+                            <span aria-hidden="true">{HEADLINE}</span>
+                            <HeadlineCube aria-hidden />
                         </>
                     )}
-                    {!hasAnimated && isReady && (
+                    {!hasAnimated && fontSize !== null && (
                         <TypeText
-                            text="Robert Kebinger"
+                            text={HEADLINE}
                             speed={50}
                             invertBox={{
                                 backgroundColor: "#141414",
                                 textColor: "#f8f6f2",
                             }}
                             startOnView={true}
-                            onComplete={handleTypingComplete}
+                            onComplete={() => setHasAnimated(true)}
+                            aria-hidden
                         />
                     )}
                 </h1>

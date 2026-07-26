@@ -96,7 +96,14 @@
     }
 }
 
-h1 {
+/*
+ * Kerning off so a measured width equals the rendered width: the Hero headline
+ * is sized by binary search against a hidden sizer element, and kerning pairs
+ * would make the two disagree. `.headline-metrics` is what puts the sizer on the
+ * same footing as the heading — it is a <div>, so the `h1` selector misses it.
+ */
+h1,
+.headline-metrics {
     font-kerning: none;
     font-feature-settings: "kern" 0;
 }
