@@ -1,116 +1,120 @@
 "use client";
 
 import { useRef } from "react";
-import { ChevronDown } from "lucide-react";
-import { motion, useTransform, useReducedMotion, useMotionValueEvent } from "framer-motion";
+import { useMotionValueEvent } from "framer-motion";
 import Projects from "@/components/sections/Projects";
+import InkTransition from "@/components/InkTransition";
 import { useHeaderTheme } from "@/lib/header-theme";
 import { useSectionProgress } from "@/lib/use-section-progress";
 
-// Animation constants — update these if you change the container height or keyframes.
-// Sentinel positions are derived from these values, so nothing else needs to change.
-const CONTAINER_VH = 340;
-const DARK_OVERLAY_START = 0.28;
-const DARK_OVERLAY_END = 0.68;
-const PROJECTS_VISIBLE_END = 0.78;
-
-// scrollRange = how many vh the page travels while the sticky panel is pinned
-const SCROLL_RANGE = CONTAINER_VH - 100;
-// Nav anchor: scroll target where projects are fully faded in
-const PROJECTS_ANCHOR_TOP_VH = PROJECTS_VISIBLE_END * SCROLL_RANGE;
+/*
+ * The paper-to-ink handover into the projects wall.
+ *
+ * There is no pinned panel. The driver below is a plain spacer that both gives
+ * useSectionProgress something to measure and holds the clear run the flood
+ * needs. The ink is a fixed backdrop behind the page (see InkTransition), so the
+ * wall simply scrolls up through the flood in normal flow.
+ *
+ * RANGE_VH is how much scrolling the flood takes, and it is deliberately short —
+ * 50vh, the reference's exact figure. A long range does not read as a slower
+ * flood, it reads as no flood at all: you can park anywhere you like on a
+ * half-dark viewport and the whole thing looks like a gradient being panned.
+ * (The other half of that fix is in ink-bleed.ts, which concentrates the actual
+ * light-to-dark flip into the middle of this range rather than spreading it
+ * evenly across it. Shortening the range alone was not enough.)
+ *
+ * LEAD_VH pulls progress 0 above the end of Experience, so the flood is already
+ * under way while Experience is still sliding off the top rather than waiting
+ * for a screen of bare paper first.
+ *
+ * An earlier revision had this pinned at 0 on the grounds that a global veil
+ * cannot overlap a light section at all. That was true of the veil as it was
+ * then. It is not true now: ink-bleed.ts tilts the fill bottom-first, and the
+ * ink does not reach the top of the frame until p ~ 0.7. Experience leaves
+ * through the top. So they only collide if Experience is still on screen when
+ * the flood gets up there — a race with slack in it, not a wall.
+ *
+ * What sets 60 is that Experience's sticky panel is a screen tall but its
+ * content stops ~260px short of the panel's bottom edge. Measuring the *box*
+ * (which 30 did) says the section is still on screen; measuring the content says
+ * the bottom quarter of the viewport went blank a long time earlier. That blank
+ * band is what read as too much space — it opens 900vh into the section and
+ * grows for most of a screen before any ink appeared. 60 starts the flood into
+ * it while the copy above is still leaving. Checked against the content edge,
+ * not the box:
+ *
+ *   scroll   content bottom sits at   ink has climbed to
+ *   5750             131px                    873px
+ *   5820              61px                    495px
+ *   5870              11px                    300px
+ *
+ * Ink stays well below the last line throughout. It is not a free parameter —
+ * around 77 the ink reaches 18px from the top while copy still hangs to 81px,
+ * and they overlap.
+ *
+ * GAP_VH is clear space between the driver and the wall. What has to land on
+ * dark is the wall's first *visible* row — the Featured Work label, ~110px into
+ * the section, not the section box, which buys about 12vh over measuring from
+ * the top edge. At 72 the label crosses the bottom edge at p = 0.88, on solid
+ * ink. Below about p = 0.7 it starts arriving onto grey, which is the thing this
+ * whole handover exists to avoid — 115/30 was tried and put it at p = 0.54, on
+ * mid-grey.
+ *
+ * Only the label constrains this. Moving the wall up does not risk tripping the
+ * Header's dark-section check early: that fires on rect.top < 40, i.e. when the
+ * section reaches the *top* of the viewport, long after the flood is over.
+ *
+ * Note that GAP + LEAD is what fixes the distance from the end of the flood to
+ * the wall, so the two can be traded to slide the whole handover earlier without
+ * changing any of its internal spacing — 30/125 -> 60/95 did exactly that, and
+ * the wall arrived on the same frame of the flood, 270px sooner in the page.
+ * Dropping GAP alone (95 -> 72) is the other move: it genuinely closes the run
+ * of empty dark between the flood finishing and the wall showing up.
+ *
+ * What is left is not slack. 100vh of it is the wall travelling from the bottom
+ * of the viewport to the top, which no constant here can shorten.
+ *
+ * MEASURE_VH is not a tuning knob. useSectionProgress measures from "top hits
+ * viewport top" to "bottom hits viewport top", so the driver has to be one
+ * viewport taller than the range it wants to report.
+ */
+const RANGE_VH = 50;
+const LEAD_VH = 60;
+const GAP_VH = 72;
+const MEASURE_VH = 100;
 
 export default function ProjectsTransition() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const prefersReducedMotion = useReducedMotion();
     const { setForceDark } = useHeaderTheme();
 
-    const scrollYProgress = useSectionProgress(containerRef);
+    const inkProgress = useSectionProgress(containerRef);
 
-    // Phase 1 (0 → 0.08): title fades in almost immediately
-    // Phase 2 (0.08 → 0.35): title is fully visible on white bg
-    // Phase 3 (0.35 → 0.55): title fades out + dark overlay fades in
-    // Phase 4 (0.55 → 0.75): projects fade in while still sticky
-    // Phase 5 (0.75 → 1): projects fully visible, user can interact before pin releases
-
-    // Title starts fully visible (like Experience) and scrolls to position, then fades out
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.35, 0.55], [1, 1, 0]);
-
-    const darkOverlayOpacity = useTransform(
-        scrollYProgress,
-        [DARK_OVERLAY_START, DARK_OVERLAY_END],
-        [0, 1]
-    );
-
-    // Drive the header theme directly from the overlay opacity — no DOM sentinel needed
-    useMotionValueEvent(darkOverlayOpacity, "change", (v) => setForceDark(v > 0.5));
-
-    const projectsOpacity = useTransform(scrollYProgress, [0.55, PROJECTS_VISIBLE_END], [0, 1]);
-
-    const projectsPointerEvents = useTransform(projectsOpacity, (v) => (v > 0.5 ? "auto" : "none"));
-
-    const hintOpacity = useTransform(
-        scrollYProgress,
-        [DARK_OVERLAY_END, DARK_OVERLAY_END + 0.05, 0.99, 1],
-        [0, 1, 1, 0]
-    );
-
-    const hintScale = useTransform(scrollYProgress, [DARK_OVERLAY_END + 0.05, 0.99], [1.8, 1]);
+    // 0.8 is inside the veil's own late stretch (0.68..1, where the mottle
+    // closes into a flat fill), so by here the nav band is dark almost
+    // everywhere even where a pale lobe is still open. The reference flips its
+    // nav colours across the same span.
+    useMotionValueEvent(inkProgress, "change", (v) => setForceDark(v > 0.8));
 
     return (
-        // CONTAINER_VH gives enough scroll distance for all phases without feeling sluggish
-        <div ref={containerRef} className="relative" style={{ height: `${CONTAINER_VH}vh` }}>
-            <div className="sticky top-0 h-screen overflow-hidden">
-                {/* Dark background overlay */}
-                <motion.div
-                    className="absolute inset-0"
-                    style={{
-                        opacity: prefersReducedMotion ? 1 : darkOverlayOpacity,
-                        backgroundColor: "hsl(0 0% 6%)",
-                        backgroundImage:
-                            "radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px)",
-                        backgroundSize: "20px 20px",
-                    }}
-                />
+        <>
+            <InkTransition progress={inkProgress} />
 
-                {/* "Selected Work" title — fades in quickly, then fades out as bg turns dark */}
-                <motion.div
-                    className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
-                    style={prefersReducedMotion ? { opacity: 0 } : { opacity: titleOpacity }}
-                >
-                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-ink">
-                        Selected Work
-                    </h2>
-                </motion.div>
-
-                {/* Projects section — fades in once bg is black */}
-                <motion.div
-                    className="absolute inset-0 z-20"
-                    style={{
-                        opacity: prefersReducedMotion ? 1 : projectsOpacity,
-                        pointerEvents: prefersReducedMotion ? "auto" : projectsPointerEvents,
-                    }}
-                >
-                    <Projects />
-                </motion.div>
-
-                {/* Scroll hint — fades in as dark overlay finishes, fades out when section ends */}
-                <motion.div
-                    className="absolute bottom-6 left-0 right-0 flex justify-center pointer-events-none z-30"
-                    style={prefersReducedMotion ? { opacity: 1 } : { opacity: hintOpacity }}
-                >
-                    <motion.div style={prefersReducedMotion ? {} : { scale: hintScale }}>
-                        <ChevronDown className="w-7 h-7 text-grey-40 animate-bounce" />
-                    </motion.div>
-                </motion.div>
-            </div>
-
-            {/* Nav anchor: scrolling to #projects lands here (projects fully faded in) */}
             <div
-                id="projects"
+                ref={containerRef}
                 aria-hidden="true"
-                className="pointer-events-none absolute left-0 w-0 h-0"
-                style={{ top: `${PROJECTS_ANCHOR_TOP_VH}vh` }}
+                className="pointer-events-none"
+                style={{
+                    // Height is fixed by what has to be measured. The top margin
+                    // lifts progress 0 above the end of Experience; the bottom
+                    // one puts it back so the wall still lands GAP below there,
+                    // independent of LEAD.
+                    height: `${MEASURE_VH + RANGE_VH}vh`,
+                    marginTop: `-${LEAD_VH}vh`,
+                    marginBottom: `${GAP_VH + LEAD_VH - MEASURE_VH - RANGE_VH}vh`,
+                }}
             />
-        </div>
+
+            <Projects />
+        </>
     );
 }

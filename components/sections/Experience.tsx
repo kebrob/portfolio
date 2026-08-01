@@ -23,7 +23,7 @@ const experiences: Experience[] = [
             "Leading frontend architecture and UI consistency across projects while mentoring developers and guiding implementation quality.",
             "Currently building customer systems including CRM tools, email workflows, and SAP CRM integrations.",
         ],
-        technologies: ["Node.js", "Typescript", "RabbitMQ", "PHP", "Shopware", "SAP", "AI"],
+        technologies: ["Nest.js", "Typescript", "RabbitMQ", "PHP", "Shopware", "SAP", "AI"],
     },
     {
         year: "2021",

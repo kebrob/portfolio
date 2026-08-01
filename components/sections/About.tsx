@@ -29,7 +29,7 @@ export default function About() {
     ];
 
     return (
-        <section id="about" ref={sectionRef} className="px-5 md:px-10 lg:px-20 py-32">
+        <section id="about" ref={sectionRef} className="px-5 md:px-10 lg:px-20 pt-44 pb-24">
             <div className="max-w-6xl mx-auto">
                 <motion.span
                     className="font-mono text-xs uppercase tracking-[0.3em] mb-16 block"
