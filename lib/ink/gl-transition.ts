@@ -108,7 +108,13 @@ void main() {
     float dot = 1.0 - smoothstep(1.5 * uDpr - 0.6, 1.5 * uDpr + 0.6, length(cell));
     vec3 col = mix(ink, vec3(1.0), dot * 0.025 * dens);
 
-    outColor = vec4(col, a);
+    // Premultiplied, to match the context's premultipliedAlpha. The obvious
+    // vec4(col, a) with premultipliedAlpha: false is the same picture in Chrome
+    // and Firefox but breaks in Safari, which composites the buffer as
+    // premultiplied whatever the flag says: the light ink (0.38) lands on ~0.96
+    // paper as 0.38 + (1 - a) * 0.96, clips at 1.0, and the clipping contour
+    // shows up as a hard white edge through the middle of the flood.
+    outColor = vec4(col * a, a);
 }`;
 
 export interface GlTransition {
@@ -149,8 +155,10 @@ export function createGlTransition(
         antialias: false,
         depth: false,
         stencil: false,
-        // Non-premultiplied so the shader can output straight colour + alpha.
-        premultipliedAlpha: false,
+        // Premultiplied. Safari ignores the false case and composites as
+        // premultiplied anyway, so the shader premultiplies and every engine
+        // agrees — see the outColor note in FRAG_MAIN.
+        premultipliedAlpha: true,
         powerPreference: "low-power",
     });
     if (!gl) return null;
