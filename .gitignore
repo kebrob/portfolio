@@ -42,3 +42,5 @@ next-env.d.ts
 
 /tmp
 .idea/
+# playwright mcp artifacts
+/.playwright-mcp/

@@ -15,7 +15,15 @@ const eslintConfig = defineConfig([
     ]),
     {
         rules: {
-            "no-unused-vars": "warn",
+            // The core rule is not TS-aware: it flags parameter names in type
+            // positions (interface methods, function-typed properties) where a
+            // name is documentation, not a binding. The @typescript-eslint one
+            // understands declarations and is already enabled by nextTs above.
+            "no-unused-vars": "off",
+            "@typescript-eslint/no-unused-vars": [
+                "warn",
+                { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+            ],
             "react/jsx-key": "error",
             "react-hooks/rules-of-hooks": "error",
             "react-hooks/exhaustive-deps": "warn",

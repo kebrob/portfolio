@@ -1,0 +1,12 @@
+# Build output
+.next/
+out/
+build/
+
+# Tooling scratch — Playwright MCP snapshots and local Claude Code settings.
+# Generated files, reformatting them is noise.
+.playwright-mcp/
+.claude/
+
+# Lockfiles
+package-lock.json

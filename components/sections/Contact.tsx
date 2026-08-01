@@ -41,7 +41,7 @@ function GlitchSquare() {
             cancelled = true;
             clearTimeout(timeoutId);
         };
-    }, [inView]);
+    }, [inView, animate, scope]);
 
     return (
         <span

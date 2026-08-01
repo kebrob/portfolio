@@ -16,7 +16,8 @@ const HEADLINE = "Robert Kebinger";
  * `headline-metrics` pulls in the kerning reset that globals.css otherwise
  * applies to `h1` by element selector.
  */
-const HEADLINE_CLASS = "headline-metrics font-bold leading-[1.2] tracking-tighter whitespace-nowrap";
+const HEADLINE_CLASS =
+    "headline-metrics font-bold leading-[1.2] tracking-tighter whitespace-nowrap";
 
 /** The square trailing the headline. Sized in `em`, so it scales with the fit. */
 function HeadlineCube({ "aria-hidden": ariaHidden }: { "aria-hidden"?: boolean }) {

@@ -94,7 +94,13 @@ export default function Header() {
 
         // Add scroll listener as well for immediate updates
         window.addEventListener("scroll", checkIntersection, { passive: true });
-        checkIntersection(); // Initial check
+
+        // No explicit initial check here: observe() queues a callback for every
+        // target it is handed, intersecting or not, so the first run happens on
+        // its own — off the effect body, which is what keeps this clear of
+        // react-hooks/set-state-in-effect. The pages that are dark from their
+        // very top (/projects, /project/[slug]) rely on that first run to open
+        // with a light nav, so it is load-bearing, just not called by hand.
 
         return () => {
             observer.disconnect();
@@ -103,10 +109,34 @@ export default function Header() {
     }, [checkIntersection]);
 
     const scrollToSection = (id: string) => {
-        lenis?.scrollTo(`#${id}`, {
-            duration: 1.5,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            lerp: 0.1,
+        const target = document.getElementById(id);
+        if (!lenis || !target) return;
+
+        // The trip to #contact is ~8000px and more than half of it is Experience's
+        // sticky panel, which translates nothing while it scrubs. A fixed duration
+        // made that stretch fly past at ~9x the speed of the (900px) hop to #about,
+        // so the distance sets the time here. sqrt, not linear: the far targets
+        // should be faster per pixel, just not nine times faster. Clamped so short
+        // hops stay snappy and long ones stop short of feeling like a cutscene.
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const to = Math.min(target.getBoundingClientRect().top + window.scrollY, maxScroll);
+        const distance = Math.abs(to - lenis.scroll);
+        const duration = Math.min(2.2, Math.max(0.9, 0.028 * Math.sqrt(distance)));
+
+        lenis.scrollTo(target, {
+            duration,
+            // Was expo-out, which starts at full speed: the first frame moved ~615px
+            // and the first 100ms covered over half the page, then the last couple
+            // hundred pixels crawled for the better part of a second. That lurch read
+            // as the sticky section breaking. An in-out curve accelerates and settles
+            // instead, so the fast part sits in the middle where it belongs.
+            //
+            // Cubic and not a steeper power: for a power-n in-out the peak velocity is
+            // exactly n x the average, and peak is what whips Experience past. Quint
+            // was tried and peaks at 316px/frame, plus it has only crept 93px 500ms
+            // after the click, which feels like the button missed. Cubic peaks at
+            // ~185px/frame and is already 500px along by then.
+            easing: (t) => (t < 0.5 ? 4 * t ** 3 : 1 - Math.pow(-2 * t + 2, 3) / 2),
         });
     };
 
