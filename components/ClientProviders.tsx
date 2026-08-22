@@ -2,12 +2,15 @@
 
 import CustomCursor from "@/components/CustomCursor";
 import { HeaderThemeProvider } from "@/lib/header-theme";
+import { PageThemeProvider } from "@/lib/page-theme";
 
 export default function ClientProviders({ children }: { children: React.ReactNode }) {
     return (
         <HeaderThemeProvider>
-            <CustomCursor />
-            {children}
+            <PageThemeProvider>
+                <CustomCursor />
+                {children}
+            </PageThemeProvider>
         </HeaderThemeProvider>
     );
 }

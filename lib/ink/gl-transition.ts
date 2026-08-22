@@ -142,6 +142,18 @@ export interface GlTransitionOptions {
      * is antialiased with fwidth, so it stays crisp at a lower ratio.
      */
     maxDpr?: number;
+    /**
+     * Progress to paint before returning, synchronously.
+     *
+     * Every other frame is scheduled on rAF, which is right for a transition but
+     * wrong for the first one when the canvas *is* the page's background: rAF
+     * runs after the browser has painted, so a page that opens fully inked would
+     * show one frame of bare paper first. Seeding through setProgress does not
+     * help — that schedules too. Passing it here draws inside the constructor,
+     * so a caller that creates the transition in a layout effect has correct
+     * pixels before anything reaches the screen.
+     */
+    initialProgress?: number;
 }
 
 export function createGlTransition(
@@ -195,7 +207,7 @@ export function createGlTransition(
     const uSeed = gl.getUniformLocation(program, "uSeed");
     const uDpr = gl.getUniformLocation(program, "uDpr");
 
-    let progress = 0;
+    let progress = options.initialProgress ?? 0;
     const seed = Math.random() * 100;
     let frame = 0;
     let dpr = 1;
@@ -203,7 +215,7 @@ export function createGlTransition(
 
     const draw = () => {
         frame = 0;
-        if (destroyed) return;
+        if (destroyed || gl.isContextLost()) return;
         gl.useProgram(program);
         gl.uniform2f(uResolution, canvas.width, canvas.height);
         gl.uniform1f(uProgress, progress);
@@ -230,6 +242,12 @@ export function createGlTransition(
     };
 
     resize();
+    // Sizing done, so this can paint for real. Synchronous, unlike every later
+    // frame — see initialProgress.
+    if (options.initialProgress !== undefined) {
+        if (frame) cancelAnimationFrame(frame);
+        draw();
+    }
 
     return {
         setProgress(p) {
@@ -242,7 +260,17 @@ export function createGlTransition(
             if (frame) cancelAnimationFrame(frame);
             gl.deleteProgram(program);
             gl.deleteBuffer(buf);
-            gl.getExtension("WEBGL_lose_context")?.loseContext();
+            // Deliberately NOT WEBGL_lose_context.loseContext(). A canvas keeps
+            // one context per type for its entire life: getContext("webgl2")
+            // hands back the same object every time, so losing it here is
+            // permanent for that element, and any later create on the same
+            // canvas gets a dead context whose shaders fail to compile with a
+            // null info log ("shader compile failed: null"). That is not
+            // hypothetical — StrictMode double-invokes effects on mount, and a
+            // client-side return to / did exactly this and silently dropped the
+            // ink flood to its CSS crossfade fallback. Deleting the program and
+            // the buffer is the cleanup that matters; the context itself goes
+            // when the detached canvas is collected.
         },
     };
 }

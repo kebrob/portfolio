@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValueEvent, useSpring, type MotionValue } from "framer-motion";
 import { createGlTransition, type GlTransition } from "@/lib/ink/gl-transition";
 import { INK_BLEED_GLSL } from "@/lib/ink/ink-bleed";
+import { DARK_PANEL } from "@/lib/ink/dark-panel";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 
 /*
@@ -33,16 +34,6 @@ import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
  * motion. It is deliberately the same target colour and the same progress value,
  * so the section always ends up in exactly the same state either way.
  */
-
-// A hand-inlined .dark-section. It cannot use the class itself: that is what the
-// Header's intersection check watches, and this element is present on every page
-// view, so it would flip the nav dark while the page is still paper-white.
-const DARK_PANEL = {
-    backgroundColor: "var(--color-grey-6)",
-    backgroundImage: "radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px)",
-    backgroundSize: "20px 20px",
-    backgroundAttachment: "fixed",
-} as const;
 
 export default function InkTransition({
     progress,

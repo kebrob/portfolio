@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useMotionValueEvent } from "framer-motion";
 import Projects from "@/components/sections/Projects";
 import InkTransition from "@/components/InkTransition";
@@ -94,6 +94,14 @@ export default function ProjectsTransition() {
     // everywhere even where a pale lobe is still open. The reference flips its
     // nav colours across the same span.
     useMotionValueEvent(inkProgress, "change", (v) => setForceDark(v > 0.8));
+
+    // forceDark lives in a provider above <main>, so it outlives this section.
+    // Leaving it set on the way out is what made the nav vanish: navigate to
+    // /projects from the inked part of the page and the flag stays true, so
+    // coming back home lands at scroll 0 on paper with the nav still painting
+    // itself paper-on-paper. Every writer of the flag owes this cleanup — the
+    // other one is ThemedPage, on the archive pages.
+    useEffect(() => () => setForceDark(false), [setForceDark]);
 
     return (
         <>

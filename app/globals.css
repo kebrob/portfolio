@@ -112,6 +112,149 @@ h1,
     font-feature-settings: "kern" 0;
 }
 
+/*
+ * PAGE THEME TOKENS — the paper/ink switch on /projects and /project/[slug].
+ *
+ * Deliberately plain custom properties rather than @theme entries, used as
+ * text-[var(--page-fg)] and friends. @theme would give shorter utilities but
+ * emits into Tailwind's theme layer, and these have to be overridable by an
+ * attribute selector on the same element (:root) — a layering fight with no
+ * upside. It also means adding a token here needs no dev server restart, unlike
+ * @theme (see the note there).
+ *
+ * Light is the base and dark is the override, even though dark is the default
+ * the pages open in, because the attribute is what the inline script in
+ * app/layout.tsx writes and it always writes one or the other.
+ *
+ * The dark values are the greys those pages already used, so the dark theme is
+ * byte-for-byte what shipped before the switch existed.
+ */
+:root {
+    --page-fg: var(--color-ink);
+    --page-muted: hsl(0 0% 8% / 0.55);
+    --page-faint: hsl(0 0% 8% / 0.4);
+    --page-rule: hsl(0 0% 8% / 0.18);
+    --page-rule-soft: hsl(0 0% 8% / 0.1);
+    /* Row hover: the nav's contact-button inversion, at row scale. */
+    --page-inv: var(--color-ink);
+    --page-inv-fg: var(--color-paper);
+    --page-inv-muted: hsl(45 30% 96% / 0.6);
+    --page-inv-faint: hsl(45 30% 96% / 0.45);
+    /* Backdrop for the sticky column header. */
+    --page-veil: hsl(45 30% 96% / 0.82);
+}
+
+[data-page-theme="dark"] {
+    --page-fg: var(--color-paper);
+    --page-muted: var(--color-grey-55);
+    --page-faint: var(--color-grey-45);
+    --page-rule: var(--color-grey-20);
+    --page-rule-soft: var(--color-grey-13);
+    --page-inv: var(--color-paper);
+    --page-inv-fg: var(--color-ink);
+    --page-inv-muted: hsl(0 0% 8% / 0.6);
+    --page-inv-faint: hsl(0 0% 8% / 0.45);
+    --page-veil: hsl(0 0% 6% / 0.82);
+}
+
+/*
+ * Colours cross at the midpoint of the flood (see lib/page-theme.tsx), so they
+ * need a fade of their own or the swap is a hard cut through the middle of a
+ * soft one. Applied per element rather than as `.themed-page *`: a blanket rule
+ * is unlayered and so beats every Tailwind `transition-*` utility it lands on,
+ * which would silently kill the row title's transform and retime the row hover.
+ *
+ * Elements that already carry a transition-colors utility need nothing — the
+ * flip rides the same declaration. So do elements that only inherit their
+ * colour, since an inherited value follows whatever its ancestor is animating.
+ *
+ * 300ms, and not a millisecond else, because that is what the utility on those
+ * other elements says: the archive rows carry `transition-colors duration-300`
+ * for their hover, and the theme flip rides the same declaration. At 420 the
+ * sticky column header was still moving after the rows had arrived, and the
+ * header visibly trailed the list it labels. Any change here has to be made in
+ * both places or the tear comes back.
+ */
+.theme-fade {
+    transition:
+        color 300ms ease,
+        background-color 300ms ease,
+        border-color 300ms ease;
+}
+
+/*
+ * PRE-PAINT GROUND for the themed pages.
+ *
+ * The dark on /projects and /project/[slug] is a WebGL canvas, and a canvas
+ * cannot paint before the JavaScript that owns it has run. So between first
+ * paint and hydration those pages had no dark at all: the body's paper showed,
+ * a visitor who chose ink got a white flash, and the sticky column header —
+ * which is a 82%-opaque plate — composited its grey-6 over paper into a
+ * visibly lighter band for the same few frames.
+ *
+ * This is that missing frame, in CSS, keyed to the attribute the inline script
+ * in app/layout.tsx writes. ThemeInk drops it the moment the canvas has painted
+ * its first frame, so it never has to be kept in step with a running flood: it
+ * exists only before there is one.
+ *
+ * The dark case duplicates .dark-section exactly — grey-6 plus the 2.5% dot
+ * lattice, anchored to the viewport — so the hand-off to the canvas swaps one
+ * identical surface for another. See lib/ink/dark-panel.ts, which is the same
+ * surface again for the no-WebGL fallback.
+ *
+ * z-index -20 puts it under the canvas (-10) and therefore under everything in
+ * the page, but still above the body background.
+ */
+.theme-ground {
+    position: fixed;
+    inset: 0;
+    z-index: -20;
+    pointer-events: none;
+    background-color: var(--color-paper);
+}
+
+[data-page-theme="dark"] .theme-ground {
+    background-color: var(--color-grey-6);
+    background-image: radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+    background-attachment: fixed;
+}
+
+/*
+ * The sticky column header's plate on the archive.
+ *
+ * A class rather than utilities because of the rule below it: while the flood
+ * is running this has to stop painting a ground of its own. It is 82% opaque,
+ * so mid-flood it was showing 82% of a flat colour that flips at the midpoint
+ * over 18% of a canvas sweeping through mottled greys — the one band on the
+ * page changing at its own rate, which is exactly what it looked like.
+ *
+ * Transparent, the canvas paints it like everything else and the band
+ * disappears into the flood. It costs nothing: what the plate is for is hiding
+ * rows that scroll under it, and a toggle is a deliberate act that lasts about
+ * a second. Coming back it snaps rather than fades, because by then the canvas
+ * has settled on the same colour the plate is about to paint and there is
+ * nothing to see.
+ */
+.page-veil {
+    background-color: var(--page-veil);
+    backdrop-filter: blur(8px);
+}
+
+[data-page-flooding] .page-veil {
+    background-color: transparent;
+    backdrop-filter: none;
+    transition: none;
+}
+
+/*
+ * The .seg rules that used to live here belonged to the paper/ink segmented
+ * control, which decided its lit half in CSS off the attribute on <html> so it
+ * could be right before hydration. The switch is a sun and a moon now and keys
+ * off React state instead — see the note in components/ui/PaperInkToggle.tsx
+ * for what that costs and why it is paid.
+ */
+
 .dark-section {
     background-color: var(--color-grey-6);
     color: var(--color-paper);

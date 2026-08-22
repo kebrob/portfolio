@@ -81,19 +81,36 @@ export default function Contact() {
     ];
 
     /*
-     * -mt-px closes a hairline seam at the top edge. This footer sits directly
-     * below ProjectsTransition's pinned panel, whose bottom edge lands on a
-     * fractional pixel (that container is sized in vh). Firefox snaps the panel's
-     * background and this one to device pixels independently, so a 1px row of the
-     * paper page background shows through between them; Chrome happens to round
-     * both the same way and looks seamless. Overlapping by 1px removes the seam
-     * for good — the footer paints above the panel and both backgrounds are
-     * grey-6, so the overlap itself is invisible.
+     * -mt-px closes a hairline seam at the top edge, from back when this footer
+     * and the section above it both painted their own grey-6 and Firefox snapped
+     * the two backgrounds to device pixels independently. Neither paints one any
+     * more — the dark under both is the same fixed canvas — so there is no seam
+     * left to close, but the overlap costs nothing and the day either of them
+     * paints a ground again it is wanted.
      */
     return (
         <footer
             id="contact"
-            className="dark-section -mt-px px-[20px] md:px-[40px] lg:px-[80px] pt-20 pb-6 bg-grey-6 text-paper min-h-screen flex flex-col justify-between"
+            className="dark-section -mt-px px-[20px] md:px-[40px] lg:px-[80px] pt-20 pb-6 text-paper min-h-screen flex flex-col justify-between"
+            /*
+             * Same move as the projects wall above: keep .dark-section for its
+             * text colour and because the Header's intersection check watches
+             * that class, but drop the background it normally paints.
+             *
+             * The footer used to be flatly dark from its first pixel while the
+             * ink was still flooding in above it, so scrolling down fast met a
+             * hard horizontal edge where the finished dark met the transition.
+             * Transparent, the same canvas paints both and there is no edge to
+             * see. It is also the same surface either way: .dark-section's
+             * background is grey-6 with a 2.5% dot lattice, and grey-6 with a
+             * 2.5% dot lattice is exactly what the shader resolves to at density
+             * 1 (see FRAG_MAIN in lib/ink/gl-transition.ts).
+             *
+             * The dots come from the canvas now rather than from here, which is
+             * the one visible difference: painting both stacked two identical
+             * lattices and doubled their opacity.
+             */
+            style={{ backgroundColor: "transparent", backgroundImage: "none" }}
         >
             {/* Headline */}
             <div ref={headlineRef} className="overflow-hidden">

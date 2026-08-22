@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useLenis } from "lenis/react";
 import ScrambleText from "@/components/ui/ScrambleText";
 import { useHeaderTheme } from "@/lib/header-theme";
@@ -28,6 +30,9 @@ const COLORS = {
 
 export default function Header() {
     const lenis = useLenis();
+    const pathname = usePathname();
+    const router = useRouter();
+    const onHome = pathname === "/";
     const { forceDark } = useHeaderTheme();
     const [intersectionDark, setIntersectionDark] = useState(false);
     const isDark = forceDark || intersectionDark;
@@ -76,9 +81,24 @@ export default function Header() {
         setIntersectionDark(shouldBeDark);
     }, []);
 
+    // Keyed on the pathname. This nav lives in the layout and does not remount
+    // across a client-side navigation, so without that dependency the observer
+    // would stay bound to the *previous* route's sections — detached nodes whose
+    // rects are all zero — and never see the new page's. The verdict from the
+    // old route would then just sit there: /projects is dark from its first
+    // pixel, so returning home left the nav dark on paper and its items
+    // invisible.
     useEffect(() => {
         const darkSections = document.querySelectorAll(".dark-section");
-        if (darkSections.length === 0) return;
+
+        // A route with no dark sections at all cannot be resolved by the
+        // observer, because there is nothing to observe and therefore no
+        // callback. Re-measure by hand instead. Off the effect body via rAF, so
+        // this stays clear of react-hooks/set-state-in-effect.
+        if (darkSections.length === 0) {
+            const id = requestAnimationFrame(checkIntersection);
+            return () => cancelAnimationFrame(id);
+        }
 
         const observer = new IntersectionObserver(
             () => {
@@ -100,15 +120,30 @@ export default function Header() {
         // its own — off the effect body, which is what keeps this clear of
         // react-hooks/set-state-in-effect. The pages that are dark from their
         // very top (/projects, /project/[slug]) rely on that first run to open
-        // with a light nav, so it is load-bearing, just not called by hand.
+        // with a light nav, so it is load-bearing, just not called by hand. It
+        // is also what re-resolves the theme after a route change, since the
+        // effect re-runs and observes the new page's sections from scratch.
 
         return () => {
             observer.disconnect();
             window.removeEventListener("scroll", checkIntersection);
         };
-    }, [checkIntersection]);
+    }, [checkIntersection, pathname]);
 
     const scrollToSection = (id: string) => {
+        /*
+         * Off the home page these buttons used to do nothing at all: every
+         * section they name lives on /, so getElementById found nothing and the
+         * click was swallowed. Hand it to the router as a hash instead and let
+         * the home page finish the job on arrival — see HashScroll, which has to
+         * do the scrolling itself because Lenis has taken over the scroller and
+         * the browser's own hash jump cannot reach it.
+         */
+        if (!onHome) {
+            router.push(`/#${id}`);
+            return;
+        }
+
         const target = document.getElementById(id);
         if (!lenis || !target) return;
 
@@ -175,11 +210,32 @@ export default function Header() {
             </div>
 
             <div className="flex justify-between items-baseline px-3 py-3 relative z-10">
-                <div className="font-mono text-[13px] uppercase tracking-widest opacity-50 leading-[1] hidden md:block">
-                    ROBERTKEBINGER_{time}_ROSENHEIM_DE
-                </div>
+                {/*
+                 * The wordmark is the way home from anywhere — the one thing a
+                 * visitor already expects a top-left mark to do, which is why
+                 * neither archive page carries a second "back home" of its own.
+                 *
+                 * It stays visible below md, unlike before, because that is
+                 * exactly where it is load-bearing: the detail page's only other
+                 * exit goes to the archive. The clock and the location drop off
+                 * there instead — they are flavour, the name is the link.
+                 */}
+                <Link
+                    href="/"
+                    onClick={(e) => {
+                        if (!onHome || !lenis) return;
+                        // Already home: scroll rather than re-navigate, or Lenis
+                        // and the router both try to move the page at once.
+                        e.preventDefault();
+                        lenis.scrollTo(0, { duration: 1.2 });
+                    }}
+                    className="hoverable font-mono text-[11px] md:text-[13px] uppercase tracking-widest leading-[1] opacity-50 hover:opacity-100 transition-opacity duration-300"
+                >
+                    ROBERTKEBINGER
+                    <span className="hidden md:inline">_{time}_ROSENHEIM_DE</span>
+                </Link>
 
-                <ul className="flex gap-4 list-none md:ml-0 ml-auto">
+                <ul className="flex gap-4 list-none">
                     {["about", "projects", "contact"].map((item) => {
                         const isHovered = hoveredItem === item;
                         const isContact = item === "contact";
