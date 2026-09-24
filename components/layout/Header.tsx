@@ -246,7 +246,7 @@ export default function Header() {
                                     onClick={() => scrollToSection(item)}
                                     onMouseEnter={() => setHoveredItem(item)}
                                     onMouseLeave={() => setHoveredItem(null)}
-                                    className={`font-mono text-[13px] uppercase tracking-widest transition-opacity duration-300 hoverable cursor-pointer leading-[1] block`}
+                                    className="font-mono text-[13px] uppercase tracking-widest hoverable cursor-pointer leading-[1] block"
                                 >
                                     <span className={getContactButtonClasses(isContact)}>
                                         {isHovered ? (

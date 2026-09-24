@@ -10,7 +10,8 @@ A modern portfolio website built with Next.js, Tailwind CSS, and Framer Motion.
 - **Tailwind CSS 4** - Utility-first CSS framework, configured CSS-first in `app/globals.css`
 - **Framer Motion** - Animation library for React
 - **Lenis** - Smooth scrolling
-- **Embla Carousel** - Projects carousel (with the auto-scroll plugin)
+- **lucide-react** - Icons
+- **WebGL2** - The paper-to-ink transition, hand-written in `lib/ink/`
 
 ## 📦 Getting Started
 
@@ -49,18 +50,31 @@ portfolio/
 │   ├── layout.tsx              # Root layout — fonts, metadata, providers
 │   ├── page.tsx                # Home page
 │   ├── globals.css             # Global styles + Tailwind entry point
-│   ├── projects/page.tsx       # /projects — all projects
-│   └── project/[slug]/page.tsx # /project/[slug] — project detail
+│   ├── projects/page.tsx       # /projects — the archive
+│   ├── project/[slug]/page.tsx # /project/[slug] — project detail
+│   └── lab/                    # Scratch design routes — gitignored, never linked
 ├── components/
 │   ├── layout/                 # Header
 │   ├── sections/               # Hero, About, Experience, Projects, Contact
-│   ├── ui/                     # TextAnimation
-│   └── ...                     # CustomCursor, GridBackground, SmoothScroll
-├── lib/                        # Project data, header theme context, hooks
+│   ├── ui/                     # ScrambleText, TypeText, PaperInkToggle
+│   ├── lab/                    # Scratch design candidates — gitignored
+│   └── ...                     # CustomCursor, GridBackground, SmoothScroll,
+│                               #   ThemeInk, InkTransition, ThemedPage
+├── lib/
+│   ├── ink/                    # WebGL2 runner + the ink-bleed shader
+│   ├── projects.ts             # Project data
+│   └── ...                     # Theme contexts and hooks
 ├── public/                     # Static assets
 ├── package.json
 └── README.md
 ```
+
+## 🧪 The lab
+
+`/app/lab/*` and `/components/lab/*` are scratch routes for trying design
+directions side by side. They are gitignored on purpose: nothing links to them,
+nothing on the site imports them, and a candidate only becomes real by being
+moved out into `components/` proper. Delete a lab once its winner has shipped.
 
 ## 🎨 Customization
 

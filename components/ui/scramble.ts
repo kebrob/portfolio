@@ -7,7 +7,7 @@ export interface InvertBox {
     textColor?: string;
 }
 
-export function getRandomChar() {
+function getRandomChar() {
     return RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)];
 }
 

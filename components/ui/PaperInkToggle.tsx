@@ -3,7 +3,7 @@
 import { usePageTheme } from "@/lib/page-theme";
 
 /*
- * The light/dark switch. Lab candidate 39C — "Orbit · Shallow".
+ * The light/dark switch — a shallow orbit.
  *
  * A sun and a moon on the rim of a wheel whose centre is six rems below the
  * frame. Turning it 44° carries one of them out of the window and brings the
@@ -22,13 +22,11 @@ import { usePageTheme } from "@/lib/page-theme";
  * `target` is set on the click itself. The page still turns over on its own
  * clock; only the switch answers immediately.
  *
- * That does cost the trick the old segmented control used: it rendered both
- * halves identically and let CSS pick the lit one off the attribute on <html>,
- * so it was right before hydration without React knowing the theme. This one
- * has to know. It renders the default on the server and adopts the real value
- * in the provider's layout effect, which runs before the browser paints — see
- * the note in lib/page-theme.tsx. What that correction must not do is animate,
- * and see MOVE below for why it cannot.
+ * Keying to React state does mean this cannot be right before hydration the way
+ * a CSS-only control could be: it renders the default on the server and adopts
+ * the real value in the provider's layout effect, which runs before the browser
+ * paints — see the note in lib/page-theme.tsx. What that correction must not do
+ * is animate, and see MOVE below for why it cannot.
  */
 
 /** The wheel's radius. Six rems against a two-rem window is the whole idea. */
@@ -38,9 +36,8 @@ const TURN = 44;
 /**
  * How far below the window's top edge the marks ride, in px.
  *
- * This is the number that was wrong in the lab: at 7px, with marks 15px across,
- * the top of the sun sat half a pixel above the frame and was clipped flat. It
- * has to clear the largest mark's radius — 7.5px — with air to spare.
+ * It has to clear the largest mark's radius — 7.5px — with air to spare. At 7px
+ * the top of the sun sat half a pixel above the frame and was clipped flat.
  */
 const TOP_PX = 11;
 
@@ -48,7 +45,7 @@ const TOP_PX = 11;
 const SUN = 14;
 const MOON = 15;
 
-export default function PaperInkToggle({ className = "" }: { className?: string }) {
+export default function PaperInkToggle() {
     const { target, toggle, transitioning } = usePageTheme();
     const isDark = target === "dark";
 
@@ -98,7 +95,7 @@ export default function PaperInkToggle({ className = "" }: { className?: string 
             title={`Switch to the ${isDark ? "light" : "dark"} theme`}
             className={`hoverable group block text-[var(--page-fg)] ${
                 transitioning ? "cursor-wait" : "cursor-pointer"
-            } ${className}`}
+            }`}
         >
             {/*
              * The horizon is the frame's own bottom edge, and it is the only

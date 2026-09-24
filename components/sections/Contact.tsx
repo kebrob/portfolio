@@ -64,7 +64,8 @@ const emailInvertBox = { backgroundColor: "#141414", textColor: "#f8f6f2" };
 
 const STAGGER_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-export default function Contact() {
+/** `year` is resolved at build by app/page.tsx — see the note there. */
+export default function Contact({ year }: { year: number }) {
     const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
     const [emailHovered, setEmailHovered] = useState(false);
 
@@ -75,9 +76,11 @@ export default function Contact() {
     const emailRowInView = useInView(emailRowRef, { once: true, amount: 0.5 });
 
     const lines = [
-        { text: "Let\u2019s talk", offset: false, isLast: false },
-        { text: "About", offset: true, isLast: false },
-        { text: "IT", offset: true, isLast: true },
+        // `nowrap` only on the line that has a space in it — the others cannot
+        // break anyway, and the clamp()'d type gets very close to the edge.
+        { text: "Let\u2019s talk", offset: false, nowrap: true, isLast: false },
+        { text: "About", offset: true, nowrap: false, isLast: false },
+        { text: "IT", offset: true, nowrap: false, isLast: true },
     ];
 
     /*
@@ -118,7 +121,7 @@ export default function Contact() {
                     {lines.map((line, i) => (
                         <motion.span
                             key={line.text}
-                            className={`block${line.text === "Let\u2019s talk" ? " whitespace-nowrap" : ""}${line.offset ? " pl-[12vw] md:pl-[18vw]" : ""}`}
+                            className={`block${line.nowrap ? " whitespace-nowrap" : ""}${line.offset ? " pl-[12vw] md:pl-[18vw]" : ""}`}
                             initial={{ opacity: 0, y: 60 }}
                             animate={headlineInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.7, delay: i * 0.1, ease: STAGGER_EASE }}
@@ -205,7 +208,7 @@ export default function Contact() {
             {/* Footer */}
             <div className="mt-12">
                 <span className="font-mono text-xs text-grey-65">
-                    © {new Date().getFullYear()} Robert Kebinger — All rights reserved
+                    © {year} Robert Kebinger — All rights reserved
                 </span>
             </div>
         </footer>

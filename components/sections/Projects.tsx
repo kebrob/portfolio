@@ -1,182 +1,36 @@
 import Link from "next/link";
-import { projects } from "@/lib/projects";
+import { headlineStat, projects } from "@/lib/projects";
 
 /*
- * A wall of post-it notes on the dark dot grid: three project notes plus a
- * fourth, blank one that *is* the link to the full archive — there is no button.
+ * Featured work, as three figures.
  *
- * This section is in normal flow with automatic height. It used to render inside
- * ProjectsTransition's pinned `h-screen overflow-hidden` panel, where anything
- * past 100vh was unreachable rather than merely hidden, and every vertical value
- * needed a compact base plus a `tall:` variant to fit. None of that applies now.
+ * This work is under NDA: there is no client name, no product name and no
+ * screenshot to show. What is left is the one number that cleared — so the
+ * number takes the space a screenshot would have had, at the size a screenshot
+ * would have been, and the project title sits under it at reading size.
+ *
+ * It is deliberately not a stats bar, and the difference is worth keeping if
+ * this is ever edited: these are three separate projects rather than three facts
+ * about one thing, each figure is a link, and the title under it carries equal
+ * weight. A row of KPIs would shrink the labels and put nothing underneath.
+ *
+ * It replaced a wall of post-it notes, which were the only colour on the site,
+ * the only skeuomorphic object, and the only element with a drop shadow — three
+ * departures from a page built entirely from type and hairlines. Nothing here
+ * paints anything.
+ *
+ * NOTHING MOVES on arrival, and that is load-bearing rather than an omission.
+ * This section comes up out of the ink flood (see ProjectsTransition), which is
+ * the largest gesture on the page; a reveal here would be competing with it. The
+ * only movement is on hover.
+ *
+ * The vertical rhythm is not free either. ProjectsTransition times the handover
+ * against the first VISIBLE row — the eyebrow, ~110px into the section — so
+ * pt-20 / md:pt-[110px] and the eyebrow's mb-16 are fixed by that calculation.
+ * Changing them moves where the flood finishes relative to the label.
  */
 
 const FEATURED_COUNT = 3;
-
-/*
- * Note colours stay literals rather than @theme tokens: they are selected by
- * card index here in JS, so a token would only add indirection — the same call
- * the Header's COLORS map makes.
- *
- * `fold` is the shaded underside of the curled corner, `ink` the title, `meta`
- * the mono labels, `rule` the hairline above the footer.
- */
-const NOTE_PALETTE = [
-    {
-        bg: "oklch(0.87 0.105 92)",
-        fold: "oklch(0.75 0.085 92)",
-        ink: "oklch(0.27 0.03 92)",
-        meta: "rgba(46,36,4,0.58)",
-        rule: "rgba(46,36,4,0.2)",
-    },
-    {
-        bg: "oklch(0.83 0.062 240)",
-        fold: "oklch(0.71 0.05 240)",
-        ink: "oklch(0.27 0.035 250)",
-        meta: "rgba(16,26,48,0.58)",
-        rule: "rgba(16,26,48,0.2)",
-    },
-    {
-        bg: "oklch(0.82 0.078 12)",
-        fold: "oklch(0.7 0.062 12)",
-        ink: "oklch(0.28 0.035 12)",
-        meta: "rgba(48,22,24,0.58)",
-        rule: "rgba(48,22,24,0.2)",
-    },
-];
-
-const ARCHIVE_PALETTE = {
-    bg: "oklch(0.9 0.006 250)",
-    fold: "oklch(0.78 0.006 250)",
-    ink: "oklch(0.26 0.004 250)",
-    meta: "rgba(24,24,28,0.5)",
-    rule: "rgba(24,24,28,0.2)",
-};
-
-/*
- * Scatter across the 12-column grid. Column starts, vertical offsets and
- * rotations are the design's; each note straightens a little and lifts on hover
- * (see `.note` in globals.css — the angles arrive as custom properties because a
- * Tailwind `hover:` utility cannot compose three transform functions around two
- * per-note values).
- *
- * Below `md` the grid is a single column and the offsets drop away, but the
- * rotations stay so the stack still reads as pinned paper rather than a list.
- */
-const PLACEMENT = [
-    { position: "md:col-start-1 md:mt-0", rot: "-1.4deg", rotHover: "-0.3deg", scale: "1.015" },
-    { position: "md:col-start-7 md:mt-[46px]", rot: "0deg", rotHover: "0deg", scale: "1.015" },
-    { position: "md:col-start-3 md:mt-[64px]", rot: "2deg", rotHover: "0.4deg", scale: "1.015" },
-    { position: "md:col-start-8 md:mt-[22px]", rot: "-1.8deg", rotHover: "-0.4deg", scale: "1.03" },
-];
-
-type Palette = (typeof NOTE_PALETTE)[number];
-
-/*
- * The note's paper: square sheet, gloss, and the folded corner. Sizes are in
- * `cqw` against the <Link> container so a note keeps the design's proportions at
- * every column width; the mono labels are the exception, pinned to px so they
- * stay legible on a phone.
- */
-function Note({
-    href,
-    index,
-    palette,
-    children,
-}: {
-    href: string;
-    index: number;
-    palette: Palette;
-    children: React.ReactNode;
-}) {
-    const placement = PLACEMENT[index];
-
-    return (
-        <Link
-            href={href}
-            className={`note hoverable @container block w-[92%] md:w-auto md:col-span-4 md:justify-self-stretch ${
-                index % 2 === 0 ? "justify-self-start" : "justify-self-end"
-            } ${placement.position}`}
-            style={
-                {
-                    "--note-rot": placement.rot,
-                    "--note-rot-hover": placement.rotHover,
-                    "--note-scale-hover": placement.scale,
-                } as React.CSSProperties
-            }
-        >
-            <div
-                className="relative flex aspect-square flex-col justify-between px-[7.6cqw] pt-[8.6cqw] pb-[7.6cqw]"
-                style={{
-                    backgroundColor: palette.bg,
-                    boxShadow: "0 1px 1px rgba(0,0,0,0.5), 0 26px 40px -26px rgba(0,0,0,0.95)",
-                }}
-            >
-                {/* Gloss: shading across the whole sheet, plus a highlight along the top edge */}
-                <div
-                    className="pointer-events-none absolute inset-0"
-                    style={{
-                        backgroundImage:
-                            "linear-gradient(190deg, rgba(255,255,255,0.4) 0%, transparent 34%, rgba(0,0,0,0.09) 100%)",
-                    }}
-                />
-                <div
-                    className="pointer-events-none absolute top-0 left-[16%] h-[8.6cqw] w-[68%]"
-                    style={{
-                        backgroundImage:
-                            "linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0))",
-                    }}
-                />
-
-                {/*
-                 * Dog-ear, two stacked triangles: the page background cuts the
-                 * corner off the sheet, then the fold curls back over the cut.
-                 * The cut uses --color-grey-6 (the .dark-section background), not
-                 * the design's #0a0a0a, so it disappears into the page.
-                 */}
-                <div
-                    className="pointer-events-none absolute right-0 bottom-0 size-[13.2cqw]"
-                    style={{
-                        backgroundImage:
-                            "linear-gradient(315deg, var(--color-grey-6) 0 50%, transparent 50%)",
-                    }}
-                />
-                <div
-                    className="pointer-events-none absolute right-[0.5cqw] bottom-[0.5cqw] size-[11.7cqw]"
-                    style={{
-                        backgroundImage: `linear-gradient(315deg, ${palette.fold} 0 50%, transparent 50%)`,
-                        boxShadow: "-3px -3px 8px -3px rgba(0,0,0,0.45)",
-                    }}
-                />
-
-                {children}
-            </div>
-        </Link>
-    );
-}
-
-function NoteHeader({ left, right, palette }: { left: string; right: string; palette: Palette }) {
-    return (
-        <div
-            className="relative flex justify-between font-mono text-[10px] md:text-[11px] tracking-[0.18em] uppercase"
-            style={{ color: palette.meta }}
-        >
-            <span>{left}</span>
-            <span>{right}</span>
-        </div>
-    );
-}
-
-function NoteTitle({ children, palette }: { children: React.ReactNode; palette: Palette }) {
-    return (
-        <h3
-            className="relative font-bold text-[10.6cqw] leading-[0.94] tracking-[-0.04em]"
-            style={{ color: palette.ink }}
-        >
-            {children}
-        </h3>
-    );
-}
 
 export default function Projects() {
     const featured = projects.slice(0, FEATURED_COUNT);
@@ -185,89 +39,83 @@ export default function Projects() {
     return (
         <section
             id="projects"
-            className="dark-section px-[6.7vw] pt-20 md:pt-[110px] pb-40 md:pb-[28vh]"
+            className="dark-section px-[6.7vw] pt-20 pb-40 md:pt-[110px] md:pb-[28vh]"
             /*
              * Keeps .dark-section for its text colour and because the Header's
              * intersection check watches that class, but drops the background it
              * normally paints: the dark here comes from the fixed ink backdrop
              * behind the page. An opaque background of its own would hide the ink
-             * entirely and the wall would arrive already black.
+             * entirely and the section would arrive already black.
              */
             style={{ backgroundColor: "transparent", backgroundImage: "none" }}
         >
             {/* 1248px = the design's 1440px canvas minus its 96px side padding */}
             <div className="mx-auto max-w-[1248px]">
                 {/* Same treatment as About's section label */}
-                <span className="font-mono text-xs uppercase tracking-[0.3em] mb-16 block">
+                <span className="mb-16 block font-mono text-xs tracking-[0.3em] uppercase">
                     Featured Work
                 </span>
 
-                <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8">
-                    {featured.map((project, i) => {
-                        const palette = NOTE_PALETTE[i];
+                <div className="grid border-t border-grey-20 md:grid-cols-3">
+                    {featured.map((project) => {
+                        const stat = headlineStat(project);
 
                         return (
-                            <Note
+                            <Link
                                 key={project.slug}
                                 href={`/project/${project.slug}`}
-                                index={i}
-                                palette={palette}
+                                /*
+                                 * The cells are divided by rules rather than
+                                 * spaced apart: three columns with gaps read as
+                                 * three cards, and the moment they read as cards
+                                 * the section is the post-it wall again in a
+                                 * different costume.
+                                 *
+                                 * first:pl-0 / last:pr-0 keep the outer figures
+                                 * flush with the eyebrow and the page gutter, so
+                                 * the padding only ever falls between cells.
+                                 */
+                                className="hoverable group flex flex-col justify-between gap-12 border-b border-grey-20 py-10 md:border-r md:border-b-0 md:px-8 md:py-12 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
                             >
-                                <NoteHeader
-                                    left={`No. ${String(i + 1).padStart(2, "0")}`}
-                                    right={project.year}
-                                    palette={palette}
-                                />
-
-                                <NoteTitle palette={palette}>{project.title}</NoteTitle>
-
-                                {/* pr clears the dog-ear so a long value never runs under the fold */}
-                                <div
-                                    className="relative flex flex-col gap-[1.8cqw] border-t pt-[3.6cqw] pr-[11.2cqw] font-mono text-[9px] md:text-[10px] tracking-[0.14em] uppercase"
-                                    style={{ color: palette.meta, borderColor: palette.rule }}
-                                >
-                                    <div className="flex justify-between gap-3">
-                                        <span>Role</span>
-                                        <span className="text-right">{project.role}</span>
+                                <div>
+                                    <div className="text-[clamp(3.25rem,6.5vw,5.5rem)] leading-[0.82] font-bold tracking-[-0.055em] text-grey-65 tabular-nums transition-colors duration-500 group-hover:text-paper">
+                                        {stat.value}
                                     </div>
-                                    <div className="flex justify-between gap-3">
-                                        <span>Stack</span>
-                                        <span className="text-right">
-                                            {project.tech.slice(0, 2).join(" · ")}
-                                        </span>
+                                    <div className="mt-5 font-mono text-[11px] leading-[1.7] tracking-[0.15em] text-grey-45 uppercase">
+                                        {stat.label}
                                     </div>
                                 </div>
-                            </Note>
+
+                                <div>
+                                    <h3 className="text-[20px] leading-[1.2] font-medium tracking-[-0.02em] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
+                                        {project.title}
+                                    </h3>
+                                    <p className="mt-3 font-mono text-[10px] leading-[1.7] tracking-[0.15em] text-grey-45 uppercase">
+                                        {project.year} · {project.role}
+                                    </p>
+                                </div>
+                            </Link>
                         );
                     })}
-
-                    {/* The fourth note is the archive link — blank stock, no button */}
-                    <Note href="/projects" index={FEATURED_COUNT} palette={ARCHIVE_PALETTE}>
-                        <NoteHeader
-                            left="Index"
-                            right={`+ ${remaining}`}
-                            palette={ARCHIVE_PALETTE}
-                        />
-
-                        <NoteTitle palette={ARCHIVE_PALETTE}>Every project</NoteTitle>
-
-                        <div
-                            className="relative flex items-end justify-between border-t pt-[3.6cqw] pr-[11.2cqw] font-mono text-[9px] md:text-[10px] tracking-[0.14em] uppercase"
-                            style={{
-                                color: ARCHIVE_PALETTE.meta,
-                                borderColor: ARCHIVE_PALETTE.rule,
-                            }}
-                        >
-                            <span>Full archive</span>
-                            <span
-                                className="text-[5cqw] leading-[0.8]"
-                                style={{ color: ARCHIVE_PALETTE.ink }}
-                            >
-                                &#8599;
-                            </span>
-                        </div>
-                    </Note>
                 </div>
+
+                {/*
+                 * The archive link, not a button. The wall's one good structural
+                 * idea was that the way to the full index is part of the section
+                 * rather than a call to action bolted under it.
+                 */}
+                <Link
+                    href="/projects"
+                    className="hoverable group mt-12 inline-flex items-baseline gap-3 font-mono text-xs tracking-[0.25em] text-grey-55 uppercase transition-colors duration-300 hover:text-paper"
+                >
+                    <span>Every project</span>
+                    <span className="text-grey-40 transition-colors duration-300 group-hover:text-paper">
+                        +{remaining}
+                    </span>
+                    <span className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                        ↗
+                    </span>
+                </Link>
             </div>
         </section>
     );

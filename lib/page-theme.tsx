@@ -39,7 +39,7 @@ export type PageTheme = "light" | "dark";
 /** Ink is the default: it is what these pages have always been. */
 export const DEFAULT_THEME: PageTheme = "dark";
 
-export const STORAGE_KEY = "page-theme";
+const STORAGE_KEY = "page-theme";
 
 /** Long enough to read as a flood rather than a cut, short enough to re-toggle. */
 export const DURATION_MS = 1150;

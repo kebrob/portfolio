@@ -6,7 +6,6 @@ import { displayChar, highlightChar, mapRange, restoreChar, type InvertBox } fro
 
 interface TypeTextProps {
     text: string;
-    className?: string;
     /** 0 = slowest (150ms per character), 100 = fastest (30ms). */
     speed?: number;
     invertBox: InvertBox;
@@ -31,7 +30,6 @@ interface TypeTextProps {
  */
 export default function TypeText({
     text,
-    className = "",
     speed = 50,
     invertBox,
     onComplete,
@@ -97,7 +95,7 @@ export default function TypeText({
     }, [shouldAnimate]);
 
     return (
-        <span ref={containerRef} className={className} aria-hidden={ariaHidden}>
+        <span ref={containerRef} aria-hidden={ariaHidden}>
             {chars.map((char, i) => (
                 <span
                     key={i}

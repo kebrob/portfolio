@@ -44,3 +44,7 @@ next-env.d.ts
 .idea/
 # playwright mcp artifacts
 /.playwright-mcp/
+
+# scratch design lab — /lab/*, never linked from the site and never shipped
+/app/lab/
+/components/lab/

@@ -39,7 +39,7 @@ export default function HeroKeywords({ start }: Readonly<HeroKeywordsProps>) {
 
     return (
         <motion.p
-            className="text-lg leading-relaxed text-neutral-900"
+            className="text-lg leading-relaxed"
             variants={{
                 hidden: { opacity: 0, y: 14 },
                 visible: {
@@ -53,9 +53,12 @@ export default function HeroKeywords({ start }: Readonly<HeroKeywordsProps>) {
             {KEYWORDS.map((kw, i) => (
                 <span key={kw}>
                     {/*
-                      Literal colours, not --color-* tokens: framer-motion
-                      interpolates these, and it cannot tween a var().
-                      #f8f6f2 is --color-paper.
+                      Literal colours, not var(--color-*): framer-motion
+                      interpolates these and it cannot tween a var(). They are
+                      still the palette's own values, so keep them in step with
+                      globals.css by hand — #f8f6f2 is --color-paper and #666666
+                      is --color-grey-40, the muted body colour Experience uses
+                      on the same paper ground.
                     */}
                     <motion.span
                         className="font-mono tracking-wide px-1 py-0.5"
@@ -67,7 +70,7 @@ export default function HeroKeywords({ start }: Readonly<HeroKeywordsProps>) {
                                   }
                                 : {
                                       backgroundColor: "rgba(0,0,0,0.05)",
-                                      color: "#525252",
+                                      color: "#666666",
                                   }
                         }
                         transition={

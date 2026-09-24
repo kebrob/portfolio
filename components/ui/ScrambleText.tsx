@@ -6,7 +6,6 @@ import { displayChar, highlightChar, mapRange, restoreChar, type InvertBox } fro
 
 interface ScrambleTextProps {
     text: string;
-    className?: string;
     /** Restart the sweep `delay` seconds after it finishes. */
     loop?: boolean;
     /** 0 = slowest, 100 = fastest. */
@@ -25,7 +24,6 @@ interface ScrambleTextProps {
  */
 export default function ScrambleText({
     text,
-    className = "",
     loop = true,
     speed = 50,
     delay = 0,
@@ -101,7 +99,7 @@ export default function ScrambleText({
     }, []);
 
     return (
-        <span className={className}>
+        <span>
             {chars.map((char, i) => (
                 <span
                     key={i}

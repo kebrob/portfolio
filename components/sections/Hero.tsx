@@ -146,7 +146,7 @@ export default function Hero() {
 
             <button
                 onClick={scrollToAbout}
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase  text-grey-40 hover:text-black transition-colors hoverable cursor-pointer"
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase text-grey-40 hover:text-black transition-colors hoverable cursor-pointer"
             >
                 <ScrambleText
                     text="[scroll to explore]"

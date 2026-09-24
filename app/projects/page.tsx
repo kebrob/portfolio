@@ -116,7 +116,7 @@ export default function ProjectsPage() {
                                 </span>
 
                                 <span className="hidden font-mono text-[11px] tracking-[0.15em] text-[var(--page-muted)] uppercase transition-colors duration-300 group-hover:text-[var(--page-inv-muted)] md:block">
-                                    {project.tech.slice(0, 3).join(" · ")}
+                                    {project.stack.slice(0, 3).join(" · ")}
                                 </span>
 
                                 <span className="hidden text-right font-mono text-[11px] text-[var(--page-faint)] tabular-nums transition-colors duration-300 group-hover:text-[var(--page-inv-faint)] md:block">
@@ -125,7 +125,7 @@ export default function ProjectsPage() {
 
                                 {/* Below md the columns collapse into a single meta line */}
                                 <span className="col-start-2 -mt-3 font-mono text-[10px] tracking-[0.15em] text-[var(--page-faint)] uppercase transition-colors duration-300 group-hover:text-[var(--page-inv-faint)] md:hidden">
-                                    {project.year} — {project.role}
+                                    {project.year} · {project.role}
                                 </span>
                             </Link>
                         </li>

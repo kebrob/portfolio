@@ -67,7 +67,6 @@ export default function ThemeInk() {
     const [painted, setPainted] = useState(false);
 
     const reducedMotion = usePrefersReducedMotion();
-    const fallback = glFailed;
 
     // Seeded from the attribute, not from `target` — see above.
     const progress = useMotionValue(initialProgress());
@@ -130,7 +129,7 @@ export default function ThemeInk() {
         glRef.current?.setProgress(v);
     });
 
-    if (fallback) {
+    if (glFailed) {
         // The ground stays under the fallback panel: at progress 0 the panel is
         // fully transparent, and paper is exactly what should show through.
         return (

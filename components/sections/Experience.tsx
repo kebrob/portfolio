@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useTransform, MotionValue, useReducedMotion } from "framer-motion";
+import { motion, useTransform, MotionValue } from "framer-motion";
 import { useSectionProgress } from "@/lib/use-section-progress";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 
-interface Experience {
+interface Role {
     year: string;
     period: string;
     role: string;
@@ -13,7 +14,7 @@ interface Experience {
     technologies: string[];
 }
 
-const experiences: Experience[] = [
+const experiences: Role[] = [
     {
         year: "2024",
         period: "Jun 2024 — Present",
@@ -49,16 +50,14 @@ const experiences: Experience[] = [
     },
 ];
 
-// Phase boundaries within the section's 0→1 scroll progress.
-// ADJUST THESE VALUES to control timing:
-// - INTRO_END: When title fades out (higher = stays longer)
-// - EXIT_START: When section ends (lower = ends sooner)
+// Phase boundaries within the section's 0→1 scroll progress: INTRO_END is
+// where the title has finished fading out, EXIT_START where the last card
+// stops holding.
 const INTRO_END = 0.15;
 const EXIT_START = 0.92;
 const EXPERIENCE_STEP = (EXIT_START - INTRO_END) / experiences.length;
 
-// Total timeline height: dots * spacing between them.
-// Each dot row is 52px high (py-4 = 32px + dot/text height ~20px)
+// One dot row is 52px: py-4 either side (32px) plus the ~20px dot and label.
 const TIMELINE_HEIGHT = experiences.length * 52;
 
 // Shared by the desktop and mobile timeline dots — same state, different layout.
@@ -77,25 +76,22 @@ function useDotTransforms(scrollYProgress: MotionValue<number>, index: number) {
 
 export default function Experience() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const prefersReducedMotion = useReducedMotion();
+    // The hydration-safe hook, not framer's: framer's reads the media query in
+    // the first client render, so a reduced-motion visitor gets a different
+    // `style` than the server emitted. See lib/use-prefers-reduced-motion.ts.
+    const prefersReducedMotion = usePrefersReducedMotion();
 
     const scrollYProgress = useSectionProgress(containerRef);
 
-    // Transform scroll progress to intro opacity (slower fade)
-    const introOpacity = useTransform(
-        scrollYProgress,
-        [0, INTRO_END * 0.7, INTRO_END],
-        [1, 1, 0] // Stays at full opacity longer, then fades
-    );
+    const introOpacity = useTransform(scrollYProgress, [0, INTRO_END * 0.7, INTRO_END], [1, 1, 0]);
 
-    // Transform for content fade in (synced with title fade out)
+    // Fades in as the title fades out.
     const contentOpacity = useTransform(
         scrollYProgress,
         [INTRO_END * 0.9, INTRO_END * 1.1],
-        [0, 1] // Fades in AFTER title fades out
+        [0, 1]
     );
 
-    // Transform for timeline progress - continuous fill with scroll
     const timelineProgress = useTransform(scrollYProgress, [INTRO_END, EXIT_START], [0, 1]);
 
     return (
@@ -111,18 +107,15 @@ export default function Experience() {
                 `absolute inset-0` and so resolves against the padding box. */}
             <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden pt-20 tall:pt-0">
                 <div className="w-full max-w-6xl mx-auto px-[20px] md:px-[40px] lg:px-[80px]">
-                    {/* Intro headline */}
                     <motion.div
                         className="absolute inset-0 flex items-center justify-center"
                         style={{ opacity: prefersReducedMotion ? 1 : introOpacity }}
-                        aria-hidden={prefersReducedMotion ? "false" : undefined}
                     >
                         <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
                             Experience
                         </h2>
                     </motion.div>
 
-                    {/* Main content - timeline + experience */}
                     <motion.div
                         // The height-gated gap is scoped to `max-md:` on purpose. Below md
                         // this is a column, so the gap costs vertical space and has to
@@ -136,21 +129,18 @@ export default function Experience() {
                             opacity: prefersReducedMotion ? 1 : contentOpacity,
                         }}
                     >
-                        {/* Desktop Timeline */}
                         <DesktopTimeline
                             scrollYProgress={scrollYProgress}
                             timelineProgress={timelineProgress}
                             prefersReducedMotion={prefersReducedMotion}
                         />
 
-                        {/* Mobile Timeline */}
                         <MobileTimeline
                             scrollYProgress={scrollYProgress}
                             timelineProgress={timelineProgress}
                             prefersReducedMotion={prefersReducedMotion}
                         />
 
-                        {/* Experience content */}
                         <ExperienceContent
                             scrollYProgress={scrollYProgress}
                             prefersReducedMotion={prefersReducedMotion}
@@ -162,7 +152,6 @@ export default function Experience() {
     );
 }
 
-// Desktop Timeline Component
 function DesktopTimeline({
     scrollYProgress,
     timelineProgress,
@@ -170,21 +159,20 @@ function DesktopTimeline({
 }: {
     scrollYProgress: MotionValue<number>;
     timelineProgress: MotionValue<number>;
-    prefersReducedMotion: boolean | null;
+    prefersReducedMotion: boolean;
 }) {
     return (
         <div
-            className="hidden md:flex flex-col gap-0 relative py-4 min-w-[100px]"
+            className="hidden md:flex flex-col relative py-4 min-w-[100px]"
             role="navigation"
             aria-label="Timeline"
         >
-            {/* Timeline track - light gray background */}
             <div
                 className="absolute left-[5px] w-px bg-grey-85"
                 style={{ height: `${TIMELINE_HEIGHT}px` }}
             />
 
-            {/* Progress indicator - fills gradually with scroll */}
+            {/* Fills gradually with scroll */}
             <motion.div
                 className="absolute left-[5px] w-px bg-ink"
                 style={
@@ -211,17 +199,16 @@ function DesktopTimeline({
     );
 }
 
-// Timeline Dot Component
 function TimelineDot({
     exp,
     index,
     scrollYProgress,
     prefersReducedMotion,
 }: {
-    exp: Experience;
+    exp: Role;
     index: number;
     scrollYProgress: MotionValue<number>;
-    prefersReducedMotion: boolean | null;
+    prefersReducedMotion: boolean;
 }) {
     const { opacity: dotOpacity, scale: dotScale } = useDotTransforms(scrollYProgress, index);
 
@@ -239,7 +226,6 @@ function TimelineDot({
     );
 }
 
-// Mobile Timeline Component - Horizontal with progress line
 function MobileTimeline({
     scrollYProgress,
     timelineProgress,
@@ -247,7 +233,7 @@ function MobileTimeline({
 }: {
     scrollYProgress: MotionValue<number>;
     timelineProgress: MotionValue<number>;
-    prefersReducedMotion: boolean | null;
+    prefersReducedMotion: boolean;
 }) {
     return (
         <div
@@ -256,10 +242,9 @@ function MobileTimeline({
             aria-label="Timeline"
         >
             <div className="flex justify-between items-start w-full relative">
-                {/* Timeline track - horizontal, positioned at dot center */}
+                {/* Track, positioned at dot centre */}
                 <div className="absolute left-0 right-0 top-[5.5px] h-px bg-grey-85" />
 
-                {/* Progress indicator - fills horizontally with scroll */}
                 <motion.div
                     className="absolute left-0 top-[5.5px] h-px bg-ink"
                     style={
@@ -273,7 +258,6 @@ function MobileTimeline({
                     }
                 />
 
-                {/* Dots */}
                 {experiences.map((exp, index) => (
                     <MobileTimelineDot
                         key={index}
@@ -288,17 +272,16 @@ function MobileTimeline({
     );
 }
 
-// Mobile Timeline Dot Component
 function MobileTimelineDot({
     exp,
     index,
     scrollYProgress,
     prefersReducedMotion,
 }: {
-    exp: Experience;
+    exp: Role;
     index: number;
     scrollYProgress: MotionValue<number>;
-    prefersReducedMotion: boolean | null;
+    prefersReducedMotion: boolean;
 }) {
     const { opacity: dotOpacity, scale: dotScale } = useDotTransforms(scrollYProgress, index);
 
@@ -316,13 +299,12 @@ function MobileTimelineDot({
     );
 }
 
-// Experience Content Component
 function ExperienceContent({
     scrollYProgress,
     prefersReducedMotion,
 }: {
     scrollYProgress: MotionValue<number>;
-    prefersReducedMotion: boolean | null;
+    prefersReducedMotion: boolean;
 }) {
     return (
         // A 1x1 grid: every card is placed in the same cell (col-start-1 row-start-1),
@@ -347,22 +329,22 @@ function ExperienceContent({
     );
 }
 
-// Experience Card Component
 function ExperienceCard({
     exp,
     index,
     scrollYProgress,
     prefersReducedMotion,
 }: {
-    exp: Experience;
+    exp: Role;
     index: number;
     scrollYProgress: MotionValue<number>;
-    prefersReducedMotion: boolean | null;
+    prefersReducedMotion: boolean;
 }) {
     const expStart = INTRO_END + index * EXPERIENCE_STEP;
     const expEnd = expStart + EXPERIENCE_STEP;
 
-    // Fade in during first 15%, full during middle, fade out during last 15%
+    // In over the first 15% of the card's slot, out over the last 15% — except
+    // the final card, which holds so the section does not end on nothing.
     const cardOpacity = useTransform(
         scrollYProgress,
         [expStart, expStart + EXPERIENCE_STEP * 0.15, expEnd - EXPERIENCE_STEP * 0.15, expEnd],

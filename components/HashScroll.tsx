@@ -19,7 +19,7 @@ import { useLenis } from "lenis/react";
  *
  * THE HASH IS SPENT ON ARRIVAL. Once the scroll has landed the fragment is
  * dropped from the URL with replaceState, so a reload opens at the top like any
- * other load of "/" (see ScrollReset).
+ * other load of "/".
  *
  * The reason is that the same nav button already behaves that way on the home
  * page: there it calls lenis.scrollTo and never touches the URL. Leaving the

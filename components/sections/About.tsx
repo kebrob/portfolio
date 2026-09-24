@@ -6,13 +6,8 @@ import { motion, useInView } from "framer-motion";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-export default function About() {
-    const startDate = new Date("2019-08-05");
-    const now = new Date();
-    const yearsOfExperience = Math.floor(
-        (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25)
-    );
-
+/** `yearsOfExperience` is resolved at build by app/page.tsx — see the note there. */
+export default function About({ yearsOfExperience }: { yearsOfExperience: number }) {
     const sectionRef = useRef(null);
     const inView = useInView(sectionRef, { once: true, amount: 0.15 });
 
@@ -29,8 +24,16 @@ export default function About() {
     ];
 
     return (
-        <section id="about" ref={sectionRef} className="px-5 md:px-10 lg:px-20 pt-44 pb-24">
-            <div className="max-w-6xl mx-auto">
+        // From md up the section is a screen tall with its content centred, the
+        // way the hero and the Experience cards sit — top-anchored, it left a
+        // quarter of the screen empty underneath and read as riding high. Below
+        // md the content is taller than the screen, so fixed padding it keeps.
+        <section
+            id="about"
+            ref={sectionRef}
+            className="px-5 md:px-10 lg:px-20 pt-44 pb-24 md:min-h-screen md:flex md:flex-col md:justify-center md:py-24"
+        >
+            <div className="w-full max-w-6xl mx-auto">
                 <motion.span
                     className="font-mono text-xs uppercase tracking-[0.3em] mb-16 block"
                     initial={{ opacity: 0 }}

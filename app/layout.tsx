@@ -37,6 +37,26 @@ export const metadata: Metadata = {
  */
 const THEME_SCRIPT = `try{document.documentElement.dataset.pageTheme=localStorage.getItem("page-theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.pageTheme="dark"}`;
 
+/*
+ * Dev only: reload a document the back/forward buttons replayed from the HTTP
+ * cache.
+ *
+ * The Next 16 dev server ties hydration to a per-request debug channel — each
+ * document carries its request ID (self.__next_r) and the client waits on the
+ * server's stream for that ID before it hydrates. A document replayed from the
+ * cache carries an ID the server has already forgotten, so hydration waits
+ * forever: the page is inert HTML, the nav never picks up its colour, and the
+ * custom cursor never binds (globals.css hides the system one). The 404 is
+ * where it showed, because a 404 is never eligible for the bfcache and so
+ * always takes the HTTP-cache path.
+ *
+ * A bfcache restore does not re-run scripts, so this only fires on the broken
+ * path. Setting Cache-Control: no-store would be the cleaner fix, but Next
+ * overwrites that header on rendered pages. Production has no debug channel and
+ * hydrates a cached document fine, so none of this ships.
+ */
+const DEV_CACHE_RELOAD_SCRIPT = `try{var n=performance.getEntriesByType("navigation")[0];if(n&&n.type==="back_forward"&&n.transferSize===0)location.reload()}catch(e){}`;
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -51,6 +71,9 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <head>
                 <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+                {process.env.NODE_ENV === "development" && (
+                    <script dangerouslySetInnerHTML={{ __html: DEV_CACHE_RELOAD_SCRIPT }} />
+                )}
             </head>
             <body className={`${inter.variable} ${ibmPlexMono.variable} font-sans`}>
                 <ClientProviders>
