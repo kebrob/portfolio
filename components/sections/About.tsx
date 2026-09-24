@@ -79,7 +79,8 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                                         src="/images/portrait.jpg"
                                         alt={t("portraitAlt")}
                                         fill
-                                        sizes="200px"
+                                        // max-w-50 frame minus 8px padding each side: 184px, so 2x DPR picks the 384w candidate, not 640w.
+                                        sizes="184px"
                                         loading="lazy"
                                         quality={85}
                                         className="object-cover object-top"

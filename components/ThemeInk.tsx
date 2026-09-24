@@ -76,10 +76,22 @@ export default function ThemeInk() {
         // the canvas takes over and there is no gap between them.
         setPainted(true);
 
+        const canvas = canvasRef.current;
         const ro = new ResizeObserver(() => gl.resize());
-        ro.observe(canvasRef.current);
+        ro.observe(canvas);
+
+        // A context can also die later — a mobile browser reclaiming a
+        // backgrounded tab, a GPU reset. The canvas then goes transparent, and
+        // since it IS the dark ground, dark-theme text lands on bare paper.
+        // Drop to the CSS panel, which follows the same progress value.
+        const onLost = () => {
+            glRef.current = null;
+            setGlFailed(true);
+        };
+        canvas.addEventListener("webglcontextlost", onLost);
 
         return () => {
+            canvas.removeEventListener("webglcontextlost", onLost);
             ro.disconnect();
             gl.destroy();
             glRef.current = null;

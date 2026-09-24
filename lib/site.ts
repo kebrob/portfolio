@@ -22,7 +22,7 @@ export const WORDMARK = "ROBERTKEBINGER";
 /** The clock in the nav shows the time here, not the visitor's. */
 export const HOME_TIME_ZONE = "Europe/Berlin";
 
-export const EMAIL = "hello@robertkebinger.com";
+export const EMAIL = "rkebinger@gmail.com";
 
 export const SOCIALS = [
     { label: "GitHub", href: "https://github.com/kebrob" },
@@ -34,39 +34,40 @@ export const SOCIALS = [
 export const CAREER_START = "2019-08-05";
 
 /*
- * The imprint's personal data (§ 5 DDG). Deliberately placeholders — fill
- * these in before going live. Everything else on the imprint page, labels and
- * sentences, is in the messages files under `imprint`.
+ * The imprint's personal data (§ 5 DDG). Everything else on the imprint page,
+ * labels and sentences, is in the messages files under `imprint`.
  *
- * `phone` and `vatId` may be left null: the page then omits the line. A second
- * fast contact channel besides email is expected, so keep `phone` unless there
- * is another one (e.g. a contact form). `vatId` only if you have one.
+ * `phone` and `vatId` may be null: the page then omits the line. § 5 DDG wants
+ * a second fast contact channel besides email, and without a contact form that
+ * is the phone. `vatId` only if you have one.
  */
 export const IMPRINT = {
-    name: "[NAME]",
-    street: "[STREET AND NUMBER]",
-    postalCode: "[POSTAL CODE]",
-    city: "[CITY]",
-    country: "[COUNTRY]",
-    email: "[EMAIL]",
-    phone: "[PHONE]" as string | null,
+    name: AUTHOR,
+    street: "Schullerstraße 13b",
+    postalCode: "83026",
+    city: "Rosenheim",
+    country: "Germany",
+    email: EMAIL,
+    phone: "+49 1523 1882445" as string | null,
     vatId: null as string | null,
 };
 
 /*
- * The privacy policy's provider details. Placeholders like the imprint's —
- * fill in before going live. The policy text is in the messages under
- * `privacy`; these are the facts it quotes.
+ * The privacy policy's provider details. The policy text is in the messages
+ * under `privacy`; these are the facts it quotes. If the host or the mailbox
+ * changes, these change — and `updated` with them.
  */
 export const PRIVACY = {
-    /** Who serves the site, with address — e.g. "Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA". */
-    host: "[HOSTING PROVIDER, NAME AND ADDRESS]",
-    /** How long the host keeps access logs — check its documentation. */
-    logRetention: "[LOG RETENTION PERIOD]",
-    /** Legal basis for transfers outside the EU/EEA, if the host is outside it. */
-    transferBasis: "[TRANSFER BASIS, E.G. THE EU–US DATA PRIVACY FRAMEWORK]",
+    /** Who serves the site, with address (from Vercel's privacy policy). */
+    host: "Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, USA",
+    /** Runtime log retention on Vercel: 1 hour on Hobby, 1 day on Pro. */
+    logRetention: "one day at most",
+    /** Vercel Inc. is certified under the DPF. */
+    transferBasis:
+        "the EU–US Data Privacy Framework (adequacy decision, Art. 45 GDPR), under which Vercel Inc. is certified",
     /** Who handles the mailbox behind the contact address. */
-    emailProvider: "[EMAIL PROVIDER]",
+    emailProvider:
+        "Google (Gmail), Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland",
     /** "YYYY-MM" — bump whenever the policy changes. */
     updated: "2026-09",
 };

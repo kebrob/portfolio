@@ -15,8 +15,8 @@ import { alternatesFor } from "@/lib/seo";
  * adds analytics, embeds, a contact form or third-party fonts, this page has to
  * change with it.
  *
- * Same shell and parts as the imprint. Provider details are placeholders in
- * lib/site.ts (PRIVACY); the text is in the messages under `privacy`.
+ * Same shell and parts as the imprint. Provider details are in lib/site.ts
+ * (PRIVACY); the text is in the messages under `privacy`.
  */
 
 type Props = { params: Promise<{ locale: Locale }> };
@@ -97,6 +97,7 @@ export default async function PrivacyPage({ params }: Props) {
                         <Section title={t("email.title")}>
                             <p>{t("email.p1")}</p>
                             <p>{t("email.p2", { emailProvider: PRIVACY.emailProvider })}</p>
+                            <p>{t("email.p3")}</p>
                         </Section>
 
                         <Section title={t("links.title")}>

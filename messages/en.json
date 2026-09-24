@@ -430,7 +430,7 @@
         "hosting": {
             "title": "Hosting and server logs",
             "p1": "This website is hosted by {host}. When you open a page, the server automatically records what your browser sends with the request: IP address, date and time, the page requested, the referring page, and browser and operating system (server log files).",
-            "p2": "This is necessary to deliver the website and keep it secure. The legal basis is Art. 6(1)(f) GDPR — the legitimate interest in a stable and secure website. The logs are kept for {retention} and then deleted, unless a security incident requires keeping them longer.",
+            "p2": "This is necessary to deliver the website and keep it secure. The legal basis is Art. 6(1)(f) GDPR — the legitimate interest in a stable and secure website. The request logs available to me are deleted automatically after {retention}. The host keeps its own operational logs only as long as it needs them to run and secure its service; details are in its privacy policy.",
             "p3": "The host processes this data on my behalf under a data processing agreement (Art. 28 GDPR). Where data is processed outside the EU/EEA, the transfer is based on {transferBasis}."
         },
         "storage": {
@@ -445,7 +445,8 @@
         "email": {
             "title": "Contact by email",
             "p1": "If you email me, I process your address and your message only to answer you. The legal basis is Art. 6(1)(b) GDPR where your message concerns a contract or its preparation, otherwise Art. 6(1)(f) GDPR — the legitimate interest in answering inquiries.",
-            "p2": "I delete the correspondence once it is no longer needed, unless statutory retention periods apply. The mailbox is provided by {emailProvider}."
+            "p2": "I delete the correspondence once it is no longer needed, unless statutory retention periods apply. The mailbox is provided by {emailProvider}. Google may also process data in the USA; Google LLC is certified under the EU–US Data Privacy Framework.",
+            "p3": "Email is not encrypted end to end, so it can be read or changed in transit. Please do not send confidential information that way."
         },
         "links": {
             "title": "Links to other websites",

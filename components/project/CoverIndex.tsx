@@ -65,9 +65,11 @@ export default function CoverIndex({ project }: { project: Project }) {
 
     return (
         <div className="theme-fade pb-28 text-[var(--page-fg)]">
+            {/* overflow-x-clip: the art scales to 1.08 on the way out, and
+                unclipped it widens the page into a sideways scroll. */}
             <div
                 ref={ref}
-                className="relative flex h-[92vh] min-h-[34rem] flex-col justify-between"
+                className="relative flex h-[92vh] min-h-[34rem] flex-col justify-between overflow-x-clip"
             >
                 <motion.div
                     aria-hidden="true"

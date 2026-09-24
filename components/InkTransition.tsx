@@ -81,10 +81,21 @@ export default function InkTransition({
         smoothed.jump(progress.get());
         gl.setProgress(progress.get());
 
+        const canvas = canvasRef.current;
         const ro = new ResizeObserver(() => gl.resize());
-        ro.observe(canvasRef.current);
+        ro.observe(canvas);
+
+        // A context lost after startup (backgrounded mobile tab, GPU reset)
+        // leaves a transparent canvas; hand over to the crossfade, as if WebGL2
+        // had never been there.
+        const onLost = () => {
+            glRef.current = null;
+            setGlFailed(true);
+        };
+        canvas.addEventListener("webglcontextlost", onLost);
 
         return () => {
+            canvas.removeEventListener("webglcontextlost", onLost);
             ro.disconnect();
             gl.destroy();
             glRef.current = null;
