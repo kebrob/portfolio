@@ -3,6 +3,7 @@
 import { useMessages, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { headlineStat, resolveProjects } from "@/lib/projects";
+import { OVER_INK } from "@/lib/ink/dark-panel";
 
 /*
  * Featured work, as three figures.
@@ -50,7 +51,7 @@ export default function Projects() {
              * behind the page. An opaque background of its own would hide the ink
              * entirely and the section would arrive already black.
              */
-            style={{ backgroundColor: "transparent", backgroundImage: "none" }}
+            style={OVER_INK}
         >
             {/* 1248px = the design's 1440px canvas minus its 96px side padding */}
             <div className="mx-auto max-w-[1248px]">

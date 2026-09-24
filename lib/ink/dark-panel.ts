@@ -18,3 +18,23 @@ export const DARK_PANEL = {
     backgroundSize: "20px 20px",
     backgroundAttachment: "fixed",
 } as const;
+
+/*
+ * The ground of a section that sits on the ink rather than painting its own:
+ * the projects wall and the home page's contact footer.
+ *
+ * Transparent so the fixed canvas behind shows through — an opaque colour would
+ * hide the flood, and the dot lattice would be painted twice.
+ *
+ * The empty gradient changes nothing on screen. It is for contrast checkers
+ * (axe, and so Lighthouse), which cannot see a fixed canvas behind a section
+ * that has scrolled away from it: with no image in the way they measured the
+ * section's grey text against the body's paper and failed it at 2.25:1. An
+ * image ground makes them report "needs review" instead, which is the truth —
+ * on the ink it is the grey-6 of DARK_PANEL, where grey-50, the faintest text
+ * used here, is 4.85:1.
+ */
+export const OVER_INK = {
+    backgroundColor: "transparent",
+    backgroundImage: "linear-gradient(transparent, transparent)",
+} as const;

@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import ScrambleText from "@/components/ui/ScrambleText";
 import LegalLinks from "@/components/layout/LegalLinks";
+import { OVER_INK } from "@/lib/ink/dark-panel";
 import { EASE_OUT_EXPO, INK, PAPER } from "@/lib/palette";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { EMAIL as email, SOCIALS as socials } from "@/lib/site";
@@ -111,7 +112,7 @@ export default function Contact({ year }: { year: number }) {
              * scrolling down fast meets a hard edge where the finished dark meets
              * the flood, and the dot lattice is painted twice.
              */
-            style={{ backgroundColor: "transparent", backgroundImage: "none" }}
+            style={OVER_INK}
         >
             <div ref={headlineRef} className="overflow-hidden">
                 <h2 className="font-bold uppercase leading-[0.85] tracking-tight text-[clamp(3.5rem,13vw,13rem)]">
