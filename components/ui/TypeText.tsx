@@ -77,7 +77,6 @@ export default function TypeText({
             timeoutId = setTimeout(typeNextChar, charDuration);
         };
 
-        // Hide everything up front, then reveal one character at a time.
         charsRef.current.forEach((charEl) => {
             if (charEl) charEl.style.opacity = "0";
         });

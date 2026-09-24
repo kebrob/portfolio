@@ -8,13 +8,12 @@
  * covers — which /app/lab/ and /components/lab/ deliberately are. Without this
  * the lab compiles and renders, but every utility it is the only user of is
  * missing from the sheet, so the candidates arrive as unstyled text with the
- * site's own classes still working. It looks like a broken layout rather than a
- * missing stylesheet, which is what makes it worth a note.
+ * site's own classes still working.
  *
  * This costs production nothing: the lab is not in the repository, so on a
  * deploy there is no directory here to scan and no extra utility ships.
  */
-@source "../app/lab";
+@source "./[locale]/lab";
 @source "../components/lab";
 
 /*
@@ -55,7 +54,6 @@
  *   curl -s localhost:3000/_next/static/chunks/<sheet>.css | grep -c color-paper
  */
 @theme {
-    /* The two primary colours: page background and body text. */
     --color-paper: hsl(45 30% 96%);
     --color-ink: hsl(0 0% 8%);
 
@@ -69,11 +67,54 @@
     --color-grey-13: hsl(0 0% 13%);
     --color-grey-20: hsl(0 0% 20%);
     --color-grey-40: hsl(0 0% 40%);
-    --color-grey-45: hsl(0 0% 45%);
+    /* The lightest grey that still reaches 4.5:1 for small text on grey-6. */
+    --color-grey-50: hsl(0 0% 50%);
     --color-grey-55: hsl(0 0% 55%);
     --color-grey-65: hsl(0 0% 65%);
     --color-grey-80: hsl(0 0% 80%);
     --color-grey-85: hsl(0 0% 85%);
+
+    /*
+     * Type. The families point at the variables next/font puts on <html>
+     * (see app/[locale]/layout.tsx) — they have to be on <html>, not <body>,
+     * because Tailwind emits these on :root and a var() resolves where it is
+     * declared.
+     */
+    --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+    /* 11px, and the floor: nothing on the site is set smaller. */
+    --text-mini: 0.6875rem;
+    --tracking-label: 0.3em; /* eyebrows and back links */
+    --tracking-caps: 0.25em; /* column headers and text links */
+    --tracking-meta: 0.15em; /* meta lines under titles */
+
+    /* The site's expo-out; also EASE_OUT_EXPO in lib/palette.ts for framer. */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+    --gutter: 1.25rem;
+
+    @variant md {
+        --gutter: 2.5rem;
+    }
+
+    @variant lg {
+        --gutter: 5rem;
+    }
+
+    /*
+     * The dot lattice of every dark surface: white at 2.5% on a 20px grid,
+     * aligned to the graph paper. Used by .dark-section, .theme-ground and
+     * DARK_PANEL (lib/ink/dark-panel.ts), and mirrored by the ink shader at
+     * density 1 (FRAG_MAIN in lib/ink/gl-transition.ts).
+     */
+    --pattern-dots: radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px);
+}
+
+@utility px-gutter {
+    padding-inline: var(--gutter);
 }
 
 @layer base {
@@ -82,32 +123,155 @@
     }
 
     body {
-        --font-sans: var(--font-inter);
-        --font-mono: var(--font-ibm-plex-mono);
-
-        font-family:
-            var(--font-inter),
-            -apple-system,
-            BlinkMacSystemFont,
-            sans-serif;
-
-        cursor: none;
         position: relative;
         background-color: var(--color-paper);
         color: var(--color-ink);
+        /* A word longer than its line breaks rather than overflowing — the
+           insurance German compounds need, invisible until one is too long. */
+        overflow-wrap: break-word;
+    }
+
+    /*
+     * The system cursor is hidden only once CustomCursor has mounted and
+     * found a mouse — it sets this class. Hiding it in plain CSS left mouse
+     * users with no cursor at all until hydration, or forever if the script
+     * failed.
+     */
+    html.has-custom-cursor body {
+        cursor: none;
+    }
+
+    /* The skip link's target. Focused by the jump, but it is not a control. */
+    main:focus {
+        outline: none;
+    }
+
+    /*
+     * One visible focus ring for every keyboard-focusable thing, in the
+     * current text colour so it reads on paper, on ink, and mid-flood alike.
+     */
+    :focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 3px;
+    }
+
+    /*
+     * LANGUAGE-SPECIFIC TYPE. None of this applies to English.
+     *
+     * German runs 30–40% longer in words that do not break on their own;
+     * hyphenation in running text keeps the measure even. Headlines and the
+     * mono labels are left alone — a hyphen in a display line reads as an
+     * error.
+     */
+    :lang(de) :is(p, dd, li) {
+        hyphens: auto;
+    }
+
+    /*
+     * Korean: Hangul is not in Inter, so the stack names Korean faces for the
+     * browser to fall back to glyph by glyph — Pretendard first, for when it is
+     * self-hosted (see the i18n checklist in the README), then the system
+     * faces. keep-all stops lines breaking inside a word, which Korean
+     * otherwise allows between any two syllables.
+     */
+    :lang(ko) {
+        --font-sans:
+            var(--font-inter), "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
+            sans-serif;
+        word-break: keep-all;
     }
 }
 
 /*
- * Kerning off so a measured width equals the rendered width: the Hero headline
- * is sized by binary search against a hidden sizer element, and kerning pairs
- * would make the two disagree. `.headline-metrics` is what puts the sizer on the
- * same footing as the heading — it is a <div>, so the `h1` selector misses it.
+ * Korean overrides that have to beat the utilities, so they sit outside the
+ * layers. Hangul needs more leading than Latin text at the same size, and the
+ * tight negative tracking the headlines use collides syllable blocks.
  */
-h1,
-.headline-metrics {
+:lang(ko) :is(p, dd, li) {
+    line-height: 1.75;
+}
+
+:lang(ko) :is(h1, h2, h3) {
+    letter-spacing: -0.01em;
+}
+
+/* The nav is fixed at z-50, so this has to clear it. */
+.skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 60;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    translate: 0 -200%;
+}
+
+.skip-link:focus {
+    translate: 0 0;
+}
+
+/* The hero statement's entrance — see Hero.tsx for why it is CSS rather than framer-motion. */
+@keyframes hero-rise {
+    from {
+        opacity: 0;
+        translate: 0 14px;
+    }
+}
+
+.hero-rise {
+    animation: hero-rise 0.55s ease-out 0.3s both;
+}
+
+.hero-rise-2 {
+    animation-delay: 0.52s;
+}
+
+.hero-rise-3 {
+    animation-delay: 0.74s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-rise {
+        animation-name: none;
+    }
+}
+
+/*
+ * Kerning off so the headline's width is exactly proportional to its size:
+ * with kerning, pairs would shift at some sizes and not others.
+ */
+h1 {
     font-kerning: none;
     font-feature-settings: "kern" 0;
+}
+
+/*
+ * THE HERO NAME, FITTED TO THE VIEWPORT IN CSS.
+ *
+ * With kerning off and letter-spacing in em, the headline's width is linear in
+ * its font size: measured in Inter Bold at tracking-tighter, "Robert Kebinger"
+ * plus the trailing cube is 7.3797 x font-size + 8px (the 8px is the cube's
+ * fixed mx-1 margins). So "the largest size that fits the viewport" is simply
+ * (100vw - 8px) / 7.3797, and the 0.96 is breathing room. It used to be found by a binary search in JavaScript after
+ * hydration, which kept the name invisible until then and re-ran on resize.
+ *
+ * RE-MEASURE 7.3797 if the text, font, weight, tracking or cube change: set
+ * the heading to 1000px and 500px and divide the width difference by 500.
+ *
+ * The pinned width is that same width at the fitted size, for the reveal
+ * (see Hero.tsx): 7.3797 x fs + 8px = 0.96 x (100vw - 8px) + 8px.
+ */
+.hero-headline {
+    font-size: calc((100vw - 8px) * 0.96 / 7.3797);
+}
+
+.hero-headline-pinned {
+    width: calc((100vw - 8px) * 0.96 + 8px);
 }
 
 /*
@@ -122,22 +286,23 @@ h1,
  *
  * Light is the base and dark is the override, even though dark is the default
  * the pages open in, because the attribute is what the inline script in
- * app/layout.tsx writes and it always writes one or the other.
- *
- * The dark values are the greys those pages already used, so the dark theme is
- * byte-for-byte what shipped before the switch existed.
+ * app/[locale]/layout.tsx writes and it always writes one or the other.
  */
 :root {
     --page-fg: var(--color-ink);
-    --page-muted: hsl(0 0% 8% / 0.55);
-    --page-faint: hsl(0 0% 8% / 0.4);
+    /*
+     * Muted and faint are sized to WCAG AA for small text (4.5:1) on paper:
+     * 0.68 is 6.1:1 and 0.6 is 4.7:1.
+     */
+    --page-muted: hsl(0 0% 8% / 0.68);
+    --page-faint: hsl(0 0% 8% / 0.6);
     --page-rule: hsl(0 0% 8% / 0.18);
     --page-rule-soft: hsl(0 0% 8% / 0.1);
     /* Row hover: the nav's contact-button inversion, at row scale. */
     --page-inv: var(--color-ink);
     --page-inv-fg: var(--color-paper);
     --page-inv-muted: hsl(45 30% 96% / 0.6);
-    --page-inv-faint: hsl(45 30% 96% / 0.45);
+    --page-inv-faint: hsl(45 30% 96% / 0.52);
     /* Backdrop for the sticky column header. */
     --page-veil: hsl(45 30% 96% / 0.82);
 }
@@ -145,13 +310,13 @@ h1,
 [data-page-theme="dark"] {
     --page-fg: var(--color-paper);
     --page-muted: var(--color-grey-55);
-    --page-faint: var(--color-grey-45);
+    --page-faint: var(--color-grey-50);
     --page-rule: var(--color-grey-20);
     --page-rule-soft: var(--color-grey-13);
     --page-inv: var(--color-paper);
     --page-inv-fg: var(--color-ink);
-    --page-inv-muted: hsl(0 0% 8% / 0.6);
-    --page-inv-faint: hsl(0 0% 8% / 0.45);
+    --page-inv-muted: hsl(0 0% 8% / 0.68);
+    --page-inv-faint: hsl(0 0% 8% / 0.6);
     --page-veil: hsl(0 0% 6% / 0.82);
 }
 
@@ -191,7 +356,7 @@ h1,
  * visibly lighter band for the same few frames.
  *
  * This is that missing frame, in CSS, keyed to the attribute the inline script
- * in app/layout.tsx writes. ThemeInk drops it the moment the canvas has painted
+ * in app/[locale]/layout.tsx writes. ThemeInk drops it the moment the canvas has painted
  * its first frame, so it never has to be kept in step with a running flood: it
  * exists only before there is one.
  *
@@ -213,7 +378,7 @@ h1,
 
 [data-page-theme="dark"] .theme-ground {
     background-color: var(--color-grey-6);
-    background-image: radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px);
+    background-image: var(--pattern-dots);
     background-size: 20px 20px;
     background-attachment: fixed;
 }
@@ -249,8 +414,7 @@ h1,
     background-color: var(--color-grey-6);
     color: var(--color-paper);
     position: relative;
-    /* Dot pattern - aligned to graph paper grid. White at 2.5% alpha; see grid-bg. */
-    background-image: radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px);
+    background-image: var(--pattern-dots);
     background-size: 20px 20px;
     background-position: 0 0;
     background-attachment: fixed;
@@ -315,11 +479,14 @@ h1,
     );
 }
 
+/* Positioned by CustomCursor through `translate`; `transform` is the hover scale. */
 .custom-cursor {
     width: 12px;
     height: 12px;
     background-color: white;
     position: fixed;
+    top: 0;
+    left: 0;
     pointer-events: none;
     z-index: 9999;
     mix-blend-mode: difference;
@@ -332,13 +499,10 @@ h1,
 
 @layer components {
     .grid-bg {
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        pointer-events: none !important;
-        z-index: 0 !important;
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
         /*
          * Graph paper pattern. These are --color-ink at 1.5% and 3% alpha, kept
          * as literals because plain CSS has no equivalent of Tailwind's /opacity
@@ -348,16 +512,12 @@ h1,
             linear-gradient(0deg, hsl(0 0% 8% / 0.015) 1px, transparent 1px),
             linear-gradient(90deg, hsl(0 0% 8% / 0.015) 1px, transparent 1px),
             linear-gradient(0deg, hsl(0 0% 8% / 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, hsl(0 0% 8% / 0.03) 1px, transparent 1px) !important;
+            linear-gradient(90deg, hsl(0 0% 8% / 0.03) 1px, transparent 1px);
         background-size:
             20px 20px,
             20px 20px,
             100px 100px,
-            100px 100px !important;
-        background-position:
-            10px 10px,
-            10px 10px,
-            10px 10px,
-            10px 10px !important;
+            100px 100px;
+        background-position: 10px 10px;
     }
 }

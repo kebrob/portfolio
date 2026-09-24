@@ -3,47 +3,45 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { EASE_OUT_EXPO as EASE } from "@/lib/palette";
 
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-
-/** `yearsOfExperience` is resolved at build by app/page.tsx — see the note there. */
+/** `yearsOfExperience` is resolved at build by app/[locale]/page.tsx — see the note there. */
 export default function About({ yearsOfExperience }: { yearsOfExperience: number }) {
     const sectionRef = useRef(null);
     const inView = useInView(sectionRef, { once: true, amount: 0.15 });
+    const t = useTranslations("about");
 
-    const headingWords = "Building digital products with precision and purpose.".split(" ");
+    // Split on spaces for the word stagger. Korean separates words with spaces
+    // too, so this holds for every language the site is planned for.
+    const headingWords = t("heading").split(" ");
 
-    const paragraphs = [
-        "I'm a developer based in Rosenheim, Germany, focused on building fast, intuitive interfaces with a strong attention to detail. I care about clean structure, maintainability, and creating experiences that feel effortless to use.",
-        "While my main focus is frontend quality, I also work across the stack by turning ideas into complete, production-ready applications from concept to deployment.",
-    ];
+    const paragraphs = [t("intro"), t("stack")];
 
     const stats = [
-        { value: `${yearsOfExperience}+`, label: "Years Experience" },
-        { value: "35+", label: "Technologies & Tools" },
+        { value: t("yearsValue", { count: yearsOfExperience }), label: t("yearsLabel") },
+        { value: t("toolsValue"), label: t("toolsLabel") },
     ];
 
     return (
         // From md up the section is a screen tall with its content centred, the
-        // way the hero and the Experience cards sit — top-anchored, it left a
-        // quarter of the screen empty underneath and read as riding high. Below
-        // md the content is taller than the screen, so fixed padding it keeps.
+        // way the hero and the Experience cards sit. Below md the content is
+        // taller than the screen, so it keeps fixed padding.
         <section
             id="about"
             ref={sectionRef}
-            className="px-5 md:px-10 lg:px-20 pt-44 pb-24 md:min-h-screen md:flex md:flex-col md:justify-center md:py-24"
+            className="px-gutter pt-44 pb-24 md:min-h-screen md:flex md:flex-col md:justify-center md:py-24"
         >
             <div className="w-full max-w-6xl mx-auto">
                 <motion.span
-                    className="font-mono text-xs uppercase tracking-[0.3em] mb-16 block"
+                    className="font-mono text-xs uppercase tracking-label mb-16 block"
                     initial={{ opacity: 0 }}
                     animate={inView ? { opacity: 1 } : {}}
                     transition={{ duration: 0.5, ease: "easeOut" }}
                 >
-                    About
+                    {t("eyebrow")}
                 </motion.span>
 
-                {/* Heading word stagger */}
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-[1.1] tracking-tight mb-6 lg:mb-8 overflow-hidden">
                     {headingWords.map((word, i) => (
                         <motion.span
@@ -59,11 +57,9 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                 </h2>
 
                 <div className="grid md:grid-cols-12 gap-8 md:gap-8">
-                    {/* Photo — clip-path wipe */}
                     <div className="md:col-span-3 me-5">
-                        {/* Outer wrapper stays unrotated — border + tape are relative to this */}
+                        {/* Stays unrotated — border and tape are positioned against this, not the tilted photo. */}
                         <div className="relative group max-w-50">
-                            {/* Decorative border stays straight — the "placeholder" in the textbook */}
                             <motion.div
                                 className="absolute -bottom-3 -right-3 w-full h-full -z-10"
                                 style={{ border: "1px solid rgba(0,0,0,0.15)" }}
@@ -71,7 +67,6 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                                 animate={inView ? { opacity: 1 } : {}}
                                 transition={{ duration: 0.4, delay: 0.9, ease: "easeOut" }}
                             />
-                            {/* Photo is slightly tilted — looks like it was taped in off-angle */}
                             <motion.div
                                 className="aspect-square md:aspect-3/4 overflow-hidden bg-white relative"
                                 style={{ rotate: -0.6, x: 4, y: 4, padding: "8px 8px 28px 8px" }}
@@ -82,7 +77,7 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                                 <div className="relative w-full h-full">
                                     <Image
                                         src="/images/portrait.jpg"
-                                        alt="Robert Kebinger"
+                                        alt={t("portraitAlt")}
                                         fill
                                         sizes="200px"
                                         loading="lazy"
@@ -91,12 +86,7 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                                     />
                                 </div>
                             </motion.div>
-                            {/*
-                              Tape strips: center placed exactly at each corner via translate before rotate.
-                              translate(50%, -50%) → center at top-right corner.
-                              translate(-50%, 50%) → center at bottom-left corner.
-                              Both ends overflow the photo onto the surrounding background.
-                            */}
+                            {/* Tape strips: translate before rotate puts each strip's centre exactly on its corner. */}
                             <motion.div
                                 className="absolute z-10 pointer-events-none"
                                 style={{
@@ -109,7 +99,6 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                                         "linear-gradient(180deg, rgba(225,225,222,0.48) 0%, rgba(195,193,188,0.52) 100%)",
                                     boxShadow:
                                         "0 1px 4px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(150,148,142,0.15)",
-                                    /* left end: single deep notch; right end: two subtle bumps */
                                     clipPath:
                                         "polygon(6% 0%, 92% 3%, 98% 0%, 100% 24%, 96% 50%, 100% 74%, 95% 100%, 9% 97%, 0% 78%, 5% 52%, 1% 28%, 0% 8%)",
                                 }}
@@ -129,7 +118,6 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                                         "linear-gradient(180deg, rgba(225,225,222,0.48) 0%, rgba(195,193,188,0.52) 100%)",
                                     boxShadow:
                                         "0 1px 4px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(150,148,142,0.15)",
-                                    /* left end: wider irregular tear + small nick; right end: concave pull */
                                     clipPath:
                                         "polygon(3% 0%, 7% 5%, 4% 15%, 8% 2%, 94% 3%, 100% 20%, 97% 48%, 99% 80%, 100% 100%, 91% 97%, 6% 100%, 0% 72%, 3% 44%, 0% 18%)",
                                 }}
@@ -140,9 +128,7 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                         </div>
                     </div>
 
-                    {/* Content */}
                     <div className="md:col-span-9 max-w-xl space-y-8">
-                        {/* Paragraphs — stagger fade up */}
                         <div className="space-y-6">
                             {paragraphs.map((p, i) => (
                                 <motion.p
@@ -162,9 +148,7 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                             ))}
                         </div>
 
-                        {/* Stats — border draws, then items stagger up */}
                         <div className="pt-8 relative">
-                            {/* Border draw */}
                             <motion.div
                                 className="absolute top-0 left-0 h-px bg-black"
                                 initial={{ width: "0%" }}
@@ -172,10 +156,12 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
                                 transition={{ duration: 0.7, delay: 0.55, ease: EASE }}
                             />
                             <div className="grid grid-cols-2 gap-8 mt-1 items-start">
+                                {/* flex-wrap: on the narrowest phones the label drops
+                                    under its number instead of pushing the page wider. */}
                                 {stats.map(({ value, label }, i) => (
                                     <motion.div
                                         key={label}
-                                        className="flex flex-row items-center gap-3"
+                                        className="flex min-w-0 flex-row flex-wrap items-center gap-3"
                                         initial={{ opacity: 0, y: 16 }}
                                         animate={inView ? { opacity: 1, y: 0 } : {}}
                                         transition={{

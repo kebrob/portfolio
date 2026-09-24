@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { usePageTheme } from "@/lib/page-theme";
 
 /*
@@ -33,21 +34,17 @@ import { usePageTheme } from "@/lib/page-theme";
 const R_REM = 6;
 /** Degrees between the two rest positions. */
 const TURN = 44;
-/**
- * How far below the window's top edge the marks ride, in px.
- *
- * It has to clear the largest mark's radius — 7.5px — with air to spare. At 7px
- * the top of the sun sat half a pixel above the frame and was clipped flat.
- */
+/** How far below the window's top edge the marks ride, in px. Must clear the largest mark's radius (7.5px). */
 const TOP_PX = 11;
 
-/** Sun and moon at a size that holds up next to 12px mono. */
 const SUN = 14;
 const MOON = 15;
 
 export default function PaperInkToggle() {
+    const t = useTranslations("theme");
     const { target, toggle, transitioning } = usePageTheme();
     const isDark = target === "dark";
+    const label = t(isDark ? "toLight" : "toDark");
 
     /*
      * Only transition while a flood is actually running.
@@ -91,8 +88,8 @@ export default function PaperInkToggle() {
             // Not disabled mid-flood — a disabled button drops focus and reads
             // as broken. The handler ignores the click; the cursor says why.
             aria-pressed={isDark}
-            aria-label={`Switch to the ${isDark ? "light" : "dark"} theme`}
-            title={`Switch to the ${isDark ? "light" : "dark"} theme`}
+            aria-label={label}
+            title={label}
             className={`hoverable group block text-[var(--page-fg)] ${
                 transitioning ? "cursor-wait" : "cursor-pointer"
             }`}

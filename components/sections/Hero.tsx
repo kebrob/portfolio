@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useLenis } from "lenis/react";
 import ScrambleText from "@/components/ui/ScrambleText";
 import TypeText from "@/components/ui/TypeText";
 import HeroKeywords from "@/components/sections/HeroKeywords";
-import { useFittedHeadline } from "@/lib/use-fitted-headline";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
+import { INK, PAPER } from "@/lib/palette";
+import { AUTHOR, EMAIL } from "@/lib/site";
 
-const HEADLINE = "Robert Kebinger";
+const HEADLINE = AUTHOR;
 
 /**
- * Typography that decides the fitted size. The hidden sizer and the <h1> have to
- * carry it identically, or the measured width is not the rendered width.
- * `headline-metrics` pulls in the kerning reset that globals.css otherwise
- * applies to `h1` by element selector.
+ * Typography the fitted size in globals.css (.hero-headline) was measured
+ * with. Change any of it — weight, tracking, the text, the cube — and the
+ * constant there has to be re-measured.
  */
-const HEADLINE_CLASS =
-    "headline-metrics font-bold leading-[1.2] tracking-tighter whitespace-nowrap";
+const HEADLINE_CLASS = "hero-headline font-bold leading-[1.2] tracking-tighter whitespace-nowrap";
 
 /** The square trailing the headline. Sized in `em`, so it scales with the fit. */
 function HeadlineCube({ "aria-hidden": ariaHidden }: { "aria-hidden"?: boolean }) {
@@ -30,12 +30,14 @@ function HeadlineCube({ "aria-hidden": ariaHidden }: { "aria-hidden"?: boolean }
 }
 
 export default function Hero() {
+    const t = useTranslations("hero");
     const lenis = useLenis();
+    const reducedMotion = usePrefersReducedMotion();
     const [hasAnimated, setHasAnimated] = useState(false);
-    const { measureRef, fontSize, width } = useFittedHeadline({ settled: hasAnimated });
 
     const scrollToAbout = () => {
         lenis?.scrollTo("#about", {
+            immediate: reducedMotion,
             duration: 1.5,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             lerp: 0.1,
@@ -44,72 +46,58 @@ export default function Hero() {
 
     return (
         <section className="min-h-screen flex flex-col relative">
-            {/*
-              Sizer for useFittedHeadline. Hidden with `invisible` rather than
-              `hidden`, because it still has to lay out for scrollWidth to mean
-              anything, and held out of the a11y tree since the <h1> below
-              already carries the real text.
-            */}
-            <div
-                ref={measureRef}
-                aria-hidden="true"
-                className={`${HEADLINE_CLASS} absolute top-0 left-0 invisible pointer-events-none`}
-            >
-                {HEADLINE}
-                <HeadlineCube />
-            </div>
-
             <div className="flex-1 flex items-center pb-32 md:pb-40 lg:pb-48">
-                <div className="w-full flex items-center justify-between px-[20px] md:px-[40px] lg:px-[80px]">
-                    {/* Statement block */}
-                    <motion.div
-                        className="max-w-[520px] space-y-4"
-                        initial="hidden"
-                        animate="visible"
-                        variants={{
-                            hidden: {},
-                            visible: { transition: { staggerChildren: 0.22, delayChildren: 0.3 } },
-                        }}
-                    >
-                        <motion.p
-                            className="text-xl font-semibold"
-                            variants={{
-                                hidden: { opacity: 0, y: 14 },
-                                visible: {
-                                    opacity: 1,
-                                    y: 0,
-                                    transition: { duration: 0.55, ease: "easeOut" },
-                                },
-                            }}
-                        >
-                            <span className="inline-block bg-grey-10 text-white font-mono px-1 py-0.5">
-                                Frontend-focused
-                            </span>{" "}
-                            Full-Stack Developer
-                        </motion.p>
+                <div className="w-full flex items-center justify-between px-gutter">
+                    {/*
+                      The entrance is a CSS animation, not a framer-motion one:
+                      framer renders `initial` into the served HTML, so this
+                      text — the LCP element — would stay at opacity 0 until
+                      hydration. In CSS it starts on first paint.
+                    */}
+                    <div className="max-w-[520px] space-y-4">
+                        <p className="hero-rise text-xl font-semibold">
+                            {t.rich("role", {
+                                chip: (chunks) => (
+                                    <span className="inline-block bg-grey-10 text-white font-mono px-1 py-0.5">
+                                        {chunks}
+                                    </span>
+                                ),
+                            })}
+                        </p>
 
                         <HeroKeywords start={hasAnimated} />
-                    </motion.div>
+
+                        {/* A text link rather than a second chip: two black boxes would compete. */}
+                        <p className="hero-rise hero-rise-3 pt-4">
+                            <a
+                                href={`mailto:${EMAIL}`}
+                                className="hoverable group inline-flex items-center gap-2 border-b border-ink/30 pb-1 font-mono text-xs tracking-caps uppercase transition-colors duration-300 hover:border-ink"
+                            >
+                                {t("emailCta")}
+                                <span
+                                    aria-hidden="true"
+                                    className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                                >
+                                    ↗
+                                </span>
+                            </a>
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <div className="absolute bottom-10 left-0 right-0 flex justify-center">
-                <h1
-                    className={HEADLINE_CLASS}
-                    style={{
-                        opacity: fontSize ? 1 : 0,
-                        fontSize: fontSize ?? "10px",
-                        /*
-                          Pinned to the measured width for the reveal only.
-                          TypeText swaps the character it is revealing for a
-                          random symbol, so the natural width changes on every
-                          tick — under `justify-center` that swings the whole
-                          headline sideways. Once the real text is in place the
-                          natural width is the right one.
-                        */
-                        width: hasAnimated || width === null ? "auto" : `${width}px`,
-                    }}
-                >
+                {/*
+                  Sized entirely in CSS — see .hero-headline in globals.css —
+                  so the size is right in the served HTML and follows every
+                  resize with no script. During the reveal the width is pinned
+                  (.hero-headline-pinned): TypeText swaps the character it is
+                  revealing for a random symbol, so the natural width changes
+                  on every tick, and under `justify-center` that swings the
+                  whole headline sideways. Once the real text is in place the
+                  natural width is the right one.
+                */}
+                <h1 className={`${HEADLINE_CLASS} ${hasAnimated ? "" : "hero-headline-pinned"}`}>
                     {/*
                       The animation renders one span per character, which screen
                       readers announce letter by letter, and it starts empty so
@@ -128,14 +116,11 @@ export default function Hero() {
                             <HeadlineCube aria-hidden />
                         </>
                     )}
-                    {!hasAnimated && fontSize !== null && (
+                    {!hasAnimated && (
                         <TypeText
                             text={HEADLINE}
                             speed={50}
-                            invertBox={{
-                                backgroundColor: "#141414",
-                                textColor: "#f8f6f2",
-                            }}
+                            invertBox={{ backgroundColor: INK, textColor: PAPER }}
                             startOnView={true}
                             onComplete={() => setHasAnimated(true)}
                             aria-hidden
@@ -149,7 +134,7 @@ export default function Hero() {
                 className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase text-grey-40 hover:text-black transition-colors hoverable cursor-pointer"
             >
                 <ScrambleText
-                    text="[scroll to explore]"
+                    text={t("scrollCue")}
                     invertBox={{
                         backgroundColor: "#000",
                         textColor: "#fff",

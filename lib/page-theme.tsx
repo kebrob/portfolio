@@ -36,19 +36,17 @@ import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 
 export type PageTheme = "light" | "dark";
 
-/** Ink is the default: it is what these pages have always been. */
 export const DEFAULT_THEME: PageTheme = "dark";
 
 const STORAGE_KEY = "page-theme";
 
-/** Long enough to read as a flood rather than a cut, short enough to re-toggle. */
 export const DURATION_MS = 1150;
 
 /*
  * The DOM attribute is the single source of truth, not React state.
  *
  * It has to be: globals.css keys the whole token set off it, and the inline
- * script in app/layout.tsx sets it before first paint so a stored preference
+ * script in app/[locale]/layout.tsx sets it before first paint so a stored preference
  * does not flash. React state only ever mirrors it, and the mirror is filled in
  * from the attribute in a layout effect — see the provider.
  */
@@ -59,6 +57,24 @@ function subscribe(onChange: () => void) {
     return () => {
         listeners.delete(onChange);
     };
+}
+
+/*
+ * What the inline script in app/[locale]/layout.tsx does, for the one case
+ * where it never ran: a 404. Next serves those as a bare error document that
+ * React then renders client-side, so the <head> script is not in the HTML and
+ * the attribute is simply missing.
+ */
+function ensureThemeAttribute() {
+    const root = document.documentElement;
+    if (root.dataset.pageTheme) return;
+    let stored: string | null = null;
+    try {
+        stored = localStorage.getItem(STORAGE_KEY);
+    } catch {
+        // Storage refused: fall through to the default, like the script does.
+    }
+    root.dataset.pageTheme = stored === "light" ? "light" : "dark";
 }
 
 function readTheme(): PageTheme {
@@ -92,10 +108,6 @@ const PageThemeContext = createContext<PageThemeContextValue>({
     toggle: () => {},
 });
 
-/*
- * A layout effect runs before the browser paints; a passive one runs after. The
- * difference is the whole reason this is not useEffect — see the provider.
- */
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export function PageThemeProvider({ children }: { children: React.ReactNode }) {
@@ -104,13 +116,9 @@ export function PageThemeProvider({ children }: { children: React.ReactNode }) {
      * whatever the inline script actually wrote — in a layout effect, so the
      * correction lands before the browser paints and the default is never seen.
      *
-     * This was useSyncExternalStore, and it could not do that. The hook is
-     * required to return the *server* snapshot during hydration, and the real
-     * value only arrives in a re-render afterwards. One paint too late: a
-     * visitor who chose paper got a first frame claiming "dark", which ThemeInk
-     * faithfully turned into a full flood playing backwards to white on every
-     * single reload, and which flipped the nav to its dark colours and then
-     * faded them back over 500ms.
+     * Not useSyncExternalStore: it must return the *server* snapshot during
+     * hydration, so the real value arrives one paint too late and ThemeInk
+     * would play the flood backwards on every reload.
      */
     const [theme, setTheme] = useState<PageTheme>(DEFAULT_THEME);
     const [pending, setPending] = useState<PageTheme | null>(null);
@@ -118,6 +126,7 @@ export function PageThemeProvider({ children }: { children: React.ReactNode }) {
 
     useIsomorphicLayoutEffect(() => {
         const sync = () => setTheme(readTheme());
+        ensureThemeAttribute();
         sync();
         return subscribe(sync);
     }, []);

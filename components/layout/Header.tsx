@@ -1,54 +1,68 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useLenis } from "lenis/react";
 import ScrambleText from "@/components/ui/ScrambleText";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useHeaderTheme } from "@/lib/header-theme";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
+import { INK, PAPER } from "@/lib/palette";
+import { HOME_TIME_ZONE, WORDMARK } from "@/lib/site";
 
 // `background`/`textColor` are raw CSS values, not var(--color-*) references,
-// because ScrambleText writes them straight onto element.style — and a var()
-// that fails to resolve there yields no colour at all, silently. They mirror
-// --color-paper (#f8f6f2) and --color-ink (#141414) in globals.css.
+// because ScrambleText writes them straight onto element.style — see
+// lib/palette.ts.
 const COLORS = {
     light: {
         textInverted: "text-paper",
         text: "text-ink",
-        background: "#f8f6f2",
-        textColor: "#141414",
+        background: PAPER,
+        textColor: INK,
         backgroundInverted: "bg-ink",
     },
     dark: {
         textInverted: "text-ink",
         text: "text-paper",
-        background: "#141414",
-        textColor: "#f8f6f2",
+        background: INK,
+        textColor: PAPER,
         backgroundInverted: "bg-paper",
     },
 };
 
+const NAV_ITEMS = ["about", "projects", "contact"] as const;
+
 export default function Header() {
+    const t = useTranslations("header");
+    const locale = useLocale();
     const lenis = useLenis();
+    // Locale-less, so this is true on / and on /de alike.
     const pathname = usePathname();
-    const router = useRouter();
     const onHome = pathname === "/";
+    const reducedMotion = usePrefersReducedMotion();
     const { forceDark } = useHeaderTheme();
     const [intersectionDark, setIntersectionDark] = useState(false);
     const isDark = forceDark || intersectionDark;
-    const [time, setTime] = useState("00:00_AM");
+    const [time, setTime] = useState<string | null>(null);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
+    /*
+     * The clock next to ROSENHEIM_DE is Rosenheim's time, whatever the
+     * visitor's own zone. Formatted by Intl, so a German or Korean visitor gets
+     * their own convention (24h, 오전/오후) for free; the underscores are the
+     * wordmark's styling, not part of the format.
+     *
+     * Client-only: the page is prerendered at build, so any time rendered on
+     * the server would be the build's, and wrong.
+     */
     useEffect(() => {
+        const formatter = new Intl.DateTimeFormat(locale, {
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: HOME_TIME_ZONE,
+        });
         const updateTime = () => {
-            const now = new Date();
-            let hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, "0");
-            const ampm = hours >= 12 ? "PM" : "AM";
-            hours = hours % 12;
-            hours = hours || 12; // 0 should be 12
-            const hoursStr = hours.toString().padStart(2, "0");
-            setTime(`${hoursStr}:${minutes}_${ampm}`);
+            setTime(formatter.format(new Date()).replace(/\s+/g, "_").toUpperCase());
         };
 
         updateTime();
@@ -66,14 +80,13 @@ export default function Header() {
             clearTimeout(timeout);
             clearInterval(interval);
         };
-    }, []);
+    }, [locale]);
 
     const checkIntersection = useCallback(() => {
         const darkSections = document.querySelectorAll(".dark-section");
         let shouldBeDark = false;
         darkSections.forEach((section) => {
             const rect = section.getBoundingClientRect();
-            // Check if section is intersecting with nav area (top 80px)
             if (rect.top < 40 && rect.bottom > 0) {
                 shouldBeDark = true;
             }
@@ -83,11 +96,7 @@ export default function Header() {
 
     // Keyed on the pathname. This nav lives in the layout and does not remount
     // across a client-side navigation, so without that dependency the observer
-    // would stay bound to the *previous* route's sections — detached nodes whose
-    // rects are all zero — and never see the new page's. The verdict from the
-    // old route would then just sit there: /projects is dark from its first
-    // pixel, so returning home left the nav dark on paper and its items
-    // invisible.
+    // would stay bound to the *previous* route's detached sections.
     useEffect(() => {
         const darkSections = document.querySelectorAll(".dark-section");
 
@@ -112,65 +121,66 @@ export default function Header() {
 
         darkSections.forEach((section) => observer.observe(section));
 
-        // Add scroll listener as well for immediate updates
-        window.addEventListener("scroll", checkIntersection, { passive: true });
+        // A scroll listener as well, for updates between observer thresholds.
+        // Coalesced to one measurement per frame: scroll events can fire
+        // several times a frame, and each check reads every dark section's
+        // layout box.
+        let frame = 0;
+        const onScroll = () => {
+            if (frame) return;
+            frame = requestAnimationFrame(() => {
+                frame = 0;
+                checkIntersection();
+            });
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
 
-        // No explicit initial check here: observe() queues a callback for every
-        // target it is handed, intersecting or not, so the first run happens on
-        // its own — off the effect body, which is what keeps this clear of
-        // react-hooks/set-state-in-effect. The pages that are dark from their
-        // very top (/projects, /project/[slug]) rely on that first run to open
-        // with a light nav, so it is load-bearing, just not called by hand. It
-        // is also what re-resolves the theme after a route change, since the
-        // effect re-runs and observes the new page's sections from scratch.
+        // No explicit initial check: observe() queues a callback for every
+        // target, intersecting or not, so the first run happens on its own — off
+        // the effect body, clear of react-hooks/set-state-in-effect. Pages dark
+        // from their very top rely on that first run.
 
         return () => {
             observer.disconnect();
-            window.removeEventListener("scroll", checkIntersection);
+            cancelAnimationFrame(frame);
+            window.removeEventListener("scroll", onScroll);
         };
     }, [checkIntersection, pathname]);
 
-    const scrollToSection = (id: string) => {
-        /*
-         * Off the home page these buttons used to do nothing at all: every
-         * section they name lives on /, so getElementById found nothing and the
-         * click was swallowed. Hand it to the router as a hash instead and let
-         * the home page finish the job on arrival — see HashScroll, which has to
-         * do the scrolling itself because Lenis has taken over the scroller and
-         * the browser's own hash jump cannot reach it.
-         */
-        if (!onHome) {
-            router.push(`/#${id}`);
-            return;
-        }
+    /*
+     * The nav items are real links to /#about and friends, so they work
+     * without JavaScript, open in a new tab, and are visible to crawlers. Off
+     * the home page the link simply navigates and the home page finishes the
+     * job on arrival — see HashScroll, which has to do the scrolling itself
+     * because Lenis has taken over the scroller and the browser's own hash jump
+     * cannot reach it. On the home page the click is taken over here instead.
+     */
+    const scrollToSection = (e: React.MouseEvent, id: string) => {
+        if (!onHome || !lenis) return;
+        // Leave modified clicks (new tab, new window) to the browser.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
 
         const target = document.getElementById(id);
-        if (!lenis || !target) return;
+        if (!target) return;
 
-        // The trip to #contact is ~8000px and more than half of it is Experience's
-        // sticky panel, which translates nothing while it scrubs. A fixed duration
-        // made that stretch fly past at ~9x the speed of the (900px) hop to #about,
-        // so the distance sets the time here. sqrt, not linear: the far targets
-        // should be faster per pixel, just not nine times faster. Clamped so short
-        // hops stay snappy and long ones stop short of feeling like a cutscene.
+        // Distance sets the duration: the trip to #contact is ~7x the hop to
+        // #about, and a fixed duration made Experience's sticky stretch fly past.
+        // sqrt, not linear, so far targets are faster per pixel but not
+        // proportionally so; clamped at both ends.
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const to = Math.min(target.getBoundingClientRect().top + window.scrollY, maxScroll);
         const distance = Math.abs(to - lenis.scroll);
         const duration = Math.min(2.2, Math.max(0.9, 0.028 * Math.sqrt(distance)));
 
         lenis.scrollTo(target, {
+            // Reduced motion: arrive, don't travel.
+            immediate: reducedMotion,
             duration,
-            // Was expo-out, which starts at full speed: the first frame moved ~615px
-            // and the first 100ms covered over half the page, then the last couple
-            // hundred pixels crawled for the better part of a second. That lurch read
-            // as the sticky section breaking. An in-out curve accelerates and settles
-            // instead, so the fast part sits in the middle where it belongs.
-            //
-            // Cubic and not a steeper power: for a power-n in-out the peak velocity is
-            // exactly n x the average, and peak is what whips Experience past. Quint
-            // was tried and peaks at 316px/frame, plus it has only crept 93px 500ms
-            // after the click, which feels like the button missed. Cubic peaks at
-            // ~185px/frame and is already 500px along by then.
+            // In-out, not expo-out: an out-curve lurches ~600px on the first frame,
+            // which reads as the sticky section breaking. Cubic rather than a
+            // steeper power, because a power-n in-out peaks at n x the average
+            // velocity and the peak is what whips Experience past.
             easing: (t) => (t < 0.5 ? 4 * t ** 3 : 1 - Math.pow(-2 * t + 2, 3) / 2),
         });
     };
@@ -200,6 +210,7 @@ export default function Header() {
 
     return (
         <nav
+            aria-label={t("navLabel")}
             className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${currentTheme.text}`}
         >
             <div className="nav-blur">
@@ -211,39 +222,40 @@ export default function Header() {
 
             <div className="flex justify-between items-baseline px-3 py-3 relative z-10">
                 {/*
-                 * The wordmark is the way home from anywhere — the one thing a
-                 * visitor already expects a top-left mark to do, which is why
-                 * neither archive page carries a second "back home" of its own.
-                 *
-                 * It stays visible below md, unlike before, because that is
-                 * exactly where it is load-bearing: the detail page's only other
-                 * exit goes to the archive. The clock and the location drop off
-                 * there instead — they are flavour, the name is the link.
+                 * The wordmark is the way home from anywhere, which is why neither
+                 * archive page carries a second "back home" of its own. Hidden
+                 * below md, where it crowded the bar; every nav item still links
+                 * to a section of /.
                  */}
                 <Link
                     href="/"
+                    aria-label={t("homeLabel")}
                     onClick={(e) => {
                         if (!onHome || !lenis) return;
                         // Already home: scroll rather than re-navigate, or Lenis
                         // and the router both try to move the page at once.
                         e.preventDefault();
-                        lenis.scrollTo(0, { duration: 1.2 });
+                        lenis.scrollTo(0, { duration: 1.2, immediate: reducedMotion });
                     }}
-                    className="hoverable font-mono text-[11px] md:text-[13px] uppercase tracking-widest leading-[1] opacity-50 hover:opacity-100 transition-opacity duration-300"
+                    className="hoverable max-md:hidden font-mono text-mini md:text-[13px] uppercase tracking-widest leading-[1] opacity-60 hover:opacity-100 transition-opacity duration-300"
                 >
-                    ROBERTKEBINGER
-                    <span className="hidden md:inline">_{time}_ROSENHEIM_DE</span>
+                    {WORDMARK}
+                    <span className="hidden md:inline">
+                        _{time ?? "--:--"}_{t("location")}
+                    </span>
                 </Link>
 
-                <ul className="flex gap-4 list-none">
-                    {["about", "projects", "contact"].map((item) => {
+                <ul className="ms-auto flex flex-wrap justify-end gap-x-4 gap-y-2 list-none">
+                    {NAV_ITEMS.map((item) => {
                         const isHovered = hoveredItem === item;
                         const isContact = item === "contact";
+                        const label = t(`nav.${item}`);
 
                         return (
                             <li key={item} className="leading-[1]">
-                                <button
-                                    onClick={() => scrollToSection(item)}
+                                <Link
+                                    href={{ pathname: "/", hash: item }}
+                                    onClick={(e) => scrollToSection(e, item)}
                                     onMouseEnter={() => setHoveredItem(item)}
                                     onMouseLeave={() => setHoveredItem(null)}
                                     className="font-mono text-[13px] uppercase tracking-widest hoverable cursor-pointer leading-[1] block"
@@ -252,16 +264,16 @@ export default function Header() {
                                         {isHovered ? (
                                             <ScrambleText
                                                 key={`${item}-${hoveredItem}`}
-                                                text={item}
+                                                text={label}
                                                 loop={false}
                                                 speed={50}
                                                 invertBox={getInvertBoxColors(isContact)}
                                             />
                                         ) : (
-                                            item
+                                            label
                                         )}
                                     </span>
-                                </button>
+                                </Link>
                             </li>
                         );
                     })}

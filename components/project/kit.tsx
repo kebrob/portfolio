@@ -1,23 +1,17 @@
-import Link from "next/link";
 import type { CSSProperties } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { ArtVariant } from "@/lib/projects";
 
 /*
  * The pieces the project page is built from.
- *
- * Lifted out of the lab (/lab/project, gitignored) along with the design that
- * won there: the back link, the byline, the outbound button and the generative
- * art. Everything the thirty candidates shared and this one still needs.
  *
  * Colour is --page-* throughout, never a literal, so every part rides the
  * paper/ink flood exactly as the rest of the page does. Anything painting its
  * own ground uses --page-inv, or it will simply not turn over.
  */
 
-/** The page gutter, shared by the cover and the index so their edges line up. */
-export const GUTTER = "px-5 md:px-10 lg:px-20";
-
-/** ------------------------------------------------------------ small parts */
+export const GUTTER = "px-gutter";
 
 export function Label({
     children,
@@ -28,33 +22,35 @@ export function Label({
 }) {
     return (
         <span
-            className={`theme-fade font-mono text-[10px] tracking-[0.3em] text-[var(--page-faint)] uppercase ${className}`}
+            className={`theme-fade font-mono text-mini tracking-label text-[var(--page-faint)] uppercase ${className}`}
         >
             {children}
         </span>
     );
 }
 
-export function BackLink({ className = "" }: { className?: string }) {
+export function BackLink({ href = "/projects", label }: { href?: string; label?: string }) {
+    const t = useTranslations("project");
     return (
         <Link
-            href="/projects"
+            href={href}
             /*
-             * flex w-fit, not inline-flex: the cover puts other inline content
-             * on the rows around this, and inline-flex lets them share its line
-             * — with mb-* on this element doing nothing to separate them.
-             * Block-level with a content-width box keeps the hit area exactly
-             * the words.
+             * flex w-fit, not inline-flex: inline-flex lets the cover's other
+             * inline content share its line. Block-level with a content-width
+             * box keeps the hit area exactly the words.
              */
-            className={`theme-fade hoverable flex w-fit items-center gap-2 font-mono text-xs tracking-[0.3em] text-[var(--page-muted)] uppercase hover:text-[var(--page-fg)] ${className}`}
+            className="theme-fade hoverable flex w-fit items-center gap-2 font-mono text-xs tracking-label text-[var(--page-muted)] uppercase hover:text-[var(--page-fg)]"
         >
-            <span className="text-base leading-none">←</span>
-            <span>All projects</span>
+            <span aria-hidden="true" className="text-base leading-none">
+                ←
+            </span>
+            <span>{label ?? t("backToArchive")}</span>
         </Link>
     );
 }
 
-export function VisitButton({ href, label = "View project" }: { href: string; label?: string }) {
+export function VisitButton({ href, label }: { href: string; label: string }) {
+    const t = useTranslations("a11y");
     return (
         <a
             href={href}
@@ -63,9 +59,13 @@ export function VisitButton({ href, label = "View project" }: { href: string; la
             className="hoverable theme-fade group inline-flex items-center gap-3 border border-[var(--page-rule)] px-8 py-4 transition-colors duration-300 hover:bg-[var(--page-inv)] hover:text-[var(--page-inv-fg)]"
         >
             <span className="font-mono text-sm tracking-wider uppercase">{label}</span>
-            <span className="font-mono text-base leading-none transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+            <span
+                aria-hidden="true"
+                className="font-mono text-base leading-none transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            >
                 ↗
             </span>
+            <span className="sr-only">{t("opensInNewTab")}</span>
         </a>
     );
 }
@@ -82,7 +82,7 @@ export function Avatar({ name, size = 32 }: { name: string; size?: number }) {
         <span
             aria-hidden="true"
             style={{ width: size, height: size }}
-            className="theme-fade inline-flex shrink-0 items-center justify-center rounded-full border border-[var(--page-rule)] font-mono text-[11px] tracking-[0.1em] text-[var(--page-muted)]"
+            className="theme-fade inline-flex shrink-0 items-center justify-center rounded-full border border-[var(--page-rule)] font-mono text-mini tracking-widest text-[var(--page-muted)]"
         >
             {monogram}
         </span>
@@ -90,35 +90,27 @@ export function Avatar({ name, size = 32 }: { name: string; size?: number }) {
 }
 
 /*
- * Who wrote it and when it was last true.
- *
- * No reading time, which is what a byline normally carries here: the page is an
- * index of eight lines and a short tail, and "4 min read" on it would be a claim
- * about a body of prose that does not exist. The update date does real work
- * instead — three of these projects are still running.
+ * No reading time: the page is an index and a short tail, so "4 min read" would
+ * describe prose that does not exist. The update date does real work instead —
+ * several of these projects are still running.
  */
 export function Byline({ author, updated }: { author: string; updated: string }) {
+    const t = useTranslations("project");
     return (
         <div className="flex items-center gap-3">
             <Avatar name={author} />
             <div className="leading-tight">
                 <div className="theme-fade text-sm font-medium text-[var(--page-fg)]">{author}</div>
                 <div className="theme-fade mt-0.5 text-[13px] text-[var(--page-muted)]">
-                    Updated {updated}
+                    {t("updated", { date: updated })}
                 </div>
             </div>
         </div>
     );
 }
 
-/** ------------------------------------------------------------------- art */
-
 /*
- * Generative figures, because the alternative is a grey rectangle saying
- * "image".
- *
- * All five variants are pure functions of a seed, which matters for more than
- * tidiness: these render on the server, and anything random would produce one
+ * Generative figures. All five variants are pure functions of a seed: these render on the server, and anything random would produce one
  * composition in the HTML and a different one after hydration. They draw in
  * currentColor at fractional opacity, so they cross the paper/ink flood with
  * everything else and never need a second palette.
@@ -287,11 +279,8 @@ function artBars(rnd: () => number) {
 }
 
 /*
- * The one composition that is about the subject rather than about texture: an
- * interface reduced to its geometry — bar, rail, columns, blocks — with no
- * content in it at all. It exists because a screenshot is the single thing
- * these write-ups cannot publish, and a diagram of the shape of the thing is
- * both allowed and more useful.
+ * An interface reduced to its geometry — bar, rail, columns, blocks — standing
+ * in for the screenshots these NDA write-ups cannot publish.
  */
 function artPlan(rnd: () => number) {
     const pad = 18;
@@ -329,7 +318,6 @@ function artPlan(rnd: () => number) {
             {frame(pad, pad, W - pad * 2, barH, 0.06, "bar")}
             {railW > 0 && frame(pad, pad + barH, railW, H - pad * 2 - barH, 0.03, "rail")}
 
-            {/* Rail entries, as the short strokes a wireframe uses for text. */}
             {railW > 0 &&
                 Array.from({ length: 6 }, (_, i) => (
                     <line
@@ -405,9 +393,7 @@ const FIT: Record<ArtVariant, string> = {
  *
  * A single opacity for all five does not work, because they are not equally
  * dense. "plan" fills the frame with a wireframe at 0.35 stroke and stretches to
- * fit (preserveAspectRatio="none"), so on a 92vh cover it reads as a diagram the
- * page is about rather than as ground — which is what made the Connector cover
- * too strong. "arcs" is thin concentric strokes and slices rather than
+ * fit, so on a 92vh cover it reads as a diagram rather than as ground. "arcs" is thin concentric strokes and slices rather than
  * stretches, so it can carry more before it competes with the headline.
  *
  * Multiplied into the caller's own opacity, so a page can still dim the whole

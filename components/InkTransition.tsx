@@ -14,9 +14,7 @@ import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
  * Fixed to the viewport and at -z-10, which puts it above the page background but
  * *behind* every in-flow section. That ordering is the whole point: the projects
  * wall scrolls up over the top of it, so the work is already on screen while the
- * page is still light and the ink floods in around it. Painting the ink over the
- * content instead would mean nothing could be visible until the flood finished,
- * which is what left a screen-height of empty dark space before.
+ * page is still light and the ink floods in around it.
  *
  * The shader is not driven by the scroll value directly but by a follower that
  * chases it. Scrolling is not continuous input — a wheel arrives as ~100px
@@ -24,9 +22,7 @@ import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
  * flood. Bound 1:1 the ink teleports a fifth of a screen per notch, which reads
  * as a slideshow of static states; behind a follower the same notch becomes a
  * short eased glide, so what you see is an animation the scroll is aiming
- * rather than a slider it is dragging. The reference site does this with a
- * per-frame lerp of 0.045; a critically-damped spring is the same idea with a
- * shorter tail. It must stay overdamped — any overshoot would flood past the
+ * rather than a slider it is dragging. It must stay overdamped — any overshoot would flood past the
  * top of the screen and suck back down.
  *
  * The fallback is a plain crossfade to the same colour, used when WebGL2 is
@@ -68,8 +64,8 @@ export default function InkTransition({
         if (disabled || !canvasRef.current) return;
 
         const gl = createGlTransition(canvasRef.current, INK_BLEED_GLSL, {
-            // The shader runs four fbm octaves per pixel; half resolution on
-            // phones costs far less than it saves.
+            // The shader is ALU-heavy; a lower ratio on phones costs far less
+            // than it saves.
             maxDpr: window.innerWidth < 768 ? 1.5 : 2,
         });
         if (!gl) {

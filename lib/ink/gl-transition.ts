@@ -265,12 +265,9 @@ export function createGlTransition(
             // hands back the same object every time, so losing it here is
             // permanent for that element, and any later create on the same
             // canvas gets a dead context whose shaders fail to compile with a
-            // null info log ("shader compile failed: null"). That is not
-            // hypothetical — StrictMode double-invokes effects on mount, and a
-            // client-side return to / did exactly this and silently dropped the
-            // ink flood to its CSS crossfade fallback. Deleting the program and
-            // the buffer is the cleanup that matters; the context itself goes
-            // when the detached canvas is collected.
+            // null info log — which StrictMode's double-invoked effects hit.
+            // Deleting the program and the buffer is the cleanup that matters;
+            // the context itself goes when the detached canvas is collected.
         },
     };
 }

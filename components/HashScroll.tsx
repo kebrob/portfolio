@@ -11,34 +11,25 @@ import { useLenis } from "lenis/react";
  * problem, and Lenis owns the scroll position afterwards and would not have
  * heard about either. So the arrival is done by hand, through Lenis.
  *
- * Immediate, not animated. The trip to #contact is ~8000px through Experience's
- * sticky panel; played as a scroll it is a five-figure-pixel cutscene past every
- * section the visitor just chose to skip. They asked to be somewhere, so put
- * them there — the nav's in-page clicks still animate, because there the travel
- * is the feedback that the click worked.
+ * Immediate, not animated: played as a scroll, the trip to #contact is a long
+ * cutscene past every section the visitor chose to skip. The nav's in-page
+ * clicks still animate, because there the travel is the feedback.
  *
  * THE HASH IS SPENT ON ARRIVAL. Once the scroll has landed the fragment is
  * dropped from the URL with replaceState, so a reload opens at the top like any
  * other load of "/".
  *
- * The reason is that the same nav button already behaves that way on the home
- * page: there it calls lenis.scrollTo and never touches the URL. Leaving the
- * hash behind on the cross-page path would mean one button with two different
- * URL behaviours depending on where it was pressed, and the difference would
- * only ever show up as a surprise — a later reload skipping the sequence the
- * home page is built around. So the hash is used as what it actually is here:
- * how the nav tells the home page where to open, not an address of a section.
+ * The same nav button already behaves that way on the home page, where it calls
+ * lenis.scrollTo and never touches the URL. The hash is how the nav tells the
+ * home page where to open, not an address of a section.
  *
  * replaceState rather than pushState, so this does not put a second entry in
  * the history and turn Back into a no-op that stays on the page.
  *
- * WHY IT KEEPS CORRECTING. One scroll on mount lands in the wrong place: the
- * Hero sizes its headline by binary search against the real font, so the page
- * grows under the target after the first frame, and #about ends up a few
- * hundred pixels below where it was when we jumped. Measured once: asked for
- * #about, landed 517px short of it. So the target is re-measured every frame
- * until it stops moving, which also absorbs any scroll Next performs on its own
- * way in.
+ * WHY IT KEEPS CORRECTING. The page can still grow under the target after the
+ * first frame (fonts, late layout), so one scroll on mount can land short. The
+ * target is re-measured every frame until it stops moving, which also absorbs
+ * any scroll Next performs on its own way in.
  */
 
 /** Frames of stillness before the arrival is considered settled. */
@@ -80,7 +71,12 @@ export default function HashScroll() {
             const target = document.getElementById(id);
             if (!target) return;
 
-            const to = target.getBoundingClientRect().top + window.scrollY;
+            // Clamped: the last section (Contact, below lg) can be shorter
+            // than the viewport, so its top may never reach the top of the
+            // screen. Aiming past the end would keep this loop correcting
+            // until it timed out.
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const to = Math.min(target.getBoundingClientRect().top + window.scrollY, maxScroll);
             if (Math.abs(to - window.scrollY) > 2) {
                 lenis.scrollTo(to, { immediate: true });
                 stable = 0;

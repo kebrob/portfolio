@@ -1,0 +1,465 @@
+{
+    "metadata": {
+        "title": "Robert Kebinger | Frontend Developer",
+        "titleTemplate": "%s | Robert Kebinger",
+        "description": "Frontend Developer crafting clean, purposeful digital experiences",
+        "jobTitle": "Frontend Developer",
+        "ogLocale": "en_US"
+    },
+    "a11y": {
+        "skipToContent": "Skip to content",
+        "opensInNewTab": "(opens in a new tab)"
+    },
+    "header": {
+        "navLabel": "Main",
+        "homeLabel": "Robert Kebinger, home",
+        "location": "ROSENHEIM_DE",
+        "nav": {
+            "about": "about",
+            "projects": "projects",
+            "contact": "contact"
+        }
+    },
+    "hero": {
+        "role": "<chip>Frontend-focused</chip> Full-Stack Developer",
+        "statement": "Designing and building scalable web applications with a strong focus on <k0>architecture</k0>, <k1>performance</k1>, and <k2>detail</k2>",
+        "scrollCue": "[scroll to explore]",
+        "emailCta": "Email me"
+    },
+    "about": {
+        "eyebrow": "About",
+        "heading": "Building digital products with precision and purpose.",
+        "intro": "I'm a developer based in Rosenheim, Germany, focused on building fast, intuitive interfaces with a strong attention to detail. I care about clean structure, maintainability, and creating experiences that feel effortless to use.",
+        "stack": "While my main focus is frontend quality, I also work across the stack by turning ideas into complete, production-ready applications from concept to deployment.",
+        "portraitAlt": "Portrait of Robert Kebinger",
+        "yearsValue": "{count}+",
+        "yearsLabel": "Years Experience",
+        "toolsValue": "35+",
+        "toolsLabel": "Technologies & Tools"
+    },
+    "experience": {
+        "title": "Experience",
+        "sectionLabel": "Work Experience",
+        "cardLabel": "{role} at {company}",
+        "technologies": "Technologies",
+        "period": "{from} — {to}",
+        "present": "Present",
+        "roles": {
+            "lead": {
+                "role": "Frontend Lead",
+                "description": [
+                    "Leading frontend architecture and UI consistency across projects while mentoring developers and guiding implementation quality.",
+                    "Currently building customer systems including CRM tools, email workflows, and SAP CRM integrations."
+                ]
+            },
+            "developer": {
+                "role": "Web Developer",
+                "description": [
+                    "Worked on product systems, building backend services to integrate product data into the shop and supporting product page development during platform changes.",
+                    "Helped evolve the ecommerce architecture across frontend and backend."
+                ]
+            },
+            "student": {
+                "role": "Intern & Working Student",
+                "description": [
+                    "Built CMS-driven pages and frontend widgets for an ecommerce platform. Worked on reusable UI components connected to a content service and storefront features.",
+                    "Learned production workflows and delivering frontend features in a team environment."
+                ]
+            }
+        }
+    },
+    "featured": {
+        "eyebrow": "Featured Work",
+        "all": "Every project",
+        "remaining": "+{count}"
+    },
+    "contact": {
+        "headline": ["Let’s talk", "About", "IT"],
+        "emailMe": "Email me",
+        "eyebrow": "Contact"
+    },
+    "footer": {
+        "copyright": "© {year} {name} — All rights reserved",
+        "imprint": "Imprint",
+        "legalLabel": "Legal",
+        "privacy": "Privacy"
+    },
+    "theme": {
+        "toLight": "Switch to the light theme",
+        "toDark": "Switch to the dark theme"
+    },
+    "archive": {
+        "metaTitle": "Projects",
+        "metaDescription": "A collection of selected work and side projects.",
+        "backHome": "Back home",
+        "title": "Archive",
+        "columns": {
+            "number": "No.",
+            "project": "Project",
+            "role": "Role",
+            "stack": "Stack",
+            "year": "Year"
+        }
+    },
+    "project": {
+        "backToArchive": "All projects",
+        "meta": "{year} · {role}",
+        "period": "{from} to {to}",
+        "periodOngoing": "{from} to present",
+        "ongoing": "Ongoing",
+        "notes": "Notes",
+        "open": "Open",
+        "updated": "Updated {date}",
+        "terms": {
+            "client": "Client",
+            "engagement": "Engagement",
+            "role": "Role",
+            "year": "Year",
+            "stack": "Stack",
+            "withheld": "Withheld"
+        },
+        "previous": "Previous project",
+        "next": "Next project",
+        "moreWork": "More work"
+    },
+    "notFound": {
+        "metaTitle": "Page not found",
+        "backHome": "Back home",
+        "catLabel": "A cat, sitting",
+        "title": "Nothing here but the cat",
+        "body": "This page doesn’t exist, or it has moved. Maybe the link is old, maybe there’s a typo in the address.",
+        "browseArchive": "Browse the archive",
+        "reportBroken": "Tell me what broke"
+    },
+    "imprint": {
+        "metaTitle": "Imprint",
+        "metaDescription": "Legal notice (Impressum) for this website.",
+        "eyebrow": "Impressum",
+        "title": "Imprint",
+        "backHome": "Back home",
+        "provider": "Information according to § 5 DDG",
+        "contact": "Contact",
+        "email": "Email",
+        "phone": "Phone",
+        "vatId": "VAT identification number according to § 27a UStG",
+        "responsible": "Responsible for the content according to § 18 (2) MStV"
+    },
+    "projectContent": {
+        "shop-that-can-be-updated": {
+            "kicker": "Replatform",
+            "title": "A Shop That Can Be Updated Again",
+            "role": "Web Developer, product team",
+            "client": "Calida Group Digital GmbH, in-house",
+            "engagement": "About a year and a half on the replatform project",
+            "description": "Moving an old Oxid shop to Shopware, and rebuilding the product pages with the team.",
+            "deck": "Our Oxid license ran out and the shop had become too old to upgrade. We rebuilt it on Shopware and redesigned the frontend at the same time. I worked in the product team on the listing and the detail page, and on the service that feeds them with product data.",
+            "tags": ["Commerce", "Replatform", "Product data"],
+            "stats": [
+                {
+                    "value": "0",
+                    "label": "changes in the core, so the shop can update",
+                    "method": "We only extend Shopware with plugins and apps, and nobody patches the core. So we can install a new Shopware version without breaking our own code."
+                },
+                {
+                    "value": "1",
+                    "label": "product feed for the whole shop",
+                    "method": "Our product system sends the data into Shopware over RabbitMQ. Price, media and stock come in over the same route and in the same format."
+                },
+                {
+                    "value": "AA",
+                    "label": "accessibility level on the product pages",
+                    "method": "AA is the WCAG level most shops have to meet. It covers color contrast, using the whole page with a keyboard, and labels a screen reader can read. We checked the listing, the filters and the detail page."
+                }
+            ],
+            "withheld": [
+                "Traffic, revenue and conversion numbers",
+                "Screens, design files and copy",
+                "Contract details with the vendors"
+            ],
+            "body": [
+                "Oxid itself was not the biggest issue. Over the years people had patched the core to fix things quickly, and at some point we could not update the shop without breaking those patches. When the license ran out we decided to start over on Shopware instead of patching again. This time mobile first, and set up so we can stay on the newest version.",
+                "My part was the product pages. We rebuilt the listing and the detail page for mobile first and added recommendations and cross selling to both. In the backend I connected our product system to Shopware, so the shop gets its product data from one place and in one format."
+            ]
+        },
+        "two-crms-one-customer": {
+            "kicker": "Program",
+            "title": "Two CRMs, One Customer",
+            "role": "Frontend Lead, customer domain",
+            "client": "Calida Group Digital GmbH, in-house",
+            "engagement": "Ongoing, across four teams",
+            "description": "Moving customer care and the customer data off BSI and Greyhound and onto SAP.",
+            "deck": "Customer care ran on BSI and Greyhound, two vendor tools that never really fit together. We are moving all of it to SAP. Service Cloud v2 is live and Greyhound is switched off, and right now we are moving the customer data from BSI to SAP CDP. BSI has to keep running until the last system is connected to CDP.",
+            "tags": ["CRM", "Migration", "Integration"],
+            "stats": [
+                {
+                    "value": "6",
+                    "label": "systems that need the same customer",
+                    "method": "Shopware, the POS system, Caperwhite, Emarsys, Service Cloud and S/4HANA. Today they send and read over RabbitMQ or directly to BSI, which is the master. Later CDP is the master, some systems talk to it directly and the rest keeps using RabbitMQ. The data flow stays similar, we mainly change the platform underneath."
+                },
+                {
+                    "value": "2",
+                    "label": "CRMs running side by side",
+                    "method": "BSI and CDP run in parallel and stay in sync while we migrate system by system. The deadline is fixed, our BSI license ends in 2026 and everything has to be off it by then."
+                },
+                {
+                    "value": "1",
+                    "label": "vendor tool switched off so far",
+                    "method": "Greyhound. Before we switched it off we migrated the old cases into an archive, so customer care can still look them up if they need to."
+                }
+            ],
+            "withheld": [
+                "Customer numbers and revenue",
+                "Screens from the internal care tools",
+                "Vendor prices and contract details"
+            ],
+            "body": [
+                "We started with customer care. Greyhound went out and Service Cloud v2 came in, and we extended and configured it together with the care team so it fits the way they work. A lot more is automated now, and we added AI to the workflow as well, so an agent spends less time sorting and typing and more time on the actual case.",
+                "The bigger part is the CRM itself. We are moving from BSI to SAP CDP, which is mostly concept and architecture work at the moment. Every system around it has to be able to send data to CDP and read from it: Shopware, the POS, Caperwhite and the rest. Until they are all connected, BSI and CDP run in parallel and stay in sync.",
+                "We already run S/4HANA, so when this is done we are on one uniform SAP landscape. For us that means one customer record instead of several, more data we can actually use, and a lot more room to personalize the experience."
+            ]
+        },
+        "one-source-two-tools": {
+            "kicker": "Design system",
+            "title": "One Source, Two Tools",
+            "role": "Frontend Lead",
+            "client": "Calida Group Digital GmbH, in-house",
+            "engagement": "Ongoing, together with the design team",
+            "description": "A design system where Figma and the shop code use the same tokens and the same components.",
+            "deck": "Design and code had their own version of the same values, so both were right about half the time. The tokens now live in code in GitLab. From there we generate the CSS custom properties for the shop, and Tokens Studio pulls the same repository into Figma.",
+            "tags": ["Design systems", "Tokens", "Governance"],
+            "stats": [
+                {
+                    "value": "32",
+                    "label": "components in the system",
+                    "method": "Counted as components that exist in Storybook and in Figma. If it only exists in one of them, I do not count it as part of the system yet."
+                },
+                {
+                    "value": "1",
+                    "label": "place a token is defined",
+                    "method": "Colours, spacing and typography are defined in code and live in GitLab. From there we generate the CSS custom properties for the shop, and Tokens Studio syncs the same repository into Figma. Both sides read the same file."
+                },
+                {
+                    "value": "0",
+                    "label": "mockups built from outdated components",
+                    "method": "UX can build mockups from the real components, in Figma or with AI tools like Figma Make. What they hand over is made of parts that already exist in code."
+                }
+            ],
+            "body": [
+                "None of the differences were big. A gray that is one step off, a spacing value someone rounded, a button that got an extra hover state in code but never in Figma. On their own they are small, but they cost us a discussion every few days.",
+                "So this is more an organizational thing than a tooling thing. The tokens have one owner and one source, and changing a value is a merge request like any other change. For UX it means designs get faster and more accurate, because they build with components that really exist. For me it means I review whether something belongs in the system, not whether the values match."
+            ]
+        },
+        "where-did-my-points-go": {
+            "kicker": "Case study",
+            "title": "Where Did My Points Go?",
+            "role": "Frontend Lead, customer team",
+            "client": "Calida Group Digital GmbH, in-house",
+            "engagement": "About ten months, with the order team and Caperwhite",
+            "description": "Replacing an old loyalty program with SAP Emarsys Loyalty and a clearer account area.",
+            "deck": "The old loyalty program worked, but the design was dated and not easy to understand. We switched to SAP Emarsys Loyalty and rebuilt the account area around the things customers actually look for: their points, their tier and the vouchers they can use.",
+            "tags": ["Loyalty", "Accounts", "Accessibility"],
+            "stats": [
+                {
+                    "value": "1",
+                    "label": "page for points, tiers and vouchers",
+                    "method": "Points, vouchers and tier status are on one account page now, in a design that fits the rest of the shop. We also promote the program in more places so more customers sign up."
+                },
+                {
+                    "value": "1",
+                    "label": "points balance, online and in the store",
+                    "method": "Emarsys holds the balance. The website and the POS in the stores read it through Caperwhite, so points from a purchase in a store are visible online right away."
+                },
+                {
+                    "value": "AA",
+                    "label": "accessibility level, account and checkout",
+                    "method": "AA is the WCAG level most shops have to meet: color contrast, keyboard support and labels for screen readers. We checked the account page, the voucher redemption and the checkout step that applies a voucher."
+                }
+            ],
+            "withheld": [
+                "Member numbers and redemption rates",
+                "Tier rules and voucher economics",
+                "Screens from the account area"
+            ],
+            "body": [
+                "Nothing was really broken. The program just looked old, customers had to think too much about how it works, and the system behind it was outdated as well. Moving to Emarsys was also a move to SAP, so we replaced the backend and rebuilt the frontend in one go. Everything is on one account page now, and we show the program in more places in the shop to get more sign ups.",
+                "I am in the customer team, but a lot of this happens somewhere else. Redemption sits in checkout, so we built that part too and the order team did the QA. The in store part we built together with the developers at Caperwhite. Security, accessibility and mobile were part of the build from the beginning. Points work like money for the customer, and many of them look at the page on their phone while standing in a store."
+            ]
+        },
+        "connector-that-outlived-the-shop": {
+            "kicker": "Integration",
+            "title": "A Connector That Outlived the Shop",
+            "role": "Web Developer, Storyblok lead",
+            "client": "Calida Group Digital GmbH, in-house",
+            "engagement": "Six years next to other work, with the content team",
+            "description": "Building and keeping the Storyblok integration running across three shop platforms.",
+            "deck": "Our content lives in Storyblok and the shop is a separate system, so something has to connect the two. I built the first integration when we started with Storyblok and worked on the connector with the team. Over the years the same content had to run on three shop platforms: Oxid, Magento and Shopware. I also wrote most of the editor plugins the content team uses every day.",
+            "tags": ["CMS", "Integration", "Editor tooling"],
+            "stats": [
+                {
+                    "value": "3",
+                    "label": "shop platforms, one content setup",
+                    "method": "Oxid, Magento and Shopware read the same content. We only rewrote the part that talks to the shop, so the existing landing pages kept working after a platform change."
+                },
+                {
+                    "value": "5",
+                    "label": "editor plugins I wrote",
+                    "method": "A WYSIWYG editor, image and video upload that goes to Azure, a dropdown with search that always shows the current shop categories, and a color picker with our brand colors."
+                },
+                {
+                    "value": "0",
+                    "label": "developers needed to publish a landing page",
+                    "method": "The content team builds landing pages from our widgets and publishes them. They only need a developer when a widget does not exist yet."
+                }
+            ],
+            "body": [
+                "I was one of the first here to work with Storyblok, so I ended up being the person people asked about it. The first thing I connected was landing pages, before the shop was involved at all. After that I had the lead for the topic until I changed teams internally.",
+                "Most of my own work was on the editor side. Storyblok brings its own fields, but they do not know our media storage or our shop categories, so I wrote plugins for that: a WYSIWYG with the options the shop can actually render, uploads that go to Azure, and a dropdown with search for categories. I built them together with the content managers, based on what they needed for their pages."
+            ]
+        },
+        "keeping-the-front-end-boring": {
+            "kicker": "Ongoing",
+            "title": "Keeping the Front End Boring",
+            "role": "Frontend Lead",
+            "client": "Calida Group Digital GmbH, in-house",
+            "engagement": "The part of the job that never ends",
+            "description": "The standing part of the lead role: rules, reviews, performance, accessibility and dependencies.",
+            "deck": "This is my daily work as a lead, not one single project. I decide how we build the frontend and write the guidelines for it, review the code against them, watch performance and accessibility, and keep dependencies up to date so we never get stuck on an old version.",
+            "tags": ["Performance", "Accessibility", "Leadership"],
+            "stats": [
+                {
+                    "value": "10",
+                    "label": "pages I watch, desktop and mobile",
+                    "method": "Five templates, home, category, product, cart and checkout, each on desktop and mobile. DebugBear collects the numbers and I go through them as part of my week."
+                },
+                {
+                    "value": "0",
+                    "label": "linting errors on the main branch",
+                    "method": "CI runs the linting for JavaScript, Twig and CSS. I set that up, including rules that check whether a component uses our custom properties instead of hard coded values."
+                },
+                {
+                    "value": "Weekly",
+                    "label": "dependency updates",
+                    "method": "I update in small steps every week instead of once a year. That keeps us close to the current version and security fixes do not sit around waiting for a big release."
+                }
+            ],
+            "body": [
+                "A lot of this is deciding something once so the team does not have to decide it again: how we build a component, what belongs in the design system, when a library is worth adding, what a review should block on. I write it down, we agree on it, and I follow it in my own pull requests too.",
+                "The other part is watching the shop. I check Web Vitals, accessibility and security myself instead of waiting for someone to report it, and if something gets worse I fix it or bring it into the sprint. Most of these improvements start as my own idea and not as a ticket. Nobody sees this work directly, but it is the reason we can still build new features quickly."
+            ]
+        },
+        "one-design-system-three-shops": {
+            "kicker": "Design system",
+            "title": "One Design System, Three Shops",
+            "role": "Working Student, project lead",
+            "client": "Calida Group Digital GmbH, in-house",
+            "engagement": "About eight months, with the UX team and an external colleague",
+            "description": "A multi tenant component library in Fractal for three server rendered shops.",
+            "deck": "Three shops, one component library. We built it with Fractal and used Bootstrap as a base where it made sense, everything else we wrote ourselves in TypeScript. The shops render on the server, so the components had to work without a JavaScript framework like Vue or React.",
+            "tags": ["Design systems", "Server-rendered", "Accessibility"],
+            "stats": [
+                {
+                    "value": "3",
+                    "label": "shops using the same components",
+                    "method": "The library is multi tenant. Each shop brings its own theme, the markup and the behavior stay the same. We ran a lot of custom services back then and any of them could pull the components in."
+                },
+                {
+                    "value": "7",
+                    "label": "components in the first release",
+                    "method": "We started with the components we needed most and wanted to add more when a team asked for one. The project was stopped before that happened, see the note below."
+                },
+                {
+                    "value": "0",
+                    "label": "components that need a mouse",
+                    "method": "We tested every component for keyboard use, focus order and screen readers before we released it, so accessibility was not something we had to repair later on a finished page."
+                },
+                {
+                    "value": "8 mo",
+                    "label": "from start to a system we could deploy",
+                    "method": "That includes the release pipeline, versioning for components and assets, and a notification when a new version was deployed. This part was finished and in use."
+                }
+            ],
+            "body": [
+                "We used Bootstrap for the standard parts like modals. Anything that had to work differently we wrote from scratch, the drawer for example, because the Bootstrap version did not do what the design needed. A component is server rendered markup plus a small TypeScript file, and we kept an eye on the CSS and JS size so the pages stayed fast.",
+                "We worked closely with UX the whole time. An external colleague and I had the lead for the project, and the designers were part of it instead of handing us finished screens. We spent as much time on delivery as on the components: versioning for components and assets, a Bitbucket pipeline that deploys to Azure, and notifications when a new version went out. Our platform team helped us with the Kubernetes side.",
+                "The project ended when the company moved from custom services to a monorepo. The design system itself was finished at that point, released, deployed and in use. New components would only have come when the demand was there."
+            ]
+        },
+        "girlfriend-approved-automation": {
+            "kicker": "Personal",
+            "title": "Girlfriend-Approved Automation",
+            "role": "Weekends",
+            "client": "My apartment",
+            "engagement": "Ongoing, unpaid, occasionally questioned",
+            "description": "A local Home Assistant setup that everyone else in the apartment can ignore.",
+            "deck": "Home Assistant on a Raspberry Pi in a closet, running the lights, the heating and the doorbell. A private project to make the apartment a bit smarter, with one rule: my girlfriend should never have to think about it.",
+            "tags": ["Home automation", "Local-first", "Side project"],
+            "stats": [
+                {
+                    "value": "36",
+                    "label": "devices, all local",
+                    "method": "Zigbee over ZHA, plus a few Wi-Fi devices that did not want to cooperate. Everything runs locally, so the lights still work when the internet is down."
+                },
+                {
+                    "value": "0",
+                    "label": "automations my girlfriend wants removed",
+                    "method": "A few of them needed some tweaking first. The hallway light used to switch off while she was still standing in the hallway."
+                },
+                {
+                    "value": "1",
+                    "label": "party cube",
+                    "method": "An Aqara Magic Cube that controls Spotify. Double tap to skip, shake to pause, turn it to change the volume. When friends are over everybody wants to try it, so far my most popular automation."
+                }
+            ],
+            "body": [
+                "Same rules as at work, only without stakeholders. Everything runs locally, so nothing breaks when a vendor shuts down a service, and I keep the automations simple enough that I can still explain what happened when a light goes on by itself. Lights react to presence, the heating follows our calendar, and the switch on the wall always wins.",
+                "That last part matters more than it sounds. If something only works with the right app on the right phone, nobody else in the apartment will use it. So every device can still be used the normal way, and guests do not need an explanation."
+            ]
+        }
+    },
+    "privacy": {
+        "metaTitle": "Privacy policy",
+        "metaDescription": "How this website handles personal data.",
+        "eyebrow": "Datenschutz",
+        "title": "Privacy policy",
+        "backHome": "Back home",
+        "summary": "In short: no cookies, no analytics, no tracking, and nothing is loaded from third parties. The only personal data involved is what every browser sends with a request, and whatever you write in an email.",
+        "controller": {
+            "title": "Who is responsible",
+            "body": "The controller within the meaning of Art. 4(7) GDPR is:"
+        },
+        "hosting": {
+            "title": "Hosting and server logs",
+            "p1": "This website is hosted by {host}. When you open a page, the server automatically records what your browser sends with the request: IP address, date and time, the page requested, the referring page, and browser and operating system (server log files).",
+            "p2": "This is necessary to deliver the website and keep it secure. The legal basis is Art. 6(1)(f) GDPR — the legitimate interest in a stable and secure website. The logs are kept for {retention} and then deleted, unless a security incident requires keeping them longer.",
+            "p3": "The host processes this data on my behalf under a data processing agreement (Art. 28 GDPR). Where data is processed outside the EU/EEA, the transfer is based on {transferBasis}."
+        },
+        "storage": {
+            "title": "Cookies and local storage",
+            "p1": "This website sets no cookies. If you use the light/dark switch on the project pages, your choice is saved in your browser’s local storage under the key “page-theme”, so the pages open in that theme next time. It never leaves your device, and you can delete it at any time in your browser settings.",
+            "p2": "The legal basis is § 25(2) no. 2 TDDDG: the storage is strictly necessary to provide a function you explicitly asked for."
+        },
+        "fonts": {
+            "title": "Fonts",
+            "body": "The fonts (Inter and IBM Plex Mono) are served from this website’s own server. No connection to Google or any other font provider is made."
+        },
+        "email": {
+            "title": "Contact by email",
+            "p1": "If you email me, I process your address and your message only to answer you. The legal basis is Art. 6(1)(b) GDPR where your message concerns a contract or its preparation, otherwise Art. 6(1)(f) GDPR — the legitimate interest in answering inquiries.",
+            "p2": "I delete the correspondence once it is no longer needed, unless statutory retention periods apply. The mailbox is provided by {emailProvider}."
+        },
+        "links": {
+            "title": "Links to other websites",
+            "body": "This website links to GitHub, LinkedIn and Instagram. Nothing is loaded from them until you follow a link; from then on, the privacy policy of that service applies."
+        },
+        "rights": {
+            "title": "Your rights",
+            "p1": "You have the right to access your data (Art. 15 GDPR), to rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18) and data portability (Art. 20), and to object to processing based on legitimate interests (Art. 21). An email to the address above is enough.",
+            "p2": "You also have the right to lodge a complaint with a supervisory authority (Art. 77 GDPR). The authority responsible here is the Bavarian State Office for Data Protection Supervision (BayLDA), Promenade 18, 91522 Ansbach, Germany, www.lda.bayern.de."
+        },
+        "obligation": {
+            "title": "No obligation, no profiling",
+            "body": "You do not have to provide any personal data to use this website beyond what your browser sends anyway. There is no automated decision-making or profiling."
+        },
+        "updated": "Last updated: {date}"
+    }
+}

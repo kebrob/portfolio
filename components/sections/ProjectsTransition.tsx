@@ -25,54 +25,22 @@ import { useSectionProgress } from "@/lib/use-section-progress";
  *
  * LEAD_VH pulls progress 0 above the end of Experience, so the flood is already
  * under way while Experience is still sliding off the top rather than waiting
- * for a screen of bare paper first.
- *
- * An earlier revision had this pinned at 0 on the grounds that a global veil
- * cannot overlap a light section at all. That was true of the veil as it was
- * then. It is not true now: ink-bleed.ts tilts the fill bottom-first, and the
- * ink does not reach the top of the frame until p ~ 0.7. Experience leaves
- * through the top. So they only collide if Experience is still on screen when
- * the flood gets up there — a race with slack in it, not a wall.
- *
- * What sets 60 is that Experience's sticky panel is a screen tall but its
- * content stops ~260px short of the panel's bottom edge. Measuring the *box*
- * (which 30 did) says the section is still on screen; measuring the content says
- * the bottom quarter of the viewport went blank a long time earlier. That blank
- * band is what read as too much space — it opens 900vh into the section and
- * grows for most of a screen before any ink appeared. 60 starts the flood into
- * it while the copy above is still leaving. Checked against the content edge,
- * not the box:
- *
- *   scroll   content bottom sits at   ink has climbed to
- *   5750             131px                    873px
- *   5820              61px                    495px
- *   5870              11px                    300px
- *
- * Ink stays well below the last line throughout. It is not a free parameter —
- * around 77 the ink reaches 18px from the top while copy still hangs to 81px,
- * and they overlap.
+ * for a screen of bare paper first. That only works because ink-bleed.ts tilts
+ * the fill bottom-first — the ink does not reach the top of the frame until
+ * p ~ 0.7, and Experience leaves through the top. What sets 60 is Experience's
+ * *content* edge, ~260px short of its sticky panel's bottom: 60 starts the flood
+ * into that blank band while the copy above is still leaving. It is not a free
+ * parameter — around 77 the ink catches the last line of copy.
  *
  * GAP_VH is clear space between the driver and the wall. What has to land on
  * dark is the wall's first *visible* row — the Featured Work label, ~110px into
- * the section, not the section box, which buys about 12vh over measuring from
- * the top edge. At 72 the label crosses the bottom edge at p = 0.88, on solid
- * ink. Below about p = 0.7 it starts arriving onto grey, which is the thing this
- * whole handover exists to avoid — 115/30 was tried and put it at p = 0.54, on
- * mid-grey.
+ * the section. At 72 the label crosses the bottom edge at p = 0.88, on solid
+ * ink; below about p = 0.7 it starts arriving onto grey, which is the thing this
+ * whole handover exists to avoid.
  *
- * Only the label constrains this. Moving the wall up does not risk tripping the
- * Header's dark-section check early: that fires on rect.top < 40, i.e. when the
- * section reaches the *top* of the viewport, long after the flood is over.
- *
- * Note that GAP + LEAD is what fixes the distance from the end of the flood to
- * the wall, so the two can be traded to slide the whole handover earlier without
- * changing any of its internal spacing — 30/125 -> 60/95 did exactly that, and
- * the wall arrived on the same frame of the flood, 270px sooner in the page.
- * Dropping GAP alone (95 -> 72) is the other move: it genuinely closes the run
- * of empty dark between the flood finishing and the wall showing up.
- *
- * What is left is not slack. 100vh of it is the wall travelling from the bottom
- * of the viewport to the top, which no constant here can shorten.
+ * GAP + LEAD fixes the distance from the end of the flood to the wall, so the
+ * two can be traded to slide the whole handover earlier without changing any of
+ * its internal spacing.
  *
  * MEASURE_VH is not a tuning knob. useSectionProgress measures from "top hits
  * viewport top" to "bottom hits viewport top", so the driver has to be one

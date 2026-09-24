@@ -12,9 +12,7 @@
  *
  * THE SHAPE OF THIS THING
  *
- * Earlier versions were a hard front sweeping bottom-to-top: a line you could
- * point at, with paper above it and ink below. That is not what the reference
- * does, and reading its shader is what settled it. Its whole overlay is one
+ * Not a hard front sweeping bottom-to-top. The reference's whole overlay is one
  * quad with
  *
  *     alpha = mix(1.0, cnoise(...) * 3.0 + 0.4, uStart0) * uStart2
@@ -53,16 +51,10 @@ vec2 inkShape(vec2 uv, float p) {
     /*
      * The field, and note that p appears NOWHERE in it. That is load-bearing.
      *
-     * The reference samples a window barely a third of a noise cell wide, so its
-     * entire viewport reads essentially one point of the field, and its coverage
-     * changes only because that window drifts with p. Copying the drift here
-     * broke it in two ways. It is seed-dependent — the window is a couple of
-     * cells wide on this canvas so the drift genuinely reshapes the field rather
-     * than just offsetting it — and worse, it made per-pixel coverage
-     * non-monotonic: early on the level rises slowly, so a lobe drifting away
-     * from a pixel outran the level rising toward it, and patches that had gone
-     * dark went light again. Read as a flicker at the top of the frame before
-     * the flood proper arrived.
+     * The reference drifts its sampling window with p. Copying that here made
+     * per-pixel coverage non-monotonic: a lobe drifting away from a pixel could
+     * outrun the level rising toward it, and patches that had gone dark went
+     * light again — a flicker at the top of the frame.
      *
      * Frozen, coverage is clamp(constant + rising) — monotonic per pixel by
      * construction, so nothing can ever un-darken. The life comes from lobes
@@ -75,10 +67,9 @@ vec2 inkShape(vec2 uv, float p) {
     n += cnoise(vec2(uv.x * 4.3 - uSeed, uv.y * 3.1 + uSeed)) * 0.45;
 
     /*
-     * Vertical tilt, now roughly the same span as the field above rather than a
-     * third of it. That ratio is the whole bottom-to-top read: at a third, which
-     * lobe opened first was down to the noise and the frame filled in in no
-     * particular order; matched, a pixel at the bottom needs the level to rise
+     * Vertical tilt, roughly the same span as the field above. That ratio is the
+     * whole bottom-to-top read: much less and which lobe opened first is down to
+     * the noise; matched, a pixel at the bottom needs the level to rise
      * 2.6 less far than one at the top, so the flood is clearly a rising one and
      * only an unusually strong peak lets the top lead. Push it much past this
      * and the raggedness stops mattering — it becomes a horizon line again.

@@ -1,7 +1,5 @@
-/** Symbols a character is swapped for while it is mid-scramble. */
 const RANDOM_CHARS = ["!", '"', "*", "/", "\\", ":", "(", ")", "?", ";", "-"];
 
-/** Colours of the inverted box drawn over the character being scrambled. */
 export interface InvertBox {
     backgroundColor?: string;
     textColor?: string;
@@ -16,7 +14,6 @@ export function displayChar(char: string) {
     return char === " " ? "\u00A0" : char;
 }
 
-/** Linear remap of `value` from one range onto another. */
 export function mapRange(
     value: number,
     fromLow: number,
@@ -29,14 +26,12 @@ export function mapRange(
     return toLow + percentage * (toHigh - toLow);
 }
 
-/** Draw the inverted box over a character and swap it for a random symbol. */
 export function highlightChar(el: HTMLSpanElement, invertBox: InvertBox) {
     el.style.backgroundColor = invertBox.backgroundColor || "#000";
     el.style.color = invertBox.textColor || "#fff";
     el.textContent = getRandomChar();
 }
 
-/** Undo `highlightChar`, putting the original character back. */
 export function restoreChar(el: HTMLSpanElement, original: string) {
     el.style.backgroundColor = "";
     el.style.color = "";

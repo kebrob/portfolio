@@ -3,15 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimate } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import ScrambleText from "@/components/ui/ScrambleText";
+import LegalLinks from "@/components/layout/LegalLinks";
+import { EASE_OUT_EXPO, INK, PAPER } from "@/lib/palette";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
+import { EMAIL as email, SOCIALS as socials } from "@/lib/site";
 
-/* Glitch square — starts 5s after in-view, then randomly single or double glitches every 3–10s */
+/*
+ * Glitch square — starts 5s after in-view, then randomly single or double
+ * glitches every 3–10s. Held still for reduced motion: it never stops on its
+ * own, and a flicker that cannot be paused is exactly what that setting asks
+ * a page not to do.
+ */
 function GlitchSquare() {
     const [scope, animate] = useAnimate();
     const inView = useInView(scope, { once: true });
+    const reduced = usePrefersReducedMotion();
 
     useEffect(() => {
-        if (!inView) return;
+        if (!inView || reduced) return;
         let cancelled = false;
         let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -41,7 +52,7 @@ function GlitchSquare() {
             cancelled = true;
             clearTimeout(timeoutId);
         };
-    }, [inView, animate, scope]);
+    }, [inView, reduced, animate, scope]);
 
     return (
         <span
@@ -51,21 +62,15 @@ function GlitchSquare() {
     );
 }
 
-const email = "hello@robertkebinger.com";
+const socialInvertBox = { backgroundColor: PAPER, textColor: INK };
+const emailInvertBox = { backgroundColor: INK, textColor: PAPER };
 
-const socials = [
-    { label: "GitHub", href: "https://github.com/kebrob" },
-    { label: "LinkedIn", href: "https://linkedin.com/in/robert-kebinger-481166204" },
-    { label: "Instagram", href: "https://instagram.com/robertkebinger" },
-];
+const STAGGER_EASE = EASE_OUT_EXPO;
 
-const socialInvertBox = { backgroundColor: "#f8f6f2", textColor: "#141414" };
-const emailInvertBox = { backgroundColor: "#141414", textColor: "#f8f6f2" };
-
-const STAGGER_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-
-/** `year` is resolved at build by app/page.tsx — see the note there. */
+/** `year` is resolved at build by app/[locale]/page.tsx — see the note there. */
 export default function Contact({ year }: { year: number }) {
+    const t = useTranslations("contact");
+    const tA11y = useTranslations("a11y");
     const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
     const [emailHovered, setEmailHovered] = useState(false);
 
@@ -75,47 +80,39 @@ export default function Contact({ year }: { year: number }) {
     const emailRowRef = useRef(null);
     const emailRowInView = useInView(emailRowRef, { once: true, amount: 0.5 });
 
-    const lines = [
-        // `nowrap` only on the line that has a space in it — the others cannot
+    const headline = t.raw("headline") as string[];
+    const lines = headline.map((text, i) => ({
+        text,
+        offset: i > 0,
+        // `nowrap` only on a line that has a space in it — the others cannot
         // break anyway, and the clamp()'d type gets very close to the edge.
-        { text: "Let\u2019s talk", offset: false, nowrap: true, isLast: false },
-        { text: "About", offset: true, nowrap: false, isLast: false },
-        { text: "IT", offset: true, nowrap: false, isLast: true },
-    ];
+        nowrap: text.includes(" "),
+        isLast: i === headline.length - 1,
+    }));
 
     /*
-     * -mt-px closes a hairline seam at the top edge, from back when this footer
-     * and the section above it both painted their own grey-6 and Firefox snapped
-     * the two backgrounds to device pixels independently. Neither paints one any
-     * more — the dark under both is the same fixed canvas — so there is no seam
-     * left to close, but the overlap costs nothing and the day either of them
-     * paints a ground again it is wanted.
+     * -mt-px guards against a hairline seam at the top edge should this footer
+     * or the section above it ever paint a ground of its own again (Firefox
+     * snaps the two backgrounds to device pixels independently).
      */
     return (
         <footer
             id="contact"
-            className="dark-section -mt-px px-[20px] md:px-[40px] lg:px-[80px] pt-20 pb-6 text-paper min-h-screen flex flex-col justify-between"
+            /*
+             * Full-screen only from lg. Below that, min-h-screen stretched the
+             * content over the viewport and left two empty bands, so it is as
+             * tall as its content.
+             */
+            className="dark-section -mt-px px-gutter pt-20 pb-6 text-paper lg:min-h-screen lg:flex lg:flex-col lg:justify-between"
             /*
              * Same move as the projects wall above: keep .dark-section for its
              * text colour and because the Header's intersection check watches
-             * that class, but drop the background it normally paints.
-             *
-             * The footer used to be flatly dark from its first pixel while the
-             * ink was still flooding in above it, so scrolling down fast met a
-             * hard horizontal edge where the finished dark met the transition.
-             * Transparent, the same canvas paints both and there is no edge to
-             * see. It is also the same surface either way: .dark-section's
-             * background is grey-6 with a 2.5% dot lattice, and grey-6 with a
-             * 2.5% dot lattice is exactly what the shader resolves to at density
-             * 1 (see FRAG_MAIN in lib/ink/gl-transition.ts).
-             *
-             * The dots come from the canvas now rather than from here, which is
-             * the one visible difference: painting both stacked two identical
-             * lattices and doubled their opacity.
+             * that class, but drop the background it normally paints. Otherwise
+             * scrolling down fast meets a hard edge where the finished dark meets
+             * the flood, and the dot lattice is painted twice.
              */
             style={{ backgroundColor: "transparent", backgroundImage: "none" }}
         >
-            {/* Headline */}
             <div ref={headlineRef} className="overflow-hidden">
                 <h2 className="font-bold uppercase leading-[0.85] tracking-tight text-[clamp(3.5rem,13vw,13rem)]">
                     {lines.map((line, i) => (
@@ -133,16 +130,12 @@ export default function Contact({ year }: { year: number }) {
                 </h2>
             </div>
 
-            {/* Bottom row. The socials column is `auto`, not a second 1fr: its widest
-                item is LINKEDIN at ~94px, whereas the email row needs ~440px ("Email me"
-                + the 80px rule + a 24-char mono address). Splitting the width evenly
-                starved the email column and made the address wrap onto a second line
-                everywhere from md up to ~1024px. */}
-            <div className="mt-32 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-y-12 gap-x-8 items-end">
-                {/* Email me */}
+            {/* The socials column is `auto`, not a second 1fr: the email row needs
+                ~440px and the socials ~94px, so an even split wrapped the address. */}
+            <div className="mt-16 md:mt-24 lg:mt-32 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-y-12 gap-x-8 items-end">
                 <div ref={emailRowRef} className="flex items-center gap-2 flex-wrap min-w-0">
                     <span className="text-base md:text-lg font-medium uppercase tracking-tight text-paper">
-                        Email me
+                        {t("emailMe")}
                     </span>
                     <motion.span
                         className="hidden sm:block h-px bg-paper"
@@ -175,7 +168,6 @@ export default function Contact({ year }: { year: number }) {
                     </a>
                 </div>
 
-                {/* Socials */}
                 <ul className="flex flex-col gap-2 md:items-end leading-tight">
                     {socials.map((s) => (
                         <li key={s.label}>
@@ -199,18 +191,14 @@ export default function Contact({ year }: { year: number }) {
                                     s.label
                                 )}
                                 <ArrowUpRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                <span className="sr-only">{tA11y("opensInNewTab")}</span>
                             </a>
                         </li>
                     ))}
                 </ul>
             </div>
 
-            {/* Footer */}
-            <div className="mt-12">
-                <span className="font-mono text-xs text-grey-65">
-                    © {year} Robert Kebinger — All rights reserved
-                </span>
-            </div>
+            <LegalLinks year={year} className="mt-16 lg:mt-12 text-grey-65" />
         </footer>
     );
 }

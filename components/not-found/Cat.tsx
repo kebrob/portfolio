@@ -15,11 +15,10 @@ import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
  * the ink canvas, mid-flood it is half one colour and half the other, and a
  * cut-out is simply correct over whatever is behind it.
  *
- * The tail animates its shape, not its rotation. The old one swung on a
- * transform whose origin framer-motion resolved against the tail's own bounding
- * box, so the pivot sat off in empty space and the tail slid away from the body
- * as it swayed. Morphing the path keeps the first point where it is — tucked
- * inside the haunch — so there is no joint to come apart.
+ * The tail animates its shape, not its rotation: framer-motion resolves a
+ * transform origin against the tail's own bounding box, so a rotating tail slid
+ * away from the body. Morphing the path keeps the first point tucked inside the
+ * haunch, so there is no joint to come apart.
  */
 
 const BODY =
@@ -50,7 +49,6 @@ const EYES = "M86 90Q97 79 112 95Q98 103 86 90ZM154 90Q143 79 128 95Q142 103 154
 const PUPILS =
     "M99.5 85Q104 92 99.5 99.5Q95 92 99.5 85ZM140.5 85Q145 92 140.5 99.5Q136 92 140.5 85Z";
 
-/* A blink every ~5.5s: open, a quick close-open, open again. */
 const BLINK = {
     animate: { scaleY: [1, 1, 0.08, 1, 1] },
     transition: {
@@ -61,7 +59,7 @@ const BLINK = {
     },
 } as const;
 
-export default function Cat({ className = "" }: { className?: string }) {
+export default function Cat({ label, className = "" }: { label: string; className?: string }) {
     const reduced = usePrefersReducedMotion();
     const id = useId();
     const cutouts = `${id}-cutouts`;
@@ -73,7 +71,7 @@ export default function Cat({ className = "" }: { className?: string }) {
         <svg
             viewBox="0 0 260 262"
             role="img"
-            aria-label="A cat, sitting"
+            aria-label={label}
             fill="none"
             className={`theme-fade block ${className}`}
         >

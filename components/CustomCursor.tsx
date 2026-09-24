@@ -1,40 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 /*
  * The dot that replaces the system cursor.
  *
- * The whole component is one bug's worth of care: it used to hide itself on
- * `mouseleave` at the document, and a route change fires exactly that event —
- * the element under the pointer is torn out of the DOM, the browser reports the
- * pointer as having left, and nothing brings it back until the mouse moves
- * again. Going to a 404 and back was enough to lose the cursor for good, since
- * the system one is hidden by globals.css and there is nothing left to see.
+ * Visibility is decided by coordinates rather than by `mouseleave`: a route
+ * change tears the element under the pointer out of the DOM and the browser
+ * reports the pointer as having left. The only thing that hides the dot is a
+ * pointer that is genuinely outside the viewport.
  *
- * So visibility is decided by coordinates rather than by the event: the only
- * thing that hides the dot is a pointer that is genuinely outside the viewport.
+ * Everything is written straight to the element, not through React state: the
+ * handlers fire at pointer rate, and a re-render per mouse move is work the
+ * main thread should be spending on the page. Position goes through the
+ * `translate` property, which composites, rather than left/top, which lay out;
+ * `transform` stays free for the hover scale in globals.css.
+ *
+ * The system cursor is only hidden once this has mounted, and only for a
+ * mouse-like pointer (the has-custom-cursor class on <html>). Before that —
+ * or if the script never runs, or on a touch screen — the normal cursor stays.
  */
 export default function CustomCursor() {
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [isHovering, setIsHovering] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const el = ref.current;
+        if (!el || !window.matchMedia("(pointer: fine)").matches) return;
+
+        const root = document.documentElement;
+        root.classList.add("has-custom-cursor");
+
         const updatePosition = (e: PointerEvent) => {
-            setPosition({ x: e.clientX, y: e.clientY });
-            setIsVisible(true);
+            // Touch and pen contacts fire pointermove too; the dot is for the mouse.
+            if (e.pointerType !== "mouse") return;
+            el.style.translate = `${e.clientX - 6}px ${e.clientY - 6}px`;
+            el.style.opacity = "1";
         };
 
         const handleElementHover = (e: PointerEvent) => {
+            if (e.pointerType !== "mouse") return;
             const target = e.target as HTMLElement | null;
-            setIsHovering(
+            el.classList.toggle(
+                "hovering",
                 Boolean(
                     target?.closest?.("a, button, .hoverable") ||
                     target?.classList?.contains("hoverable")
                 )
             );
-            setIsVisible(true);
+            el.style.opacity = "1";
         };
 
         /*
@@ -47,7 +60,7 @@ export default function CustomCursor() {
             if (e.relatedTarget) return;
             const { clientX: x, clientY: y } = e;
             const inside = x > 0 && y > 0 && x < window.innerWidth && y < window.innerHeight;
-            if (!inside) setIsVisible(false);
+            if (!inside) el.style.opacity = "0";
         };
 
         window.addEventListener("pointermove", updatePosition, { passive: true });
@@ -55,6 +68,7 @@ export default function CustomCursor() {
         document.addEventListener("mouseout", handleOut);
 
         return () => {
+            root.classList.remove("has-custom-cursor");
             window.removeEventListener("pointermove", updatePosition);
             window.removeEventListener("pointerover", handleElementHover);
             document.removeEventListener("mouseout", handleOut);
@@ -62,19 +76,8 @@ export default function CustomCursor() {
     }, []);
 
     /*
-     * Rendered even while hidden, and faded with opacity instead. Unmounting
-     * threw away the last known position, so the dot could only come back at
-     * the next mousemove — the other half of the disappearing-cursor bug.
+     * Rendered even while hidden, and faded with opacity instead: unmounting
+     * would throw away the last known position until the next mousemove.
      */
-    return (
-        <div
-            aria-hidden="true"
-            className={`custom-cursor ${isHovering ? "hovering" : ""}`}
-            style={{
-                left: position.x - 6,
-                top: position.y - 6,
-                opacity: isVisible ? 1 : 0,
-            }}
-        />
-    );
+    return <div ref={ref} aria-hidden="true" className="custom-cursor" style={{ opacity: 0 }} />;
 }

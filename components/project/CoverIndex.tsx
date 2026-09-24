@@ -2,28 +2,24 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useFormatter, useTranslations } from "next-intl";
 import PaperInkToggle from "@/components/ui/PaperInkToggle";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
-import { AUTHOR, type Project } from "@/lib/projects";
+import { monthDate, type Project } from "@/lib/projects";
+import { AUTHOR } from "@/lib/site";
 import { Art, ART_WEIGHT, BackLink, Byline, GUTTER, Label, VisitButton } from "./kit";
 
 /*
  * The project page: a cover that holds the whole first screen, then an index of
  * facts rather than an essay.
  *
- * Thirty candidates were built for this in the lab and this is the one that
- * stayed, for a reason that is about the content rather than the drawing. None
- * of this work can show a screenshot, name a figure in absolute terms, or quote
- * a customer — so a page built around a narrative spends four hundred words
- * having every specific removed from it. An index cannot do that. Eight true
- * lines, one of which says what was withheld, reads as deliberate; a short essay
- * reads as thin. And the cover carries the page on its own, so nothing below it
- * has to work hard.
+ * None of this work can show a screenshot, name a figure in absolute terms, or
+ * quote a customer (NDA), so a narrative would spend its words having every
+ * specific removed. Eight true lines, one of which says what was withheld,
+ * reads as deliberate; a short essay reads as thin.
  *
- * The prose tail under the index is the extension the design always allowed for
- * and it is capped at three paragraphs in lib/projects.ts. That cap is the
- * design: past it, the page is an essay again and the index becomes a spec
- * sheet stapled to the front of one.
+ * The prose tail under the index is capped at three paragraphs in
+ * lib/projects.ts. Past that, the page is an essay again.
  */
 export default function CoverIndex({ project }: { project: Project }) {
     const reduced = usePrefersReducedMotion();
@@ -31,27 +27,40 @@ export default function CoverIndex({ project }: { project: Project }) {
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
     const scale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
     const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+    const t = useTranslations("project");
+    const format = useFormatter();
+
+    const period =
+        project.to === null
+            ? t("periodOngoing", { from: project.from })
+            : t("period", { from: project.from, to: project.to });
+    const updated = format.dateTime(monthDate(project.updated), {
+        month: "long",
+        year: "numeric",
+    });
 
     const rows: { term: string; value: React.ReactNode }[] = [
-        { term: "Client", value: project.client },
-        { term: "Engagement", value: project.engagement },
-        { term: "Role", value: project.role },
-        { term: "Year", value: project.period ?? project.year },
-        { term: "Stack", value: project.stack.join(", ") },
+        { term: t("terms.client"), value: project.client },
+        { term: t("terms.engagement"), value: project.engagement },
+        { term: t("terms.role"), value: project.role },
+        { term: t("terms.year"), value: period },
+        { term: t("terms.stack"), value: format.list(project.stack, { type: "unit" }) },
         ...project.stats.map((stat) => ({
             term: stat.label,
             value: (
                 <span>
                     <span className="text-[var(--page-fg)]">{stat.value}</span>
                     {stat.method && (
-                        <span className="theme-fade mt-1 block font-mono text-[11px] leading-[1.7] text-[var(--page-faint)]">
+                        <span className="theme-fade mt-1 block font-mono text-mini leading-[1.7] text-[var(--page-faint)]">
                             {stat.method}
                         </span>
                     )}
                 </span>
             ),
         })),
-        ...(project.withheld ? [{ term: "Withheld", value: project.withheld.join(" · ") }] : []),
+        ...(project.withheld
+            ? [{ term: t("terms.withheld"), value: project.withheld.join(" · ") }]
+            : []),
     ];
 
     return (
@@ -70,10 +79,9 @@ export default function CoverIndex({ project }: { project: Project }) {
                         seed={project.hero.seed}
                         ratio="h-full"
                         /*
-                         * 0.42 rather than the 0.6 this shipped with: the art is
-                         * the ground the title sits on, and at 0.6 the denser
-                         * variants were reading as the subject. ART_WEIGHT then
-                         * pulls the heavier ones down further — see kit.tsx.
+                         * The art is the ground the title sits on, not the
+                         * subject. ART_WEIGHT pulls the denser variants down
+                         * further — see kit.tsx.
                          */
                         style={{ opacity: 0.42 * ART_WEIGHT[project.hero.art] }}
                     />
@@ -81,9 +89,8 @@ export default function CoverIndex({ project }: { project: Project }) {
 
                 {/*
                  * pt-32 matches the archive index's own pt-32, so the back link
-                 * and the toggle sit at the same height on both pages. It is
-                 * also what clears the nav's blur band: at pt-14 the row landed
-                 * inside it and the two sets of small caps overlapped.
+                 * and the toggle sit at the same height on both pages, clear of
+                 * the nav's blur band.
                  */}
                 <div className={`relative flex items-center justify-between gap-6 pt-32 ${GUTTER}`}>
                     <BackLink />
@@ -91,10 +98,10 @@ export default function CoverIndex({ project }: { project: Project }) {
                 </div>
 
                 <div className={`relative pb-12 ${GUTTER}`}>
-                    <div className="theme-fade mb-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10px] tracking-[0.3em] text-[var(--page-faint)] uppercase">
+                    <div className="theme-fade mb-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-mini tracking-label text-[var(--page-faint)] uppercase">
                         <span className="text-[var(--page-fg)]">{project.kicker}</span>
-                        <span>{project.period ?? project.year}</span>
-                        {project.ongoing && <span>Ongoing</span>}
+                        <span>{period}</span>
+                        {project.to === null && <span>{t("ongoing")}</span>}
                     </div>
                     <h1 className="max-w-[14ch] text-[clamp(3rem,11vw,9rem)] leading-[0.86] font-bold tracking-[-0.055em]">
                         {project.title}
@@ -130,7 +137,7 @@ export default function CoverIndex({ project }: { project: Project }) {
                  */}
                 {project.body && (
                     <div className="mt-16 max-w-[40rem]">
-                        <Label>Notes</Label>
+                        <Label>{t("notes")}</Label>
                         <div className="mt-5 space-y-5">
                             {project.body.map((paragraph) => (
                                 <p
@@ -145,8 +152,8 @@ export default function CoverIndex({ project }: { project: Project }) {
                 )}
 
                 <div className="mt-16 flex flex-wrap items-center justify-between gap-6">
-                    <Byline author={AUTHOR} updated={project.updated} />
-                    {project.link && <VisitButton href={project.link} label="Open" />}
+                    <Byline author={AUTHOR} updated={updated} />
+                    {project.link && <VisitButton href={project.link} label={t("open")} />}
                 </div>
             </div>
         </div>

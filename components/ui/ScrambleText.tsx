@@ -21,6 +21,10 @@ interface ScrambleTextProps {
  *
  * Characters are mutated directly through refs rather than through state, which
  * is what keeps a per-character animation off React's render path.
+ *
+ * Assistive tech gets the plain string from a visually hidden copy; the
+ * per-character spans are hidden from it, since mid-sweep they spell a random
+ * symbol and a screen reader would announce them letter by letter.
  */
 export default function ScrambleText({
     text,
@@ -40,6 +44,13 @@ export default function ScrambleText({
         let isAnimating = true;
 
         const charCount = chars.length;
+
+        // A looping sweep is ambient motion that never stops, which reduced
+        // motion asks a page not to have. One-shot sweeps (the hover ones) are
+        // a response to the visitor and stay. Read from the media query rather
+        // than the hydration-safe hook: this effect runs once, on the client,
+        // and the hook would still be reporting its server value here.
+        if (loop && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
         const runSweep = () => {
             // Higher speed = shorter per-character duration (0.3s down to 0.01s).
@@ -100,17 +111,20 @@ export default function ScrambleText({
 
     return (
         <span>
-            {chars.map((char, i) => (
-                <span
-                    key={i}
-                    ref={(el) => {
-                        charsRef.current[i] = el;
-                    }}
-                    style={{ opacity: 1 }}
-                >
-                    {displayChar(char)}
-                </span>
-            ))}
+            <span className="sr-only">{text}</span>
+            <span aria-hidden="true">
+                {chars.map((char, i) => (
+                    <span
+                        key={i}
+                        ref={(el) => {
+                            charsRef.current[i] = el;
+                        }}
+                        style={{ opacity: 1 }}
+                    >
+                        {displayChar(char)}
+                    </span>
+                ))}
+            </span>
         </span>
     );
 }

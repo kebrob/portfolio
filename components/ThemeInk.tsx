@@ -25,17 +25,12 @@ import { DEFAULT_THEME, DURATION_MS, usePageTheme } from "@/lib/page-theme";
  * frame arrives after the browser has painted — one frame of white. Hence the
  * layout effect and initialProgress; see gl-transition.ts.
  *
- * A RELOAD IS NOT A TRANSITION. Two separate things used to make it look like
- * one, and both are handled here:
+ * A RELOAD IS NOT A TRANSITION:
  *
- *   - The seed came from `target`, which reports DEFAULT_THEME during hydration
- *     because the provider has to match the server. A visitor on paper was
- *     therefore seeded at 1, and the correction to 0 arrived as a change to
- *     animate — the entire flood, backwards, on every reload. It now reads the
- *     attribute the inline script wrote, which is right on the first try.
- *   - Even seeded correctly, any later change of `target` was animated. Only a
- *     toggle should be; everything else is bookkeeping catching up with the DOM
- *     and belongs on a jump.
+ *   - The seed comes from the attribute the inline script wrote, not `target`,
+ *     which reports DEFAULT_THEME during hydration to match the server.
+ *   - Only a toggle animates; any other change of `target` is bookkeeping
+ *     catching up with the DOM and belongs on a jump.
  *
  * And before any of it, there is a frame with no canvas at all, because the
  * context is created after hydration. .theme-ground covers exactly that gap —
@@ -43,19 +38,11 @@ import { DEFAULT_THEME, DURATION_MS, usePageTheme } from "@/lib/page-theme";
  * painted for real.
  */
 
-/**
- * The stored theme, straight off the element the inline script stamped it on.
- * Not from React: this has to be right on the very first client render, which
- * is precisely where the provider still has to be reporting the default.
- */
 function initialProgress() {
     if (typeof document === "undefined") return DEFAULT_THEME === "dark" ? 1 : 0;
     return document.documentElement.dataset.pageTheme === "light" ? 0 : 1;
 }
 
-// useLayoutEffect warns when it runs during SSR, and this component is
-// server-rendered like any other client component. The effect is a no-op on the
-// server either way — it only touches a ref'd canvas.
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export default function ThemeInk() {
@@ -63,7 +50,6 @@ export default function ThemeInk() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const glRef = useRef<GlTransition | null>(null);
     const [glFailed, setGlFailed] = useState(false);
-    /** True once the canvas has painted, which is when the ground can go. */
     const [painted, setPainted] = useState(false);
 
     const reducedMotion = usePrefersReducedMotion();

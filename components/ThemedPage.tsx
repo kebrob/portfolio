@@ -10,9 +10,8 @@ import { usePageTheme } from "@/lib/page-theme";
  * neither should repeat: the ink canvas, the nav's colour, and a transparent
  * shell that lets the canvas through.
  *
- * Transparent is load-bearing. These pages used to carry .dark-section, which
- * paints an opaque grey-6 — over the canvas it would hide the ink entirely and
- * the page would simply be dark, with the flood happening invisibly behind it.
+ * Transparent is load-bearing: an opaque ground (.dark-section, say) would hide
+ * the ink entirely, with the flood happening invisibly behind it.
  *
  * Children stay server components; this only wraps them.
  */

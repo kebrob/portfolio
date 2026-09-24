@@ -14,7 +14,7 @@
  */
 export const DARK_PANEL = {
     backgroundColor: "var(--color-grey-6)",
-    backgroundImage: "radial-gradient(circle, hsl(0 0% 100% / 0.025) 1.5px, transparent 1.5px)",
+    backgroundImage: "var(--pattern-dots)",
     backgroundSize: "20px 20px",
     backgroundAttachment: "fixed",
 } as const;

@@ -46,5 +46,5 @@ next-env.d.ts
 /.playwright-mcp/
 
 # scratch design lab — /lab/*, never linked from the site and never shipped
-/app/lab/
+/app/[[]locale]/lab/
 /components/lab/
