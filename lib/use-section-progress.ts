@@ -2,6 +2,7 @@
 
 import { RefObject } from "react";
 import { useScroll, useTransform } from "framer-motion";
+import { stableViewportHeight } from "@/lib/viewport";
 
 /**
  * 0→1 scroll progress for a pinned section, measured from the moment its top
@@ -20,7 +21,7 @@ export function useSectionProgress(ref: RefObject<HTMLElement | null>) {
         if (!ref.current) return 0;
         const top = ref.current.offsetTop;
         const height = ref.current.offsetHeight;
-        const viewH = window.innerHeight;
+        const viewH = stableViewportHeight();
         return Math.max(0, Math.min(1, (y - top) / (height - viewH)));
     });
 }

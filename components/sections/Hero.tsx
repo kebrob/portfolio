@@ -45,7 +45,7 @@ export default function Hero() {
     };
 
     return (
-        <section className="min-h-screen flex flex-col relative">
+        <section className="min-h-view flex flex-col relative">
             <div className="flex-1 flex items-center pb-32 md:pb-40 lg:pb-48">
                 <div className="w-full flex items-center justify-between px-gutter">
                     {/*

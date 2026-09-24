@@ -18,7 +18,7 @@
 
 /*
  * Height-based variant for Experience, the one remaining pinned scrollytelling
- * section. Its content has to fit inside a `sticky h-screen overflow-hidden`
+ * section. Its content has to fit inside a `sticky h-view overflow-hidden`
  * panel, and a pinned panel cannot scroll — anything that overflows is not
  * merely hidden, it is unreachable. The roomy desktop spacing and type scale
  * stop fitting below roughly 700px of viewport height, so base utilities carry
@@ -94,6 +94,22 @@
 }
 
 :root {
+    /*
+     * One hundredth of a viewport height that holds still while you scroll.
+     * Overwritten in px by VIEWPORT_SCRIPT (app/[locale]/layout.tsx) before
+     * first paint; svh is only the fallback for a page where that did not run.
+     *
+     * Plain vh is not stable on iOS. Firefox resizes the whole web view when its
+     * toolbar collapses, so vh changes mid-scroll, and every section sized in it
+     * — Experience's runway, the ink driver, the hero — changes with it. About
+     * six screens of vh sit above the projects wall, so a 60px toolbar became a
+     * ~380px jump of the whole page on every swipe. Chrome and Safari keep vh
+     * at the toolbar-hidden height, which is steady but puts the bottom of a
+     * 100vh hero under the toolbar at load.
+     *
+     * Use it through h-view / min-h-view, or calc(var(--vh) * N) for runways.
+     */
+    --vh: 1svh;
     --gutter: 1.25rem;
 
     @variant md {
@@ -115,6 +131,15 @@
 
 @utility px-gutter {
     padding-inline: var(--gutter);
+}
+
+/* A viewport tall, in the stable unit — see --vh. */
+@utility h-view {
+    height: calc(var(--vh) * 100);
+}
+
+@utility min-h-view {
+    min-height: calc(var(--vh) * 100);
 }
 
 @layer base {

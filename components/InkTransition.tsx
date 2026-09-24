@@ -116,10 +116,14 @@ export default function InkTransition({
         );
     }
 
+    // h-lvh rather than inset-0: on iOS the fixed box of inset-0 grows and
+    // shrinks with the browser's toolbar, which resized — and so wiped — the
+    // canvas on every scroll that showed or hid it. The large viewport is
+    // constant and always covers what is visible.
     return (
         <canvas
             ref={canvasRef}
-            className="fixed inset-0 -z-10 h-full w-full pointer-events-none"
+            className="fixed inset-x-0 top-0 -z-10 h-lvh w-full pointer-events-none"
             aria-hidden="true"
         />
     );

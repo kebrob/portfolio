@@ -101,14 +101,14 @@ export default function Experience() {
         <section
             ref={containerRef}
             className="relative"
-            style={{ height: `${100 + experiences.length * SCROLL_VH_PER_ROLE}vh` }}
+            style={{ height: `calc(var(--vh) * ${100 + experiences.length * SCROLL_VH_PER_ROLE})` }}
             aria-label={t("sectionLabel")}
         >
             {/* pt-20 below `tall` reserves .nav-blur's 80px so the
                 vertically centred card cannot ride up under the header on short
                 viewports; it does not move the intro headline below, which is
                 `absolute inset-0` and so resolves against the padding box. */}
-            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden pt-20 tall:pt-0">
+            <div className="sticky top-0 h-view flex items-center justify-center overflow-hidden pt-20 tall:pt-0">
                 <div className="w-full max-w-6xl mx-auto px-gutter">
                     <motion.div
                         className="absolute inset-0 flex items-center justify-center"

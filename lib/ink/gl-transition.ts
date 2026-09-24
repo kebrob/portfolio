@@ -237,6 +237,15 @@ export function createGlTransition(
             canvas.width = w;
             canvas.height = h;
             gl.viewport(0, 0, w, h);
+            // Assigning the size wipes the buffer, and for a canvas that IS the
+            // dark background a wiped buffer is bare paper. Repaint now rather
+            // than on the next rAF: the callers resize from a ResizeObserver,
+            // whose callbacks run before paint, so the cleared buffer never
+            // reaches the screen. Deferred, it did — every frame of iOS's
+            // toolbar slide resized the canvas and flashed the ink to paper.
+            if (frame) cancelAnimationFrame(frame);
+            draw();
+            return;
         }
         schedule();
     };

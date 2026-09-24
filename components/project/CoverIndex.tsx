@@ -69,7 +69,7 @@ export default function CoverIndex({ project }: { project: Project }) {
                 unclipped it widens the page into a sideways scroll. */}
             <div
                 ref={ref}
-                className="relative flex h-[92vh] min-h-[34rem] flex-col justify-between overflow-x-clip"
+                className="relative flex h-[calc(var(--vh)*92)] min-h-[34rem] flex-col justify-between overflow-x-clip"
             >
                 <motion.div
                     aria-hidden="true"

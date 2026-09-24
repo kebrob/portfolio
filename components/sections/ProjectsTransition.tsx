@@ -84,9 +84,9 @@ export default function ProjectsTransition() {
                     // lifts progress 0 above the end of Experience; the bottom
                     // one puts it back so the wall still lands GAP below there,
                     // independent of LEAD.
-                    height: `${MEASURE_VH + RANGE_VH}vh`,
-                    marginTop: `-${LEAD_VH}vh`,
-                    marginBottom: `${GAP_VH + LEAD_VH - MEASURE_VH - RANGE_VH}vh`,
+                    height: `calc(var(--vh) * ${MEASURE_VH + RANGE_VH})`,
+                    marginTop: `calc(var(--vh) * ${-LEAD_VH})`,
+                    marginBottom: `calc(var(--vh) * ${GAP_VH + LEAD_VH - MEASURE_VH - RANGE_VH})`,
                 }}
             />
 

@@ -149,7 +149,7 @@ export default function ThemeInk() {
             {!painted && <div className="theme-ground" aria-hidden="true" />}
             <canvas
                 ref={canvasRef}
-                className="pointer-events-none fixed inset-0 -z-10 h-full w-full"
+                className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh w-full"
                 aria-hidden="true"
             />
         </>

@@ -30,7 +30,7 @@ export default function About({ yearsOfExperience }: { yearsOfExperience: number
         <section
             id="about"
             ref={sectionRef}
-            className="px-gutter pt-44 pb-24 md:min-h-screen md:flex md:flex-col md:justify-center md:py-24"
+            className="px-gutter pt-44 pb-24 md:min-h-view md:flex md:flex-col md:justify-center md:py-24"
         >
             <div className="w-full max-w-6xl mx-auto">
                 <motion.span

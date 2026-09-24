@@ -103,7 +103,7 @@ export default function Contact({ year }: { year: number }) {
              * content over the viewport and left two empty bands, so it is as
              * tall as its content.
              */
-            className="dark-section -mt-px px-gutter pt-20 pb-6 text-paper lg:min-h-screen lg:flex lg:flex-col lg:justify-between"
+            className="dark-section -mt-px px-gutter pt-20 pb-6 text-paper lg:min-h-view lg:flex lg:flex-col lg:justify-between"
             /*
              * Same move as the projects wall above: keep .dark-section for its
              * text colour and because the Header's intersection check watches

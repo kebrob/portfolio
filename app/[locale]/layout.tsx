@@ -77,6 +77,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const THEME_SCRIPT = `try{document.documentElement.dataset.pageTheme=localStorage.getItem("page-theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.pageTheme="dark"}`;
 
 /*
+ * Pins --vh (globals.css) to the viewport height at load, in px.
+ *
+ * On a touch device it is re-measured only when the width changes — a rotation.
+ * A height-only resize there is the browser's toolbar sliding in or out, which
+ * happens on nearly every swipe, and following it is exactly the reflow --vh
+ * exists to avoid. With a mouse, every resize is a real window resize and is
+ * followed.
+ *
+ * Inline in <head> for the same reason as THEME_SCRIPT: the sections sized by
+ * it must have their final height in the first layout, not after hydration.
+ */
+const VIEWPORT_SCRIPT = `(function(){var d=document.documentElement,w=-1;function s(){if(innerWidth===w&&matchMedia("(pointer: coarse)").matches)return;w=innerWidth;d.style.setProperty("--vh",innerHeight/100+"px")}s();addEventListener("resize",s)})()`;
+
+/*
  * Dev only: reload a document the back/forward buttons replayed from the HTTP
  * cache.
  *
@@ -101,7 +115,7 @@ export default async function RootLayout({ children, params }: Readonly<Props>) 
 
     return (
         // suppressHydrationWarning is for the data-page-theme THEME_SCRIPT
-        // writes: it lands on <html> before React hydrates, so React finds an
+        // writes (and the --vh style VIEWPORT_SCRIPT writes): it lands on <html> before React hydrates, so React finds an
         // attribute on this element that its own render did not produce and
         // reports a mismatch. It covers this element only — it does not reach
         // the tree underneath, so a real mismatch in the page still surfaces.
@@ -116,6 +130,7 @@ export default async function RootLayout({ children, params }: Readonly<Props>) 
         >
             <head>
                 <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+                <script dangerouslySetInnerHTML={{ __html: VIEWPORT_SCRIPT }} />
                 {process.env.NODE_ENV === "development" && (
                     <script dangerouslySetInnerHTML={{ __html: DEV_CACHE_RELOAD_SCRIPT }} />
                 )}
